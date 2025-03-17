@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="bonat_discount_product" model="product.product">
+            <field name="name">10% Bonat Discount on your order</field>
+            <field name="available_in_pos">True</field>
+            <field name="list_price">0.00</field> <!-- Price of the discount is 0.00 -->
+            <field name="weight">0.00</field> <!-- Service products typically have no weight -->
+            <field name="default_code">BONAT_DISCOUNT_001</field> <!-- Unique SKU for the discount product -->
+            <field name="type">service</field> <!-- Set as service type -->
+            <field name="uom_id" ref="uom.product_uom_unit" /> <!-- Default UOM is unit -->
+            <field name="uom_po_id" ref="uom.product_uom_unit" /> <!-- UOM for purchase -->
+        </record>
+        <record id="res_config_settings_bonat_discount" model="res.config.settings">
+            <field name="bonat_discount_percentage_product_id" ref="bonat_discount_product" />
+        </record>
+    </data>
+</odoo>
