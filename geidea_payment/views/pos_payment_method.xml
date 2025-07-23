@@ -1,0 +1,9 @@
+<odoo>
+    <data>
+        <record id="payment_method_geidea" model="pos.payment.method">
+            <field name="name">Geidea</field>
+            <field name="use_payment_terminal">True</field>
+            <field name="payment_terminal">geidea</field>
+        </record>
+    </data>
+</odoo>
