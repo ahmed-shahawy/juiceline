@@ -2,6 +2,7 @@
     <record id="view_geidea_device_tree" model="ir.ui.view">
         <field name="name">geidea.device.tree</field>
         <field name="model">geidea.device</field>
+        <field name="type">tree</field>
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
@@ -15,6 +16,7 @@
     <record id="view_geidea_device_form" model="ir.ui.view">
         <field name="name">geidea.device.form</field>
         <field name="model">geidea.device</field>
+        <field name="type">form</field>
         <field name="arch" type="xml">
             <form>
                 <group>
@@ -34,5 +36,6 @@
         <field name="name">أجهزة Geidea</field>
         <field name="res_model">geidea.device</field>
         <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_geidea_device_tree"/>
     </record>
 </odoo>
