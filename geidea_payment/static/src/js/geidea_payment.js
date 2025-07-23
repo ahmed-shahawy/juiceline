@@ -1,1 +1,0 @@
-// JS for simulated Geidea Payment
