@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- نموذج العرض الشجري -->
+        <record id="view_geidea_transaction_tree" model="ir.ui.view">
+            <field name="name">geidea.transaction.tree</field>
+            <field name="model">geidea.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Transactions" decoration-info="state=='pending'" decoration-success="state=='completed'" decoration-danger="state=='failed'">
+                    <field name="name"/>
+                    <field name="date"/>
+                    <field name="terminal_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- نموذج العرض النموذجي -->
+        <record id="view_geidea_transaction_form" model="ir.ui.view">
+            <field name="name">geidea.transaction.form</field>
+            <field name="model">geidea.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Transaction">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,completed"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="date"/>
+                                <field name="terminal_id"/>
+                                <field name="pos_order_id"/>
+                                <field name="pos_session_id"/>
+                            </group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="transaction_type"/>
+                                <field name="is_test_mode"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Transaction Details" name="details">
+                                <group>
+                                    <group>
+                                        <field name="geidea_reference"/>
+                                        <field name="card_type"/>
+                                        <field name="card_number"/>
+                                        <field name="approval_code"/>
+                                    </group>
+                                    <group>
+                                        <field name="response_code"/>
+                                        <field name="response_message"/>
+                                        <field name="retry_count"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Customer Information" name="customer">
+                                <group>
+                                    <field name="customer_id"/>
+                                    <field name="customer_email"/>
+                                    <field name="customer_phone"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- نموذج البحث -->
+        <record id="view_geidea_transaction_search" model="ir.ui.view">
+            <field name="name">geidea.transaction.search</field>
+            <field name="model">geidea.transaction</field>
+            <field name="arch" type="xml">
+                <search string="Search Geidea Transactions">
+                    <field name="name"/>
+                    <field name="terminal_id"/>
+                    <field name="geidea_reference"/>
+                    <filter string="Draft" name="draft" domain="[('state','=','draft')]"/>
+                    <filter string="Pending" name="pending" domain="[('state','=','pending')]"/>
+                    <filter string="Completed" name="completed" domain="[('state','=','completed')]"/>
+                    <filter string="Failed" name="failed" domain="[('state','=','failed')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Terminal" name="group_by_terminal" context="{'group_by':'terminal_id'}"/>
+                        <filter string="Status" name="group_by_state" context="{'group_by':'state'}"/>
+                        <filter string="Date" name="group_by_date" context="{'group_by':'date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- إجراء النافذة -->
+        <record id="action_geidea_transaction" model="ir.actions.act_window">
+            <field name="name">Geidea Transactions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">geidea.transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_geidea_transaction_search"/>
+            <field name="context">{'search_default_draft':1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No transactions found!
+                </p>
+            </field>
+        </record>
+
+        <!-- عنصر القائمة -->
+        <menuitem id="menu_geidea_transaction"
+                  name="Geidea Transactions"
+                  parent="point_of_sale.menu_point_config_product"
+                  action="action_geidea_transaction"
+                  sequence="101"/>
+    </data>
+</odoo>

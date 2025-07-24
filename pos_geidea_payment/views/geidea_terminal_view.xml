@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- نموذج العرض الشجري -->
+        <record id="view_geidea_terminal_tree" model="ir.ui.view">
+            <field name="name">geidea.terminal.tree</field>
+            <field name="model">geidea.terminal</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Terminals">
+                    <field name="name"/>
+                    <field name="terminal_id"/>
+                    <field name="merchant_id"/>
+                    <field name="state"/>
+                    <field name="last_sync"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- نموذج العرض النموذجي -->
+        <record id="view_geidea_terminal_form" model="ir.ui.view">
+            <field name="name">geidea.terminal.form</field>
+            <field name="model">geidea.terminal</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Terminal">
+                    <header>
+                        <button name="action_activate" string="Activate" type="object" class="oe_highlight" attrs="{'invisible': [('state', '!=', 'draft')]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Terminal Name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="terminal_id"/>
+                                <field name="merchant_id"/>
+                            </group>
+                            <group>
+                                <field name="api_key" password="True"/>
+                                <field name="last_sync"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="POS Points" name="pos_points">
+                                <field name="pos_config_ids" widget="many2many_tags"/>
+                            </page>
+                            <page string="Transactions" name="transactions">
+                                <field name="transaction_ids" readonly="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="date"/>
+                                        <field name="amount"/>
+                                        <field name="state"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- نموذج البحث -->
+        <record id="view_geidea_terminal_search" model="ir.ui.view">
+            <field name="name">geidea.terminal.search</field>
+            <field name="model">geidea.terminal</field>
+            <field name="arch" type="xml">
+                <search string="Search Geidea Terminals">
+                    <field name="name"/>
+                    <field name="terminal_id"/>
+                    <field name="merchant_id"/>
+                    <filter string="Active" name="active" domain="[('state','=','active')]"/>
+                    <filter string="Inactive" name="inactive" domain="[('state','=','inactive')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_by_state" context="{'group_by':'state'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- إجراء النافذة -->
+        <record id="action_geidea_terminal" model="ir.actions.act_window">
+            <field name="name">Geidea Terminals</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">geidea.terminal</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_geidea_terminal_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Geidea terminal!
+                </p>
+            </field>
+        </record>
+
+        <!-- عنصر القائمة -->
+        <menuitem id="menu_geidea_terminal"
+                  name="Geidea Terminals"
+                  parent="point_of_sale.menu_point_config_product"
+                  action="action_geidea_terminal"
+                  sequence="100"/>
+    </data>
+</odoo>
