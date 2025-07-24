@@ -18,30 +18,30 @@
         <!-- قواعد الأمان -->
         <record id="geidea_terminal_rule_user" model="ir.rule">
             <field name="name">Geidea Terminal: POS User Access</field>
-            <field name="model_id" ref="model_geidea_terminal"/>
+            <field name="model_id" ref="pos_geidea_payment.model_geidea_terminal"/>
             <field name="domain_force">[('pos_config_ids', 'in', user.pos_config_ids.ids)]</field>
-            <field name="groups" eval="[(4, ref('group_geidea_user'))]"/>
+            <field name="groups" eval="[(4, ref('pos_geidea_payment.group_geidea_user'))]"/>
         </record>
 
         <record id="geidea_terminal_rule_manager" model="ir.rule">
             <field name="name">Geidea Terminal: Manager Access</field>
-            <field name="model_id" ref="model_geidea_terminal"/>
+            <field name="model_id" ref="pos_geidea_payment.model_geidea_terminal"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_geidea_manager'))]"/>
+            <field name="groups" eval="[(4, ref('pos_geidea_payment.group_geidea_manager'))]"/>
         </record>
 
         <record id="geidea_transaction_rule_user" model="ir.rule">
             <field name="name">Geidea Transaction: POS User Access</field>
-            <field name="model_id" ref="model_geidea_transaction"/>
+            <field name="model_id" ref="pos_geidea_payment.model_geidea_transaction"/>
             <field name="domain_force">[('terminal_id.pos_config_ids', 'in', user.pos_config_ids.ids)]</field>
-            <field name="groups" eval="[(4, ref('group_geidea_user'))]"/>
+            <field name="groups" eval="[(4, ref('pos_geidea_payment.group_geidea_user'))]"/>
         </record>
 
         <record id="geidea_transaction_rule_manager" model="ir.rule">
             <field name="name">Geidea Transaction: Manager Access</field>
-            <field name="model_id" ref="model_geidea_transaction"/>
+            <field name="model_id" ref="pos_geidea_payment.model_geidea_transaction"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('group_geidea_manager'))]"/>
+            <field name="groups" eval="[(4, ref('pos_geidea_payment.group_geidea_manager'))]"/>
         </record>
     </data>
 </odoo>
