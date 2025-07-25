@@ -27,6 +27,9 @@
         'views/geidea_terminal_views.xml',
         'data/payment_method_data.xml',
     ],
+    'demo': [
+        'data/demo_terminals.xml',
+    ],
     'assets': {
         'point_of_sale._assets_pos': [
             'pos_geidea_payment/static/src/**/*',
