@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Geidea Terminal Tree View -->
+        <record id="view_geidea_terminal_tree" model="ir.ui.view">
+            <field name="name">geidea.terminal.tree</field>
+            <field name="model">geidea.terminal</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="terminal_id"/>
+                    <field name="merchant_id"/>
+                    <field name="connection_type"/>
+                    <field name="platform"/>
+                    <field name="connection_status" decoration-success="connection_status == 'connected'" decoration-danger="connection_status == 'error'" decoration-warning="connection_status == 'connecting'"/>
+                    <field name="active"/>
+                    <button name="test_connection" type="object" string="Test" icon="fa-plug" title="Test Connection"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Geidea Terminal Form View -->
+        <record id="view_geidea_terminal_form" model="ir.ui.view">
+            <field name="name">geidea.terminal.form</field>
+            <field name="model">geidea.terminal</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="test_connection" string="Test Connection" type="object" class="btn-primary" icon="fa-plug"/>
+                        <button name="disconnect" string="Disconnect" type="object" class="btn-secondary" icon="fa-unlink"/>
+                        <field name="connection_status" widget="badge" decoration-success="connection_status == 'connected'" decoration-danger="connection_status == 'error'" decoration-warning="connection_status == 'connecting'"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options="{'terminology': 'archive'}"/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Terminal Name"/>
+                            </h1>
+                        </div>
+                        
+                        <group>
+                            <group string="Terminal Details">
+                                <field name="terminal_id"/>
+                                <field name="merchant_id"/>
+                                <field name="terminal_key" password="True"/>
+                            </group>
+                            <group string="Platform &amp; Connection">
+                                <field name="platform"/>
+                                <field name="connection_type"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Connection Settings" name="connection">
+                                <group>
+                                    <group string="Network Settings" attrs="{'invisible': [('connection_type', '!=', 'network')]}">
+                                        <field name="ip_address"/>
+                                        <field name="port"/>
+                                    </group>
+                                    <group string="Bluetooth Settings" attrs="{'invisible': [('connection_type', '!=', 'bluetooth')]}">
+                                        <field name="bluetooth_address"/>
+                                    </group>
+                                    <group string="Serial Settings" attrs="{'invisible': [('connection_type', '!=', 'serial')]}">
+                                        <field name="serial_port"/>
+                                    </group>
+                                    <group string="USB Settings" attrs="{'invisible': [('connection_type', '!=', 'usb')]}">
+                                        <field name="usb_vendor_id"/>
+                                        <field name="usb_product_id"/>
+                                    </group>
+                                </group>
+                                
+                                <group>
+                                    <group string="Connection Options">
+                                        <field name="timeout"/>
+                                        <field name="retry_attempts"/>
+                                        <field name="auto_reconnect"/>
+                                    </group>
+                                    <group string="Status Information">
+                                        <field name="last_connection_test" readonly="1"/>
+                                        <field name="last_error_message" readonly="1"/>
+                                    </group>
+                                </group>
+                            </page>
+                            
+                            <page string="POS Configuration" name="pos_config">
+                                <field name="pos_config_ids">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="module_pos_hr"/>
+                                        <field name="is_posbox"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Geidea Terminal Action -->
+        <record id="action_geidea_terminal" model="ir.actions.act_window">
+            <field name="name">Geidea Terminals</field>
+            <field name="res_model">geidea.terminal</field>
+            <field name="view_mode">tree,form</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Geidea payment terminal!
+                </p>
+                <p>
+                    Configure Geidea payment terminals to accept payments in your Point of Sale.
+                    Supports multiple platforms and connection types.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_geidea_terminal"
+                  name="Geidea Terminals"
+                  parent="point_of_sale.menu_point_of_sale"
+                  action="action_geidea_terminal"
+                  sequence="50"/>
+    </data>
+</odoo>

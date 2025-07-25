@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_geidea_payment.ConnectionManager">
+        <div class="geidea-connection-manager">
+            <!-- Connection Status Bar -->
+            <div class="connection-status-bar d-flex align-items-center p-2 border-bottom">
+                <i t-attf-class="fa {{statusIcon}} me-2"></i>
+                <span class="flex-grow-1" t-esc="statusText"/>
+                <button class="btn btn-sm btn-outline-primary" 
+                        t-on-click="toggleManager">
+                    <i class="fa fa-cogs me-1"></i>
+                    <t t-if="state.showManager">Hide</t>
+                    <t t-else="">Manage</t>
+                </button>
+            </div>
+
+            <!-- Terminal Management Panel -->
+            <div t-if="state.showManager" class="terminal-management-panel p-3">
+                <!-- Action Buttons -->
+                <div class="terminal-actions mb-3">
+                    <button class="btn btn-success me-2" 
+                            t-on-click="connectAllTerminals"
+                            t-att-disabled="state.autoConnecting">
+                        <i class="fa fa-plug me-1"></i>
+                        Connect All
+                    </button>
+                    <button class="btn btn-outline-secondary" 
+                            t-on-click="disconnectAllTerminals">
+                        <i class="fa fa-unlink me-1"></i>
+                        Disconnect All
+                    </button>
+                </div>
+
+                <!-- Auto-connecting indicator -->
+                <div t-if="state.autoConnecting" class="alert alert-info">
+                    <i class="fa fa-spinner fa-spin me-1"></i>
+                    Auto-connecting to terminals...
+                </div>
+
+                <!-- Terminal List -->
+                <div class="terminals-list">
+                    <t t-if="state.terminals.length === 0">
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle me-1"></i>
+                            No Geidea terminals configured for this POS.
+                            Please configure terminals in the POS settings.
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="state.terminals" t-as="terminal" t-key="terminal.id">
+                            <TerminalStatus 
+                                terminal="terminal" 
+                                connectionManager="props.connectionManager"/>
+                        </t>
+                    </t>
+                </div>
+
+                <!-- Platform Information -->
+                <div class="platform-info mt-3 pt-3 border-top">
+                    <h6 class="text-muted">Platform Information</h6>
+                    <div class="small text-muted">
+                        <div>Browser: <span t-esc="navigator.userAgent.split(' ').slice(-1)[0]"/></div>
+                        <div>Platform: <span t-esc="navigator.platform"/></div>
+                        <div>Touch Support: <span t-esc="navigator.maxTouchPoints > 0 ? 'Yes' : 'No'"/></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

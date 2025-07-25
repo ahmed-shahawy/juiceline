@@ -1,0 +1,141 @@
+/* Geidea Payment Terminal Integration Styles */
+
+.geidea-terminal-status {
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.geidea-terminal-status .alert {
+    margin-bottom: 0.5rem;
+}
+
+.geidea-terminal-status .terminal-actions {
+    white-space: nowrap;
+}
+
+.geidea-terminal-status .terminal-details {
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    margin-top: 0.5rem;
+}
+
+.geidea-connection-manager {
+    max-width: 600px;
+    min-width: 400px;
+}
+
+.geidea-connection-manager .connection-status-bar {
+    background-color: #f8f9fa;
+    border-radius: 8px 8px 0 0;
+}
+
+.geidea-connection-manager .terminal-management-panel {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.geidea-connection-manager .terminals-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.geidea-connection-manager .platform-info {
+    font-size: 0.875rem;
+}
+
+.geidea-status-widget {
+    margin-left: 1rem;
+}
+
+.geidea-status-widget .btn {
+    background-color: transparent;
+    border: 1px solid #dee2e6;
+    transition: all 0.2s ease;
+}
+
+.geidea-status-widget .btn:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+}
+
+/* Platform-specific styles */
+@media (max-width: 768px) {
+    .geidea-connection-manager {
+        min-width: 300px;
+        max-width: 95vw;
+    }
+    
+    .geidea-terminal-status .terminal-actions .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .geidea-terminal-status .terminal-details {
+        font-size: 0.875rem;
+    }
+}
+
+/* Touch-friendly styles for mobile devices */
+@media (pointer: coarse) {
+    .geidea-terminal-status .btn {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+    
+    .geidea-connection-manager .terminal-actions .btn {
+        min-height: 44px;
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Status indicators */
+.geidea-terminal-status .alert-success {
+    border-left: 4px solid #28a745;
+}
+
+.geidea-terminal-status .alert-warning {
+    border-left: 4px solid #ffc107;
+}
+
+.geidea-terminal-status .alert-danger {
+    border-left: 4px solid #dc3545;
+}
+
+.geidea-terminal-status .alert-secondary {
+    border-left: 4px solid #6c757d;
+}
+
+/* Connection status animations */
+.geidea-terminal-status .fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .geidea-terminal-status .alert {
+        border-width: 2px;
+    }
+    
+    .geidea-status-widget .btn {
+        border-width: 2px;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .geidea-terminal-status .terminal-details {
+        background-color: #343a40;
+        color: #f8f9fa;
+    }
+    
+    .geidea-connection-manager .connection-status-bar {
+        background-color: #343a40;
+        color: #f8f9fa;
+    }
+}

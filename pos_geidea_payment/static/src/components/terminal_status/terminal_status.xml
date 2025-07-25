@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="pos_geidea_payment.TerminalStatus">
+        <div class="geidea-terminal-status">
+            <div t-attf-class="alert {{statusClass}} d-flex align-items-center mb-2">
+                <i t-attf-class="fa {{statusIcon}} me-2"></i>
+                <div class="flex-grow-1">
+                    <strong t-esc="props.terminal.name"/>
+                    <div class="small">
+                        <span t-esc="statusText"/>
+                        <t t-if="props.terminal.connection_type">
+                            via <span t-esc="props.terminal.connection_type"/>
+                        </t>
+                    </div>
+                </div>
+                <div class="terminal-actions">
+                    <t t-if="state.status === 'disconnected'">
+                        <button class="btn btn-sm btn-success" 
+                                t-on-click="connectTerminal"
+                                t-att-disabled="state.connecting">
+                            <i class="fa fa-plug me-1"></i>Connect
+                        </button>
+                    </t>
+                    <t t-elif="state.status === 'connected'">
+                        <button class="btn btn-sm btn-outline-secondary" 
+                                t-on-click="disconnectTerminal">
+                            <i class="fa fa-unlink me-1"></i>Disconnect
+                        </button>
+                    </t>
+                    <t t-elif="state.status === 'connecting'">
+                        <button class="btn btn-sm btn-outline-warning" disabled="disabled">
+                            <i class="fa fa-spinner fa-spin me-1"></i>Connecting...
+                        </button>
+                    </t>
+                    <t t-elif="state.status === 'error'">
+                        <button class="btn btn-sm btn-outline-danger" 
+                                t-on-click="connectTerminal"
+                                t-att-disabled="state.connecting">
+                            <i class="fa fa-refresh me-1"></i>Retry
+                        </button>
+                    </t>
+                </div>
+            </div>
+            
+            <!-- Terminal Details -->
+            <div class="terminal-details small text-muted">
+                <div>Terminal ID: <span t-esc="props.terminal.terminal_id"/></div>
+                <div>Platform: <span t-esc="props.terminal.platform"/></div>
+                <t t-if="props.terminal.ip_address">
+                    <div>Address: <span t-esc="props.terminal.ip_address"/>:<span t-esc="props.terminal.port"/></div>
+                </t>
+                <t t-if="state.lastTest">
+                    <div>Last Test: <span t-esc="state.lastTest"/></div>
+                </t>
+            </div>
+            
+            <!-- Error Message -->
+            <t t-if="state.error">
+                <div class="alert alert-danger mt-2 small">
+                    <i class="fa fa-exclamation-triangle me-1"></i>
+                    <span t-esc="state.error"/>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

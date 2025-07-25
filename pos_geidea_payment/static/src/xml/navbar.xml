@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!-- Extend the Navbar to include Geidea terminal status -->
+    <t t-extend="point_of_sale.Navbar">
+        <t t-jquery=".pos-topheader .pos-rightheader" t-operation="append">
+            <div class="geidea-status-widget" 
+                 t-if="pos.geidea_terminals and pos.geidea_terminals.length > 0">
+                <button class="btn btn-sm" 
+                        t-on-click="showGeideaManager"
+                        t-attf-title="{{geideaStatusText}}">
+                    <i t-attf-class="fa {{geideaStatusIcon}} me-1"></i>
+                    <span class="d-none d-md-inline" t-esc="geideaStatusText"/>
+                </button>
+            </div>
+        </t>
+    </t>
+</templates>

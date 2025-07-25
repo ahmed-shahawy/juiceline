@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Geidea Payment Method -->
+        <record id="payment_method_geidea" model="pos.payment.method">
+            <field name="name">Geidea Terminal</field>
+            <field name="use_payment_terminal">geidea</field>
+            <field name="journal_id" ref="account.bank_journal"/>
+        </record>
+    </data>
+</odoo>
