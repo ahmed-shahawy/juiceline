@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Enhanced Geidea Terminal Views -->
+    <record id="view_geidea_terminal_tree" model="ir.ui.view">
+        <field name="name">geidea.terminal.tree</field>
+        <field name="model">geidea.terminal</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Terminals" decoration-success="state == 'active'" decoration-danger="state == 'error'">
+                <field name="name"/>
+                <field name="terminal_id"/>
+                <field name="merchant_id"/>
+                <field name="acquirer_id"/>
+                <field name="state"/>
+                <field name="device_count"/>
+                <field name="transaction_count"/>
+                <field name="success_rate" widget="progressbar"/>
+                <field name="last_sync"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_geidea_terminal_form" model="ir.ui.view">
+        <field name="name">geidea.terminal.form</field>
+        <field name="model">geidea.terminal</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Terminal">
+                <header>
+                    <button name="action_activate" string="Activate" type="object" class="btn-primary" attrs="{'invisible': [('state', '=', 'active')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_geidea_device)d" type="action" class="oe_stat_button" icon="fa-mobile" context="{'default_terminal_id': active_id}">
+                            <field name="device_count" widget="statinfo" string="Devices"/>
+                        </button>
+                        <button name="%(action_geidea_transaction)d" type="action" class="oe_stat_button" icon="fa-credit-card" context="{'default_terminal_id': active_id}">
+                            <field name="transaction_count" widget="statinfo" string="Transactions"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-percent">
+                            <field name="success_rate" widget="statinfo" string="Success Rate"/>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group string="Terminal Information">
+                            <field name="name"/>
+                            <field name="terminal_id"/>
+                            <field name="merchant_id"/>
+                            <field name="acquirer_id"/>
+                        </group>
+                        <group string="Configuration">
+                            <field name="api_key" password="True"/>
+                            <field name="last_sync"/>
+                            <field name="primary_device_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Connected Devices" name="devices">
+                            <field name="device_ids" context="{'default_terminal_id': active_id}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="device_id"/>
+                                    <field name="platform"/>
+                                    <field name="connection_type"/>
+                                    <field name="state"/>
+                                    <field name="last_seen"/>
+                                    <field name="is_active" widget="boolean_toggle"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="POS Configurations" name="pos_configs">
+                            <field name="pos_config_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="sequence_id"/>
+                                    <field name="current_session_id"/>
+                                    <field name="current_session_state"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Recent Transactions" name="transactions">
+                            <field name="transaction_ids" context="{'default_terminal_id': active_id}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="amount"/>
+                                    <field name="currency_id"/>
+                                    <field name="state"/>
+                                    <field name="transaction_type"/>
+                                    <field name="device_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Security" name="security">
+                            <group>
+                                <field name="encryption_key" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_geidea_terminal_kanban" model="ir.ui.view">
+        <field name="name">geidea.terminal.kanban</field>
+        <field name="model">geidea.terminal</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="terminal_id"/>
+                <field name="state"/>
+                <field name="device_count"/>
+                <field name="transaction_count"/>
+                <field name="success_rate"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-8">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="col-4">
+                                    <span class="float-right badge" t-attf-class="badge-#{record.state.raw_value === 'active' ? 'success' : record.state.raw_value === 'error' ? 'danger' : 'warning'}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <small>Terminal ID:</small> <field name="terminal_id"/>
+                                </div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-4">
+                                    <small>Devices</small><br/>
+                                    <strong><field name="device_count"/></strong>
+                                </div>
+                                <div class="col-4">
+                                    <small>Transactions</small><br/>
+                                    <strong><field name="transaction_count"/></strong>
+                                </div>
+                                <div class="col-4">
+                                    <small>Success Rate</small><br/>
+                                    <strong><field name="success_rate"/>%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_geidea_terminal_search" model="ir.ui.view">
+        <field name="name">geidea.terminal.search</field>
+        <field name="model">geidea.terminal</field>
+        <field name="arch" type="xml">
+            <search string="Search Geidea Terminals">
+                <field name="name"/>
+                <field name="terminal_id"/>
+                <field name="merchant_id"/>
+                <field name="acquirer_id"/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Inactive" name="inactive" domain="[('state', '=', 'inactive')]"/>
+                <filter string="Error" name="error" domain="[('state', '=', 'error')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Payment Acquirer" name="group_acquirer" context="{'group_by': 'acquirer_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_geidea_terminal" model="ir.actions.act_window">
+        <field name="name">Geidea Terminals</field>
+        <field name="res_model">geidea.terminal</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Geidea Terminal
+            </p>
+            <p>
+                Terminals represent physical or virtual payment processing endpoints.
+                Each terminal can be associated with multiple devices and POS configurations.
+            </p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Enhanced Configuration Settings View -->
+    <record id="view_geidea_config_settings" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.geidea</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Geidea Payment Gateway" string="Geidea Payment Gateway" data-key="geidea_payment">
+                    <h2>Geidea Payment Gateway Configuration</h2>
+                    
+                    <!-- Global Settings -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_global_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_global_enabled"/>
+                                <div class="text-muted">
+                                    Enable Geidea payments globally across all POS configurations
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_test_mode"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_test_mode"/>
+                                <div class="text-muted">
+                                    Enable test mode for all Geidea operations
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- API Configuration -->
+                    <h3>API Configuration</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_api_url_test" string="Test API URL"/>
+                                <field name="geidea_api_url_test"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_api_url_production" string="Production API URL"/>
+                                <field name="geidea_api_url_production"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_request_timeout" string="API Request Timeout (seconds)"/>
+                                <field name="geidea_request_timeout"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <button name="action_test_geidea_connection" string="Test API Connection" type="object" class="btn btn-primary"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Security Settings -->
+                    <h3>Security Settings</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_encryption_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_encryption_enabled"/>
+                                <div class="text-muted">
+                                    Encrypt sensitive payment data
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_ssl_verify"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_ssl_verify"/>
+                                <div class="text-muted">
+                                    Verify SSL certificates for API calls
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_webhook_secret" string="Global Webhook Secret"/>
+                                <field name="geidea_webhook_secret" password="True"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transaction Settings -->
+                    <h3>Transaction Settings</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_transaction_timeout" string="Transaction Timeout (seconds)"/>
+                                <field name="geidea_transaction_timeout"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_retry_attempts" string="Retry Attempts"/>
+                                <field name="geidea_retry_attempts"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_auto_reconcile"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_auto_reconcile"/>
+                                <div class="text-muted">
+                                    Automatically reconcile successful payments
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Multi-Platform Support -->
+                    <h3>Multi-Platform Support</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_windows_support"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_windows_support"/>
+                                <div class="text-muted">
+                                    Enable Windows device support (USB/Serial/Network)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_ios_support"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_ios_support"/>
+                                <div class="text-muted">
+                                    Enable iOS/iPad device support (Bluetooth/Lightning/Network)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_android_support"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_android_support"/>
+                                <div class="text-muted">
+                                    Enable Android device support (USB OTG/Bluetooth/Network)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Device Management -->
+                    <h3>Device Management</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_device_discovery"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_device_discovery"/>
+                                <div class="text-muted">
+                                    Automatically discover Geidea devices
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_device_heartbeat" string="Device Heartbeat Interval (seconds)"/>
+                                <field name="geidea_device_heartbeat"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_offline_mode"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_offline_mode"/>
+                                <div class="text-muted">
+                                    Allow offline transaction processing
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Webhook Configuration -->
+                    <h3>Webhook Configuration</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_webhook_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_webhook_enabled"/>
+                                <div class="text-muted">
+                                    Enable webhook notifications from Geidea
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('geidea_webhook_enabled', '=', False)]}">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_webhook_url" string="Webhook URL"/>
+                                <field name="geidea_webhook_url"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Receipt and Printing -->
+                    <h3>Receipt Configuration</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_print_receipts"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_print_receipts"/>
+                                <div class="text-muted">
+                                    Automatically print receipts for Geidea payments
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('geidea_print_receipts', '=', False)]}">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_receipt_template" string="Receipt Template"/>
+                                <field name="geidea_receipt_template"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Multi-Currency Support -->
+                    <h3>Multi-Currency Support</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_multi_currency"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_multi_currency"/>
+                                <div class="text-muted">
+                                    Enable multi-currency payment processing
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('geidea_multi_currency', '=', False)]}">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_currency_conversion"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_currency_conversion"/>
+                                <div class="text-muted">
+                                    Automatically convert currencies
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Analytics and Reporting -->
+                    <h3>Analytics and Reporting</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_analytics_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_analytics_enabled"/>
+                                <div class="text-muted">
+                                    Enable payment analytics and reporting
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box" attrs="{'invisible': [('geidea_analytics_enabled', '=', False)]}">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_real_time_dashboard"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_real_time_dashboard"/>
+                                <div class="text-muted">
+                                    Enable real-time payment dashboard
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Performance Settings -->
+                    <h3>Performance Settings</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_connection_pool_size" string="Connection Pool Size"/>
+                                <field name="geidea_connection_pool_size"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Logging and Monitoring -->
+                    <h3>Logging and Monitoring</h3>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_logging_level" string="Logging Level"/>
+                                <field name="geidea_logging_level"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_log_retention" string="Log Retention (days)"/>
+                                <field name="geidea_log_retention"/>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_monitoring_enabled"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_monitoring_enabled"/>
+                                <div class="text-muted">
+                                    Enable real-time transaction monitoring
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane">
+                                <field name="geidea_debug_mode"/>
+                            </div>
+                            <div class="o_setting_right_pane">
+                                <label for="geidea_debug_mode"/>
+                                <div class="text-muted">
+                                    Enable debug mode for development
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Reset Configuration -->
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12">
+                            <button name="action_reset_geidea_config" string="Reset to Defaults" type="object" class="btn btn-warning" confirm="Are you sure you want to reset all Geidea configuration to defaults?"/>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

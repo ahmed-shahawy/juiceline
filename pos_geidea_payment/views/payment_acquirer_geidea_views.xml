@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payment Acquirer Geidea Views -->
+    <record id="view_payment_acquirer_geidea_tree" model="ir.ui.view">
+        <field name="name">payment.acquirer.geidea.tree</field>
+        <field name="model">payment.acquirer.geidea</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Payment Acquirers">
+                <field name="name"/>
+                <field name="merchant_id"/>
+                <field name="environment"/>
+                <field name="state" decoration-success="state == 'active'" decoration-danger="state == 'error'"/>
+                <field name="transaction_count"/>
+                <field name="success_rate" widget="progressbar"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_payment_acquirer_geidea_form" model="ir.ui.view">
+        <field name="name">payment.acquirer.geidea.form</field>
+        <field name="model">payment.acquirer.geidea</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Payment Acquirer">
+                <header>
+                    <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary" attrs="{'invisible': [('state', '=', 'active')]}"/>
+                    <button name="action_activate" string="Activate" type="object" class="btn-success" attrs="{'invisible': [('state', '=', 'active')]}"/>
+                    <button name="action_deactivate" string="Deactivate" type="object" class="btn-warning" attrs="{'invisible': [('state', '!=', 'active')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,active,inactive"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_geidea_terminal)d" type="action" class="oe_stat_button" icon="fa-desktop">
+                            <field name="terminal_ids" widget="statinfo" string="Terminals"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-credit-card">
+                            <field name="transaction_count" widget="statinfo" string="Transactions"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-percent">
+                            <field name="success_rate" widget="statinfo" string="Success Rate"/>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group string="Basic Information">
+                            <field name="name"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="environment"/>
+                        </group>
+                        <group string="Statistics">
+                            <field name="total_amount" widget="monetary"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="API Configuration" name="api_config">
+                            <group>
+                                <group string="Merchant Configuration">
+                                    <field name="merchant_id"/>
+                                    <field name="api_key" password="True"/>
+                                    <field name="api_password" password="True"/>
+                                </group>
+                                <group string="API URLs">
+                                    <field name="api_url_test"/>
+                                    <field name="api_url_production"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Security Settings" name="security">
+                            <group>
+                                <group string="Encryption">
+                                    <field name="encryption_key" readonly="1"/>
+                                </group>
+                                <group string="Webhooks">
+                                    <field name="webhook_secret"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Transaction Settings" name="transaction">
+                            <group>
+                                <group string="Capture Settings">
+                                    <field name="auto_capture"/>
+                                    <field name="capture_manually"/>
+                                </group>
+                                <group string="Fees and Limits">
+                                    <field name="fixed_fee"/>
+                                    <field name="percentage_fee"/>
+                                    <field name="minimum_amount"/>
+                                    <field name="maximum_amount"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Supported Currencies" name="currencies">
+                            <field name="currency_ids" widget="many2many_tags"/>
+                        </page>
+                        
+                        <page string="Terminals" name="terminals">
+                            <field name="terminal_ids" context="{'default_acquirer_id': active_id}">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="terminal_id"/>
+                                    <field name="state"/>
+                                    <field name="transaction_count"/>
+                                    <field name="success_rate"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payment_acquirer_geidea_search" model="ir.ui.view">
+        <field name="name">payment.acquirer.geidea.search</field>
+        <field name="model">payment.acquirer.geidea</field>
+        <field name="arch" type="xml">
+            <search string="Search Geidea Acquirers">
+                <field name="name"/>
+                <field name="merchant_id"/>
+                <field name="environment"/>
+                <filter string="Active" name="active" domain="[('state', '=', 'active')]"/>
+                <filter string="Test Environment" name="test" domain="[('environment', '=', 'test')]"/>
+                <filter string="Production Environment" name="production" domain="[('environment', '=', 'production')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Environment" name="group_environment" context="{'group_by': 'environment'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_payment_acquirer_geidea" model="ir.actions.act_window">
+        <field name="name">Geidea Payment Acquirers</field>
+        <field name="res_model">payment.acquirer.geidea</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create a new Geidea Payment Acquirer
+            </p>
+            <p>
+                Configure your Geidea payment gateway to accept payments from customers.
+                You can set up multiple acquirers for different environments or merchant accounts.
+            </p>
+        </field>
+    </record>
+</odoo>

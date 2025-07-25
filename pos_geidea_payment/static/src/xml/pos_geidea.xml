@@ -1,29 +1,248 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
+    <!-- Enhanced Geidea Payment Button -->
     <t t-name="GeideaPaymentButton" owl="1">
-        <div class="button geidea-button" t-on-click="onClick">
+        <div class="button geidea-button" t-on-click="onClick" t-att-class="{'disabled': !deviceManager.isReady}">
             <i class="fa fa-credit-card"></i>
             <span>Pay with Geidea</span>
+            <small t-if="selectedDevice" class="device-info">
+                <i t-attf-class="fa fa-{{getDeviceIcon(selectedDevice.platform)}}"/>
+                <t t-esc="selectedDevice.name"/>
+            </small>
         </div>
     </t>
 
+    <!-- Enhanced Payment Status Display -->
     <t t-name="GeideaPaymentStatus" owl="1">
         <div class="geidea-payment-status">
+            <!-- Device Selection -->
+            <div t-if="showDeviceSelection" class="device-selection">
+                <h4>Select Payment Device</h4>
+                <div class="device-list">
+                    <div t-foreach="availableDevices" t-as="device" t-key="device.device_id" 
+                         class="device-item" t-att-class="{'selected': device.device_id === selectedDevice?.device_id}"
+                         t-on-click="() => selectDevice(device)">
+                        <div class="device-info">
+                            <i t-attf-class="fa fa-{{getDeviceIcon(device.platform)}}"/>
+                            <span class="device-name" t-esc="device.name"/>
+                            <span class="device-platform" t-esc="device.platform"/>
+                        </div>
+                        <div class="device-status">
+                            <span t-attf-class="status-badge status-{{device.state}}" t-esc="device.state"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="device-actions">
+                    <button t-on-click="discoverDevices" class="btn btn-secondary">
+                        <i class="fa fa-search"/> Discover Devices
+                    </button>
+                    <button t-if="selectedDevice" t-on-click="testDevice" class="btn btn-info">
+                        <i class="fa fa-check"/> Test Device
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Processing Status -->
             <div t-if="state.status === 'processing'" class="processing">
                 <i class="fa fa-spinner fa-spin"></i>
                 <span>Processing Payment...</span>
+                <div class="progress-bar">
+                    <div class="progress-fill" t-att-style="'width: ' + progress + '%'"></div>
+                </div>
+                <small t-if="selectedDevice">Using <t t-esc="selectedDevice.name"/></small>
             </div>
+            
+            <!-- Discovering Devices -->
+            <div t-if="state.status === 'discovering'" class="discovering">
+                <i class="fa fa-search fa-spin"></i>
+                <span>Discovering Devices...</span>
+                <small>Looking for available Geidea payment devices</small>
+            </div>
+            
+            <!-- Success State -->
             <div t-if="state.status === 'completed'" class="completed">
                 <i class="fa fa-check-circle"></i>
-                <span>Payment Completed</span>
+                <span>Payment Completed Successfully</span>
+                <div class="payment-details" t-if="paymentResult">
+                    <p><strong>Amount:</strong> <t t-esc="formatCurrency(paymentResult.amount)"/></p>
+                    <p><strong>Reference:</strong> <t t-esc="paymentResult.reference"/></p>
+                    <p t-if="paymentResult.card_type"><strong>Card:</strong> <t t-esc="paymentResult.card_type"/> ending in <t t-esc="paymentResult.card_number"/></p>
+                </div>
             </div>
+            
+            <!-- Error State -->
             <div t-if="state.status === 'error'" class="error">
                 <i class="fa fa-times-circle"></i>
                 <span t-esc="state.message"/>
-                <button t-if="state.showRetry" t-on-click="onRetry">
-                    Retry Payment
+                <div class="error-actions">
+                    <button t-if="state.showRetry" t-on-click="onRetry" class="btn btn-warning">
+                        <i class="fa fa-refresh"/> Retry Payment
+                    </button>
+                    <button t-on-click="onSelectDifferentDevice" class="btn btn-secondary">
+                        <i class="fa fa-mobile"/> Select Different Device
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Device Status Indicator -->
+            <div class="device-status-bar" t-if="selectedDevice">
+                <div class="device-info-mini">
+                    <i t-attf-class="fa fa-{{getDeviceIcon(selectedDevice.platform)}}"/>
+                    <span t-esc="selectedDevice.name"/>
+                    <span t-attf-class="status-indicator status-{{selectedDevice.state}}">
+                        <i t-if="selectedDevice.state === 'online'" class="fa fa-circle text-success"/>
+                        <i t-elif="selectedDevice.state === 'busy'" class="fa fa-circle text-warning"/>
+                        <i t-elif="selectedDevice.state === 'error'" class="fa fa-circle text-danger"/>
+                        <i t-else="" class="fa fa-circle text-muted"/>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Device Selection Modal -->
+    <t t-name="GeideaDeviceSelectionModal" owl="1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Select Payment Device</h4>
+                    <button type="button" class="btn-close" t-on-click="close"/>
+                </div>
+                <div class="modal-body">
+                    <!-- Platform Tabs -->
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" t-att-class="{'active': currentPlatform === 'all'}" 
+                               t-on-click="() => filterByPlatform('all')">All Devices</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" t-att-class="{'active': currentPlatform === 'windows'}" 
+                               t-on-click="() => filterByPlatform('windows')">
+                                <i class="fa fa-windows"/> Windows
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" t-att-class="{'active': currentPlatform === 'ios'}" 
+                               t-on-click="() => filterByPlatform('ios')">
+                                <i class="fa fa-apple"/> iOS/iPad
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" t-att-class="{'active': currentPlatform === 'android'}" 
+                               t-on-click="() => filterByPlatform('android')">
+                                <i class="fa fa-android"/> Android
+                            </a>
+                        </li>
+                    </ul>
+                    
+                    <!-- Device Grid -->
+                    <div class="device-grid mt-3">
+                        <div t-foreach="filteredDevices" t-as="device" t-key="device.device_id" 
+                             class="device-card" t-att-class="{'selected': device.device_id === selectedDevice?.device_id}"
+                             t-on-click="() => selectDevice(device)">
+                            <div class="device-header">
+                                <i t-attf-class="fa fa-{{getDeviceIcon(device.platform)}} fa-2x"/>
+                                <h5 t-esc="device.name"/>
+                            </div>
+                            <div class="device-body">
+                                <p><strong>Platform:</strong> <t t-esc="device.platform"/></p>
+                                <p><strong>Connection:</strong> <t t-esc="device.connection_type"/></p>
+                                <p><strong>Status:</strong> 
+                                    <span t-attf-class="badge badge-{{device.state === 'online' ? 'success' : device.state === 'error' ? 'danger' : 'warning'}}">
+                                        <t t-esc="device.state"/>
+                                    </span>
+                                </p>
+                                <p t-if="device.last_seen"><strong>Last Seen:</strong> <t t-esc="formatDateTime(device.last_seen)"/></p>
+                            </div>
+                            <div class="device-footer">
+                                <div class="device-stats">
+                                    <small>Success Rate: <t t-esc="device.success_rate"/>%</small>
+                                    <small>Transactions: <t t-esc="device.transaction_count"/></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No Devices Message -->
+                    <div t-if="!filteredDevices.length" class="no-devices text-center py-4">
+                        <i class="fa fa-mobile fa-3x text-muted"/>
+                        <h5 class="mt-3">No devices found</h5>
+                        <p class="text-muted">Try discovering devices or check your device connections.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" t-on-click="discoverDevices">
+                        <i class="fa fa-search"/> Discover Devices
+                    </button>
+                    <button type="button" class="btn btn-info" t-on-click="testDevice" t-att-disabled="!selectedDevice">
+                        <i class="fa fa-check"/> Test Device
+                    </button>
+                    <button type="button" class="btn btn-primary" t-on-click="confirmSelection" t-att-disabled="!selectedDevice">
+                        <i class="fa fa-check"/> Use This Device
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Real-time Device Status -->
+    <t t-name="GeideaDeviceStatusWidget" owl="1">
+        <div class="geidea-device-status-widget">
+            <div class="widget-header">
+                <h6><i class="fa fa-mobile"/> Connected Devices</h6>
+                <button class="btn btn-sm btn-outline-secondary" t-on-click="refreshDevices">
+                    <i class="fa fa-refresh"/>
                 </button>
+            </div>
+            <div class="widget-body">
+                <div t-foreach="connectedDevices" t-as="device" t-key="device.device_id" class="device-status-item">
+                    <div class="device-icon">
+                        <i t-attf-class="fa fa-{{getDeviceIcon(device.platform)}}"/>
+                    </div>
+                    <div class="device-details">
+                        <div class="device-name" t-esc="device.name"/>
+                        <div class="device-meta">
+                            <span t-esc="device.platform"/> • <span t-esc="device.connection_type"/>
+                        </div>
+                    </div>
+                    <div class="device-status">
+                        <span t-attf-class="status-dot status-{{device.state}}"/>
+                        <small t-esc="device.state"/>
+                    </div>
+                </div>
+                
+                <div t-if="!connectedDevices.length" class="no-devices-widget text-center py-2">
+                    <small class="text-muted">No devices connected</small>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Payment Method Configuration -->
+    <t t-name="GeideaPaymentMethodConfig" owl="1">
+        <div class="geidea-payment-method-config">
+            <div class="form-group">
+                <label>Default Device</label>
+                <select class="form-control" t-model="defaultDevice">
+                    <option value="">Auto-select</option>
+                    <option t-foreach="availableDevices" t-as="device" t-key="device.device_id" 
+                            t-att-value="device.device_id" t-esc="device.name"/>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" t-model="autoDiscovery"/> 
+                    Auto-discover devices
+                </label>
+            </div>
+            
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" t-model="showDeviceSelection"/> 
+                    Show device selection for each payment
+                </label>
             </div>
         </div>
     </t>

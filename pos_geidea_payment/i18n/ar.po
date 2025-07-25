@@ -1,0 +1,363 @@
+# Translation template for Geidea Payment Module
+# Arabic Translation
+
+# Module Information
+msgid "Geidea POS Integration PRO"
+msgstr "تكامل جيديا لنقطة البيع المتقدم"
+
+msgid "Advanced Geidea Payment Integration for Odoo POS - Multi-Platform Support"
+msgstr "تكامل الدفع المتقدم مع جيديا لأودو نقطة البيع - دعم متعدد المنصات"
+
+# Models
+msgid "Geidea Payment Acquirer"
+msgstr "بوابة دفع جيديا"
+
+msgid "Geidea Payment Device"
+msgstr "جهاز دفع جيديا"
+
+msgid "Geidea Payment Terminal"
+msgstr "طرفية دفع جيديا"
+
+msgid "Geidea Transaction"
+msgstr "معاملة جيديا"
+
+# Fields
+msgid "Terminal Name"
+msgstr "اسم الطرفية"
+
+msgid "Device Name"
+msgstr "اسم الجهاز"
+
+msgid "Device ID"
+msgstr "معرف الجهاز"
+
+msgid "Merchant ID"
+msgstr "معرف التاجر"
+
+msgid "API Key"
+msgstr "مفتاح API"
+
+msgid "API Password"
+msgstr "كلمة مرور API"
+
+msgid "Platform"
+msgstr "المنصة"
+
+msgid "Connection Type"
+msgstr "نوع الاتصال"
+
+msgid "Device Type"
+msgstr "نوع الجهاز"
+
+msgid "Transaction Amount"
+msgstr "مبلغ المعاملة"
+
+msgid "Transaction State"
+msgstr "حالة المعاملة"
+
+msgid "Success Rate"
+msgstr "معدل النجاح"
+
+msgid "Last Seen"
+msgstr "آخر ظهور"
+
+msgid "Last Heartbeat"
+msgstr "آخر نبضة"
+
+# States
+msgid "Draft"
+msgstr "مسودة"
+
+msgid "Active"
+msgstr "نشط"
+
+msgid "Inactive"
+msgstr "غير نشط"
+
+msgid "Online"
+msgstr "متصل"
+
+msgid "Offline"
+msgstr "غير متصل"
+
+msgid "Busy"
+msgstr "مشغول"
+
+msgid "Error"
+msgstr "خطأ"
+
+msgid "Completed"
+msgstr "مكتمل"
+
+msgid "Failed"
+msgstr "فشل"
+
+msgid "Pending"
+msgstr "معلق"
+
+msgid "Cancelled"
+msgstr "ملغي"
+
+# Platforms
+msgid "Windows"
+msgstr "ويندوز"
+
+msgid "iOS/iPad"
+msgstr "آي أو إس/آيباد"
+
+msgid "Android"
+msgstr "أندرويد"
+
+msgid "Web Browser"
+msgstr "متصفح الويب"
+
+# Connection Types
+msgid "USB"
+msgstr "يو إس بي"
+
+msgid "Serial/COM Port"
+msgstr "منفذ تسلسلي/COM"
+
+msgid "Bluetooth"
+msgstr "بلوتوث"
+
+msgid "WiFi/Network"
+msgstr "واي فاي/شبكة"
+
+msgid "Lightning (iOS)"
+msgstr "لايتنينغ (آي أو إس)"
+
+msgid "USB OTG (Android)"
+msgstr "يو إس بي OTG (أندرويد)"
+
+msgid "WebSocket"
+msgstr "ويب سوكت"
+
+# Device Types
+msgid "POS Terminal"
+msgstr "طرفية نقطة البيع"
+
+msgid "Mobile Card Reader"
+msgstr "قارئ بطاقات محمول"
+
+msgid "Tablet"
+msgstr "جهاز لوحي"
+
+msgid "Desktop"
+msgstr "كمبيوتر مكتبي"
+
+msgid "Virtual Terminal"
+msgstr "طرفية افتراضية"
+
+# Transaction Types
+msgid "Sale"
+msgstr "بيع"
+
+msgid "Refund"
+msgstr "استرداد"
+
+msgid "Void"
+msgstr "إلغاء"
+
+# Environment
+msgid "Test Environment"
+msgstr "بيئة الاختبار"
+
+msgid "Production Environment"
+msgstr "بيئة الإنتاج"
+
+# Buttons and Actions
+msgid "Connect"
+msgstr "اتصال"
+
+msgid "Disconnect"
+msgstr "قطع الاتصال"
+
+msgid "Test Connection"
+msgstr "اختبار الاتصال"
+
+msgid "Test Device"
+msgstr "اختبار الجهاز"
+
+msgid "Discover Devices"
+msgstr "اكتشاف الأجهزة"
+
+msgid "Activate"
+msgstr "تفعيل"
+
+msgid "Deactivate"
+msgstr "إلغاء التفعيل"
+
+msgid "Retry Payment"
+msgstr "إعادة محاولة الدفع"
+
+msgid "Cancel Payment"
+msgstr "إلغاء الدفع"
+
+# Messages
+msgid "Processing payment..."
+msgstr "جاري معالجة الدفع..."
+
+msgid "Payment completed successfully"
+msgstr "تم الدفع بنجاح"
+
+msgid "Payment failed"
+msgstr "فشل الدفع"
+
+msgid "Device connected successfully"
+msgstr "تم توصيل الجهاز بنجاح"
+
+msgid "Device disconnected"
+msgstr "تم قطع اتصال الجهاز"
+
+msgid "No devices found"
+msgstr "لم يتم العثور على أجهزة"
+
+msgid "Device test successful"
+msgstr "نجح اختبار الجهاز"
+
+msgid "Device test failed"
+msgstr "فشل اختبار الجهاز"
+
+msgid "Connection test successful!"
+msgstr "نجح اختبار الاتصال!"
+
+msgid "Connection test failed"
+msgstr "فشل اختبار الاتصال"
+
+# Configuration
+msgid "Enable Geidea Payments Globally"
+msgstr "تفعيل مدفوعات جيديا عالمياً"
+
+msgid "Enable Geidea payments across all POS configurations"
+msgstr "تفعيل مدفوعات جيديا عبر جميع إعدادات نقطة البيع"
+
+msgid "Enable Data Encryption"
+msgstr "تفعيل تشفير البيانات"
+
+msgid "Encrypt sensitive payment data"
+msgstr "تشفير بيانات الدفع الحساسة"
+
+msgid "Enable Device Discovery"
+msgstr "تفعيل اكتشاف الأجهزة"
+
+msgid "Automatically discover Geidea devices"
+msgstr "اكتشاف أجهزة جيديا تلقائياً"
+
+msgid "Enable Webhooks"
+msgstr "تفعيل الروابط الخطافية"
+
+msgid "Enable webhook notifications from Geidea"
+msgstr "تفعيل إشعارات الروابط الخطافية من جيديا"
+
+msgid "Multi-Currency Support"
+msgstr "دعم متعدد العملات"
+
+msgid "Enable multi-currency payment processing"
+msgstr "تفعيل معالجة الدفع متعدد العملات"
+
+# Menu Items
+msgid "Geidea Payments"
+msgstr "مدفوعات جيديا"
+
+msgid "Configuration"
+msgstr "الإعدادات"
+
+msgid "Payment Acquirers"
+msgstr "بوابات الدفع"
+
+msgid "Terminals"
+msgstr "الطرفيات"
+
+msgid "Devices"
+msgstr "الأجهزة"
+
+msgid "Transactions"
+msgstr "المعاملات"
+
+msgid "All Transactions"
+msgstr "جميع المعاملات"
+
+msgid "Today's Transactions"
+msgstr "معاملات اليوم"
+
+msgid "Failed Transactions"
+msgstr "المعاملات الفاشلة"
+
+msgid "Analytics"
+msgstr "التحليلات"
+
+msgid "Transaction Dashboard"
+msgstr "لوحة معلومات المعاملات"
+
+msgid "Device Performance"
+msgstr "أداء الأجهزة"
+
+# Errors
+msgid "No payment line found"
+msgstr "لم يتم العثور على خط دفع"
+
+msgid "No device selected. Please select a payment device."
+msgstr "لم يتم تحديد جهاز. يرجى تحديد جهاز دفع."
+
+msgid "Device ID is required"
+msgstr "معرف الجهاز مطلوب"
+
+msgid "Device not found"
+msgstr "لم يتم العثور على الجهاز"
+
+msgid "Terminal ID must be unique!"
+msgstr "معرف الطرفية يجب أن يكون فريداً!"
+
+msgid "Device ID must be unique!"
+msgstr "معرف الجهاز يجب أن يكون فريداً!"
+
+msgid "Merchant ID must be unique per environment!"
+msgstr "معرف التاجر يجب أن يكون فريداً لكل بيئة!"
+
+# Help Text
+msgid "Create a new Geidea Payment Acquirer"
+msgstr "إنشاء بوابة دفع جيديا جديدة"
+
+msgid "Configure your Geidea payment gateway to accept payments from customers."
+msgstr "قم بتكوين بوابة دفع جيديا لقبول المدفوعات من العملاء."
+
+msgid "No devices found!"
+msgstr "لم يتم العثور على أجهزة!"
+
+msgid "Register and configure Geidea payment devices."
+msgstr "تسجيل وتكوين أجهزة دفع جيديا."
+
+msgid "Create your first Geidea Terminal"
+msgstr "إنشاء طرفية جيديا الأولى"
+
+msgid "Terminals represent physical or virtual payment processing endpoints."
+msgstr "تمثل الطرفيات نقاط معالجة الدفع الفيزيائية أو الافتراضية."
+
+msgid "No transactions yet!"
+msgstr "لا توجد معاملات حتى الآن!"
+
+msgid "All Geidea payment transactions will appear here."
+msgstr "ستظهر جميع معاملات دفع جيديا هنا."
+
+# Capabilities
+msgid "Supports Contactless"
+msgstr "يدعم اللاتلامسي"
+
+msgid "Supports Chip & PIN"
+msgstr "يدعم الشريحة والرقم السري"
+
+msgid "Supports Magnetic Stripe"
+msgstr "يدعم الشريط المغناطيسي"
+
+msgid "Supports Manual Entry"
+msgstr "يدعم الإدخال اليدوي"
+
+msgid "Encryption Support"
+msgstr "دعم التشفير"
+
+msgid "PIN Verification"
+msgstr "التحقق من الرقم السري"
+
+msgid "Signature Support"
+msgstr "دعم التوقيع"

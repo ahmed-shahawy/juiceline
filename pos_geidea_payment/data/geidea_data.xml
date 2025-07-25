@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default Configuration Parameters -->
+    <record id="geidea_default_api_url_test" model="ir.config_parameter">
+        <field name="key">geidea.api_url_test</field>
+        <field name="value">https://api-test.geidea.net/v1</field>
+    </record>
+    
+    <record id="geidea_default_api_url_production" model="ir.config_parameter">
+        <field name="key">geidea.api_url_production</field>
+        <field name="value">https://api.geidea.net/v1</field>
+    </record>
+    
+    <record id="geidea_default_transaction_timeout" model="ir.config_parameter">
+        <field name="key">geidea.transaction_timeout</field>
+        <field name="value">30</field>
+    </record>
+    
+    <record id="geidea_default_retry_attempts" model="ir.config_parameter">
+        <field name="key">geidea.retry_attempts</field>
+        <field name="value">3</field>
+    </record>
+    
+    <record id="geidea_default_device_heartbeat" model="ir.config_parameter">
+        <field name="key">geidea.device_heartbeat</field>
+        <field name="value">30</field>
+    </record>
+    
+    <record id="geidea_default_encryption_enabled" model="ir.config_parameter">
+        <field name="key">geidea.encryption_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_ssl_verify" model="ir.config_parameter">
+        <field name="key">geidea.ssl_verify</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_windows_support" model="ir.config_parameter">
+        <field name="key">geidea.windows_support</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_ios_support" model="ir.config_parameter">
+        <field name="key">geidea.ios_support</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_android_support" model="ir.config_parameter">
+        <field name="key">geidea.android_support</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_device_discovery" model="ir.config_parameter">
+        <field name="key">geidea.device_discovery</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_webhook_enabled" model="ir.config_parameter">
+        <field name="key">geidea.webhook_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_analytics_enabled" model="ir.config_parameter">
+        <field name="key">geidea.analytics_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_monitoring_enabled" model="ir.config_parameter">
+        <field name="key">geidea.monitoring_enabled</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_auto_reconcile" model="ir.config_parameter">
+        <field name="key">geidea.auto_reconcile</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_print_receipts" model="ir.config_parameter">
+        <field name="key">geidea.print_receipts</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_receipt_template" model="ir.config_parameter">
+        <field name="key">geidea.receipt_template</field>
+        <field name="value">standard</field>
+    </record>
+    
+    <record id="geidea_default_multi_currency" model="ir.config_parameter">
+        <field name="key">geidea.multi_currency</field>
+        <field name="value">True</field>
+    </record>
+    
+    <record id="geidea_default_logging_level" model="ir.config_parameter">
+        <field name="key">geidea.logging_level</field>
+        <field name="value">INFO</field>
+    </record>
+    
+    <record id="geidea_default_log_retention" model="ir.config_parameter">
+        <field name="key">geidea.log_retention</field>
+        <field name="value">90</field>
+    </record>
+    
+    <record id="geidea_default_connection_pool_size" model="ir.config_parameter">
+        <field name="key">geidea.connection_pool_size</field>
+        <field name="value">10</field>
+    </record>
+    
+    <record id="geidea_default_request_timeout" model="ir.config_parameter">
+        <field name="key">geidea.request_timeout</field>
+        <field name="value">30</field>
+    </record>
+    
+    <!-- Transaction Sequence -->
+    <record id="seq_geidea_transaction" model="ir.sequence">
+        <field name="name">Geidea Transaction</field>
+        <field name="code">geidea.transaction</field>
+        <field name="prefix">GTX</field>
+        <field name="padding">6</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+    
+    <!-- Sample Payment Acquirer (Demo Data) -->
+    <record id="geidea_demo_acquirer" model="payment.acquirer.geidea">
+        <field name="name">Geidea Demo Acquirer</field>
+        <field name="merchant_id">DEMO_MERCHANT_123</field>
+        <field name="api_key">demo_api_key_encrypted</field>
+        <field name="api_password">demo_password_encrypted</field>
+        <field name="environment">test</field>
+        <field name="state">draft</field>
+        <field name="auto_capture" eval="True"/>
+        <field name="fixed_fee">0.0</field>
+        <field name="percentage_fee">2.5</field>
+        <field name="minimum_amount">1.0</field>
+        <field name="maximum_amount">10000.0</field>
+    </record>
+    
+    <!-- Demo Terminal -->
+    <record id="geidea_demo_terminal" model="geidea.terminal">
+        <field name="name">Demo Terminal 001</field>
+        <field name="terminal_id">TERM_DEMO_001</field>
+        <field name="merchant_id">DEMO_MERCHANT_123</field>
+        <field name="api_key">demo_terminal_key</field>
+        <field name="acquirer_id" ref="geidea_demo_acquirer"/>
+        <field name="state">draft</field>
+    </record>
+    
+    <!-- Demo Devices for different platforms -->
+    <record id="geidea_demo_device_windows" model="geidea.device">
+        <field name="name">Windows POS Terminal</field>
+        <field name="device_id">WIN_DEMO_001</field>
+        <field name="platform">windows</field>
+        <field name="device_type">pos_terminal</field>
+        <field name="connection_type">serial</field>
+        <field name="terminal_id" ref="geidea_demo_terminal"/>
+        <field name="manufacturer">Geidea</field>
+        <field name="model">GT-W100</field>
+        <field name="connection_config">{"port": "COM1", "baudrate": 9600}</field>
+        <field name="supports_contactless" eval="True"/>
+        <field name="supports_chip" eval="True"/>
+        <field name="supports_magnetic" eval="True"/>
+        <field name="encryption_support" eval="True"/>
+        <field name="pin_verification" eval="True"/>
+        <field name="is_active" eval="True"/>
+    </record>
+    
+    <record id="geidea_demo_device_ios" model="geidea.device">
+        <field name="name">iPad Card Reader</field>
+        <field name="device_id">IOS_DEMO_001</field>
+        <field name="platform">ios</field>
+        <field name="device_type">mobile_reader</field>
+        <field name="connection_type">bluetooth</field>
+        <field name="terminal_id" ref="geidea_demo_terminal"/>
+        <field name="manufacturer">Geidea</field>
+        <field name="model">GT-iOS-BT</field>
+        <field name="connection_config">{"device_uuid": "ABC123-DEF456-GHI789"}</field>
+        <field name="supports_contactless" eval="True"/>
+        <field name="supports_chip" eval="True"/>
+        <field name="supports_magnetic" eval="False"/>
+        <field name="encryption_support" eval="True"/>
+        <field name="pin_verification" eval="True"/>
+        <field name="is_active" eval="True"/>
+    </record>
+    
+    <record id="geidea_demo_device_android" model="geidea.device">
+        <field name="name">Android Tablet Reader</field>
+        <field name="device_id">AND_DEMO_001</field>
+        <field name="platform">android</field>
+        <field name="device_type">tablet</field>
+        <field name="connection_type">usb_otg</field>
+        <field name="terminal_id" ref="geidea_demo_terminal"/>
+        <field name="manufacturer">Geidea</field>
+        <field name="model">GT-Android-USB</field>
+        <field name="connection_config">{}</field>
+        <field name="supports_contactless" eval="True"/>
+        <field name="supports_chip" eval="True"/>
+        <field name="supports_magnetic" eval="True"/>
+        <field name="encryption_support" eval="True"/>
+        <field name="pin_verification" eval="True"/>
+        <field name="is_active" eval="True"/>
+    </record>
+    
+    <record id="geidea_demo_device_web" model="geidea.device">
+        <field name="name">Virtual Terminal</field>
+        <field name="device_id">WEB_DEMO_001</field>
+        <field name="platform">web</field>
+        <field name="device_type">virtual</field>
+        <field name="connection_type">websocket</field>
+        <field name="terminal_id" ref="geidea_demo_terminal"/>
+        <field name="manufacturer">Geidea</field>
+        <field name="model">GT-Virtual</field>
+        <field name="connection_config">{"websocket_url": "wss://demo.geidea.net/ws"}</field>
+        <field name="supports_contactless" eval="False"/>
+        <field name="supports_chip" eval="False"/>
+        <field name="supports_magnetic" eval="False"/>
+        <field name="supports_manual" eval="True"/>
+        <field name="encryption_support" eval="True"/>
+        <field name="pin_verification" eval="False"/>
+        <field name="is_active" eval="True"/>
+    </record>
+</odoo>

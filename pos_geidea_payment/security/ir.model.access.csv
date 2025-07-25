@@ -3,3 +3,9 @@ access_geidea_terminal_manager,geidea.terminal.manager,model_geidea_terminal,poi
 access_geidea_terminal_user,geidea.terminal.user,model_geidea_terminal,point_of_sale.group_pos_user,1,0,0,0
 access_geidea_transaction_manager,geidea.transaction.manager,model_geidea_transaction,point_of_sale.group_pos_manager,1,1,1,1
 access_geidea_transaction_user,geidea.transaction.user,model_geidea_transaction,point_of_sale.group_pos_user,1,1,1,0
+access_geidea_device_manager,geidea.device.manager,model_geidea_device,point_of_sale.group_pos_manager,1,1,1,1
+access_geidea_device_user,geidea.device.user,model_geidea_device,point_of_sale.group_pos_user,1,0,0,0
+access_payment_acquirer_geidea_manager,payment.acquirer.geidea.manager,model_payment_acquirer_geidea,point_of_sale.group_pos_manager,1,1,1,1
+access_payment_acquirer_geidea_user,payment.acquirer.geidea.user,model_payment_acquirer_geidea,point_of_sale.group_pos_user,1,0,0,0
+access_geidea_device_public,geidea.device.public,model_geidea_device,base.group_public,1,0,0,0
+access_geidea_transaction_public,geidea.transaction.public,model_geidea_transaction,base.group_public,1,0,0,0

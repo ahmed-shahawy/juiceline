@@ -1,0 +1,451 @@
+/* Geidea Payment Module Styles */
+
+/* Payment Button */
+.geidea-button {
+    background: linear-gradient(135deg, #6b73ff 0%, #9b59b6 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.geidea-button:hover:not(.disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 115, 255, 0.3);
+}
+
+.geidea-button.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #ccc;
+}
+
+.geidea-button .device-info {
+    display: block;
+    font-size: 11px;
+    opacity: 0.9;
+    margin-top: 2px;
+}
+
+/* Payment Status */
+.geidea-payment-status {
+    padding: 20px;
+    border-radius: 8px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.geidea-payment-status .processing {
+    text-align: center;
+    color: #3498db;
+}
+
+.geidea-payment-status .processing .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #ecf0f1;
+    border-radius: 3px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.geidea-payment-status .processing .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3498db, #2ecc71);
+    transition: width 0.3s ease;
+}
+
+.geidea-payment-status .completed {
+    text-align: center;
+    color: #27ae60;
+}
+
+.geidea-payment-status .error {
+    text-align: center;
+    color: #e74c3c;
+}
+
+.geidea-payment-status .discovering {
+    text-align: center;
+    color: #f39c12;
+}
+
+/* Device Selection */
+.device-selection {
+    margin: 20px 0;
+}
+
+.device-selection h4 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.device-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.device-item {
+    border: 2px solid #ecf0f1;
+    border-radius: 8px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.device-item:hover {
+    border-color: #6b73ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(107, 115, 255, 0.15);
+}
+
+.device-item.selected {
+    border-color: #6b73ff;
+    background: linear-gradient(135deg, #6b73ff10, #9b59b610);
+}
+
+.device-item .device-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.device-item .device-name {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.device-item .device-platform {
+    font-size: 12px;
+    color: #7f8c8d;
+    text-transform: capitalize;
+}
+
+.device-item .device-status {
+    text-align: right;
+}
+
+.device-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.status-online {
+    background: #d5f4e6;
+    color: #27ae60;
+}
+
+.status-badge.status-offline {
+    background: #fadbd8;
+    color: #e74c3c;
+}
+
+.status-badge.status-busy {
+    background: #fef3cd;
+    color: #f39c12;
+}
+
+.status-badge.status-error {
+    background: #fadbd8;
+    color: #e74c3c;
+}
+
+/* Device Status Bar */
+.device-status-bar {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.device-info-mini {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #6c757d;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-dot.status-online {
+    background: #27ae60;
+}
+
+.status-dot.status-offline {
+    background: #e74c3c;
+}
+
+.status-dot.status-busy {
+    background: #f39c12;
+}
+
+.status-dot.status-error {
+    background: #e74c3c;
+}
+
+/* Modal Styles */
+.device-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.device-card {
+    border: 2px solid #ecf0f1;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: white;
+    text-align: center;
+}
+
+.device-card:hover {
+    border-color: #6b73ff;
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(107, 115, 255, 0.15);
+}
+
+.device-card.selected {
+    border-color: #6b73ff;
+    background: linear-gradient(135deg, #6b73ff15, #9b59b615);
+}
+
+.device-card .device-header {
+    margin-bottom: 15px;
+}
+
+.device-card .device-header i {
+    color: #6b73ff;
+    margin-bottom: 10px;
+}
+
+.device-card .device-header h5 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+}
+
+.device-card .device-body {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.device-card .device-body p {
+    margin: 5px 0;
+    font-size: 13px;
+    color: #6c757d;
+}
+
+.device-card .device-footer {
+    border-top: 1px solid #ecf0f1;
+    padding-top: 10px;
+}
+
+.device-stats {
+    display: flex;
+    justify-content: space-between;
+}
+
+.device-stats small {
+    color: #7f8c8d;
+    font-size: 11px;
+}
+
+/* Widget Styles */
+.geidea-device-status-widget {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ecf0f1;
+    overflow: hidden;
+}
+
+.geidea-device-status-widget .widget-header {
+    background: #f8f9fa;
+    padding: 12px 15px;
+    border-bottom: 1px solid #ecf0f1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.geidea-device-status-widget .widget-header h6 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+}
+
+.geidea-device-status-widget .widget-body {
+    padding: 0;
+}
+
+.device-status-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #f1f3f4;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: background 0.2s ease;
+}
+
+.device-status-item:hover {
+    background: #f8f9fa;
+}
+
+.device-status-item:last-child {
+    border-bottom: none;
+}
+
+.device-status-item .device-icon {
+    color: #6b73ff;
+    width: 20px;
+    text-align: center;
+}
+
+.device-status-item .device-details {
+    flex: 1;
+}
+
+.device-status-item .device-name {
+    font-weight: 500;
+    color: #2c3e50;
+    font-size: 13px;
+}
+
+.device-status-item .device-meta {
+    font-size: 11px;
+    color: #7f8c8d;
+}
+
+.device-status-item .device-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.no-devices-widget {
+    padding: 20px;
+    color: #7f8c8d;
+}
+
+.no-devices {
+    padding: 40px 20px;
+}
+
+.no-devices i {
+    opacity: 0.3;
+}
+
+/* Error Actions */
+.error-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+/* Payment Details */
+.payment-details {
+    background: #f8f9fa;
+    border-radius: 6px;
+    padding: 15px;
+    margin-top: 15px;
+    text-align: left;
+}
+
+.payment-details p {
+    margin: 5px 0;
+    font-size: 13px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .device-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .device-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .device-actions {
+        flex-direction: column;
+    }
+    
+    .error-actions {
+        flex-direction: column;
+    }
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(359deg); }
+}
+
+/* Focus states for accessibility */
+.device-item:focus,
+.device-card:focus,
+.geidea-button:focus {
+    outline: 2px solid #6b73ff;
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    .geidea-payment-status,
+    .device-selection {
+        display: none;
+    }
+}

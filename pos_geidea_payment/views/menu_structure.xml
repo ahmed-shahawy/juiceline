@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menu Structure -->
+    <menuitem id="menu_geidea_root" name="Geidea Payments" sequence="50"/>
+    
+    <!-- Configuration Menu -->
+    <menuitem id="menu_geidea_config" name="Configuration" parent="menu_geidea_root" sequence="10"/>
+    
+    <menuitem id="menu_payment_acquirer_geidea" 
+              name="Payment Acquirers" 
+              parent="menu_geidea_config" 
+              action="action_payment_acquirer_geidea" 
+              sequence="10"/>
+              
+    <menuitem id="menu_geidea_terminal" 
+              name="Terminals" 
+              parent="menu_geidea_config" 
+              action="action_geidea_terminal" 
+              sequence="20"/>
+              
+    <menuitem id="menu_geidea_device" 
+              name="Devices" 
+              parent="menu_geidea_config" 
+              action="action_geidea_device" 
+              sequence="30"/>
+    
+    <!-- Transactions Menu -->
+    <menuitem id="menu_geidea_transactions" name="Transactions" parent="menu_geidea_root" sequence="20"/>
+    
+    <menuitem id="menu_geidea_transaction" 
+              name="All Transactions" 
+              parent="menu_geidea_transactions" 
+              action="action_geidea_transaction" 
+              sequence="10"/>
+    
+    <!-- Analytics Actions and Menus -->
+    <record id="action_geidea_transaction_today" model="ir.actions.act_window">
+        <field name="name">Today's Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form,pivot,graph</field>
+        <field name="context">{'search_default_today': 1, 'search_default_completed': 1}</field>
+        <field name="domain">[('date', '>=', datetime.datetime.now().replace(hour=0, minute=0, second=0))]</field>
+    </record>
+    
+    <record id="action_geidea_transaction_failed" model="ir.actions.act_window">
+        <field name="name">Failed Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_failed': 1}</field>
+        <field name="domain">[('state', '=', 'failed')]</field>
+    </record>
+    
+    <menuitem id="menu_geidea_transaction_today" 
+              name="Today's Transactions" 
+              parent="menu_geidea_transactions" 
+              action="action_geidea_transaction_today" 
+              sequence="20"/>
+              
+    <menuitem id="menu_geidea_transaction_failed" 
+              name="Failed Transactions" 
+              parent="menu_geidea_transactions" 
+              action="action_geidea_transaction_failed" 
+              sequence="30"/>
+    
+    <!-- Analytics Menu -->
+    <menuitem id="menu_geidea_analytics" name="Analytics" parent="menu_geidea_root" sequence="30"/>
+    
+    <record id="action_geidea_analytics_dashboard" model="ir.actions.act_window">
+        <field name="name">Transaction Analytics</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">pivot,graph</field>
+        <field name="context">{'search_default_this_month': 1}</field>
+    </record>
+    
+    <menuitem id="menu_geidea_analytics_dashboard" 
+              name="Transaction Dashboard" 
+              parent="menu_geidea_analytics" 
+              action="action_geidea_analytics_dashboard" 
+              sequence="10"/>
+    
+    <!-- Device Analytics -->
+    <record id="action_geidea_device_analytics" model="ir.actions.act_window">
+        <field name="name">Device Performance</field>
+        <field name="res_model">geidea.device</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+    </record>
+    
+    <menuitem id="menu_geidea_device_analytics" 
+              name="Device Performance" 
+              parent="menu_geidea_analytics" 
+              action="action_geidea_device_analytics" 
+              sequence="20"/>
+</odoo>

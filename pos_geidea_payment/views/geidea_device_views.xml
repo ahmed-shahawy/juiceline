@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Device Views -->
+    <record id="view_geidea_device_tree" model="ir.ui.view">
+        <field name="name">geidea.device.tree</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Devices" decoration-success="state == 'online'" decoration-warning="state == 'busy'" decoration-danger="state == 'error'">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform" widget="badge"/>
+                <field name="device_type"/>
+                <field name="connection_type"/>
+                <field name="state"/>
+                <field name="last_seen"/>
+                <field name="success_rate" widget="progressbar"/>
+                <field name="uptime_percentage" widget="progressbar"/>
+                <field name="is_active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_geidea_device_form" model="ir.ui.view">
+        <field name="name">geidea.device.form</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Device">
+                <header>
+                    <button name="action_connect" string="Connect" type="object" class="btn-primary" attrs="{'invisible': [('state', 'in', ['online', 'busy'])]}"/>
+                    <button name="action_disconnect" string="Disconnect" type="object" class="btn-warning" attrs="{'invisible': [('state', 'not in', ['online', 'busy'])]}"/>
+                    <button name="action_test_device" string="Test Device" type="object" class="btn-info" attrs="{'invisible': [('state', '!=', 'online')]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="offline,online,busy,error"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" icon="fa-credit-card">
+                            <field name="transaction_count" widget="statinfo" string="Transactions"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-percent">
+                            <field name="success_rate" widget="statinfo" string="Success Rate"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-clock-o">
+                            <field name="uptime_percentage" widget="statinfo" string="Uptime"/>
+                        </button>
+                        <button class="oe_stat_button" icon="fa-tachometer">
+                            <field name="average_response_time" widget="statinfo" string="Avg Response (s)"/>
+                        </button>
+                    </div>
+                    
+                    <widget name="web_ribbon" title="Inactive" bg_color="bg-danger" attrs="{'invisible': [('is_active', '=', True)]}"/>
+                    
+                    <group>
+                        <group string="Device Information">
+                            <field name="name"/>
+                            <field name="device_id"/>
+                            <field name="device_serial"/>
+                            <field name="is_active"/>
+                        </group>
+                        <group string="Platform Details">
+                            <field name="platform"/>
+                            <field name="device_type"/>
+                            <field name="connection_type"/>
+                            <field name="manufacturer"/>
+                            <field name="model"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Connection Configuration" name="connection">
+                            <group>
+                                <group string="Terminal Association">
+                                    <field name="terminal_id"/>
+                                </group>
+                                <group string="Connection Status">
+                                    <field name="last_seen"/>
+                                    <field name="last_heartbeat"/>
+                                </group>
+                            </group>
+                            <group string="Connection Parameters">
+                                <field name="connection_config" widget="ace" options="{'mode': 'json'}" placeholder='{"port": "COM1", "baudrate": 9600}'/>
+                            </group>
+                        </page>
+                        
+                        <page string="Capabilities" name="capabilities">
+                            <group>
+                                <group string="Payment Methods">
+                                    <field name="supports_contactless"/>
+                                    <field name="supports_chip"/>
+                                    <field name="supports_magnetic"/>
+                                    <field name="supports_manual"/>
+                                </group>
+                                <group string="Security Features">
+                                    <field name="encryption_support"/>
+                                    <field name="pin_verification"/>
+                                    <field name="signature_support"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Device Specifications" name="specs">
+                            <group>
+                                <group string="Software">
+                                    <field name="firmware_version"/>
+                                    <field name="software_version"/>
+                                </group>
+                                <group string="Performance">
+                                    <field name="average_response_time" readonly="1"/>
+                                    <field name="uptime_percentage" readonly="1"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Maintenance" name="maintenance">
+                            <group>
+                                <group string="Maintenance Schedule">
+                                    <field name="last_maintenance"/>
+                                    <field name="next_maintenance"/>
+                                </group>
+                            </group>
+                            <group string="Maintenance Notes">
+                                <field name="maintenance_notes" nolabel="1" placeholder="Enter maintenance notes and history..."/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_geidea_device_kanban" model="ir.ui.view">
+        <field name="name">geidea.device.kanban</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform"/>
+                <field name="state"/>
+                <field name="connection_type"/>
+                <field name="last_seen"/>
+                <field name="success_rate"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_card oe_kanban_global_click">
+                            <div class="row">
+                                <div class="col-6">
+                                    <strong><field name="name"/></strong>
+                                </div>
+                                <div class="col-6">
+                                    <span class="float-right badge" t-attf-class="badge-#{record.state.raw_value === 'online' ? 'success' : record.state.raw_value === 'error' ? 'danger' : 'warning'}">
+                                        <field name="state"/>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    <i class="fa fa-mobile" t-if="record.platform.raw_value == 'ios'"/>
+                                    <i class="fa fa-android" t-if="record.platform.raw_value == 'android'"/>
+                                    <i class="fa fa-windows" t-if="record.platform.raw_value == 'windows'"/>
+                                    <i class="fa fa-globe" t-if="record.platform.raw_value == 'web'"/>
+                                    <field name="platform"/>
+                                    - <field name="connection_type"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <small>Success Rate</small><br/>
+                                    <strong><field name="success_rate"/>%</strong>
+                                </div>
+                                <div class="col-6">
+                                    <small>Last Seen</small><br/>
+                                    <field name="last_seen" widget="relative"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_geidea_device_search" model="ir.ui.view">
+        <field name="name">geidea.device.search</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <search string="Search Geidea Devices">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform"/>
+                <field name="device_type"/>
+                <field name="manufacturer"/>
+                <field name="model"/>
+                <filter string="Online" name="online" domain="[('state', '=', 'online')]"/>
+                <filter string="Offline" name="offline" domain="[('state', '=', 'offline')]"/>
+                <filter string="Error" name="error" domain="[('state', '=', 'error')]"/>
+                <filter string="Active" name="active" domain="[('is_active', '=', True)]"/>
+                <separator/>
+                <filter string="iOS Devices" name="ios" domain="[('platform', '=', 'ios')]"/>
+                <filter string="Android Devices" name="android" domain="[('platform', '=', 'android')]"/>
+                <filter string="Windows Devices" name="windows" domain="[('platform', '=', 'windows')]"/>
+                <filter string="Web Devices" name="web" domain="[('platform', '=', 'web')]"/>
+                <separator/>
+                <filter string="Bluetooth" name="bluetooth" domain="[('connection_type', '=', 'bluetooth')]"/>
+                <filter string="USB" name="usb" domain="[('connection_type', 'in', ['usb', 'usb_otg'])]"/>
+                <filter string="Network" name="network" domain="[('connection_type', 'in', ['wifi', 'websocket'])]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Platform" name="group_platform" context="{'group_by': 'platform'}"/>
+                    <filter string="Device Type" name="group_device_type" context="{'group_by': 'device_type'}"/>
+                    <filter string="Connection Type" name="group_connection" context="{'group_by': 'connection_type'}"/>
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Terminal" name="group_terminal" context="{'group_by': 'terminal_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_geidea_device" model="ir.actions.act_window">
+        <field name="name">Geidea Devices</field>
+        <field name="res_model">geidea.device</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No devices found!
+            </p>
+            <p>
+                Register and configure Geidea payment devices. The system supports multiple platforms
+                including Windows, iOS/iPad, Android, and web-based devices with various connection methods.
+            </p>
+        </field>
+    </record>
+</odoo>
