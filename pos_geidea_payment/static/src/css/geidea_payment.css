@@ -1,0 +1,880 @@
+/* Geidea Payment Integration - iPad Optimized Styles */
+
+/* Base Variables */
+:root {
+    --geidea-primary: #0066cc;
+    --geidea-primary-dark: #004499;
+    --geidea-secondary: #6c757d;
+    --geidea-success: #28a745;
+    --geidea-warning: #ffc107;
+    --geidea-danger: #dc3545;
+    --geidea-info: #17a2b8;
+    
+    /* iPad optimized sizing */
+    --touch-target-size: 44px;
+    --touch-target-size-large: 64px;
+    --font-size-base: 16px;
+    --font-size-large: 20px;
+    --font-size-small: 14px;
+    --spacing-xs: 8px;
+    --spacing-sm: 12px;
+    --spacing-base: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    
+    /* Border radius */
+    --border-radius: 8px;
+    --border-radius-large: 12px;
+    
+    /* Shadows */
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-medium: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-heavy: 0 8px 16px rgba(0, 0, 0, 0.2);
+    
+    /* Transitions */
+    --transition-fast: 0.15s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+/* Main Payment Screen */
+.geidea-payment-screen {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* iPad Specific Optimizations */
+.geidea-payment-screen.ipad-mode {
+    --touch-target-size: 48px;
+    --touch-target-size-large: 72px;
+    --font-size-base: 18px;
+    --font-size-large: 24px;
+    --spacing-base: 20px;
+}
+
+.geidea-payment-screen.ipad-mode * {
+    touch-action: manipulation; /* Disable double-tap zoom */
+}
+
+/* Layout adjustments for different orientations */
+.geidea-payment-screen.landscape-layout .geidea-content {
+    flex-direction: row;
+    gap: var(--spacing-lg);
+}
+
+.geidea-payment-screen.landscape-layout .connection-section,
+.geidea-payment-screen.landscape-layout .payment-section {
+    flex: 1;
+    min-width: 300px;
+}
+
+.geidea-payment-screen.portrait-layout .geidea-content {
+    flex-direction: column;
+}
+
+/* Compact layout for Split View */
+.geidea-payment-screen.compact-layout {
+    --spacing-base: 12px;
+    --spacing-lg: 16px;
+}
+
+.geidea-payment-screen.compact-layout .card-header h3 {
+    font-size: var(--font-size-base);
+}
+
+/* Header */
+.geidea-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-base) var(--spacing-lg);
+    background: white;
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: var(--shadow-light);
+    z-index: 10;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+}
+
+.screen-title {
+    margin: 0;
+    font-size: var(--font-size-large);
+    font-weight: 600;
+    color: var(--geidea-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.connection-status .status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.connection-status.status-disconnected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.connection-status.status-disconnected .status-indicator {
+    background: var(--geidea-danger);
+}
+
+.connection-status.status-connecting {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.connection-status.status-connecting .status-indicator {
+    background: var(--geidea-warning);
+}
+
+.connection-status.status-connected {
+    background: #d4edda;
+    color: #155724;
+}
+
+.connection-status.status-connected .status-indicator {
+    background: var(--geidea-success);
+}
+
+.connection-status.status-error {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.connection-status.status-error .status-indicator {
+    background: var(--geidea-danger);
+    animation: blink 1s infinite;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+}
+
+.device-info {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-small);
+}
+
+.device-name {
+    font-weight: 500;
+    color: #495057;
+}
+
+.battery-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.battery-indicator.battery-good {
+    background: #d4edda;
+    color: #155724;
+}
+
+.battery-indicator.battery-medium {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.battery-indicator.battery-low {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.close-btn {
+    min-width: var(--touch-target-size);
+    min-height: var(--touch-target-size);
+    border-radius: 50%;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Main Content */
+.geidea-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+/* Cards */
+.card {
+    background: white;
+    border-radius: var(--border-radius-large);
+    box-shadow: var(--shadow-medium);
+    border: none;
+    overflow: hidden;
+    transition: box-shadow var(--transition-normal);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-heavy);
+}
+
+.card-header {
+    padding: var(--spacing-base) var(--spacing-lg);
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.card-header:hover {
+    background: #e9ecef;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-size: var(--font-size-large);
+    font-weight: 600;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.card-body {
+    padding: var(--spacing-lg);
+}
+
+.toggle-btn {
+    background: none;
+    border: none;
+    color: #6c757d;
+    font-size: 16px;
+    transition: color var(--transition-fast);
+}
+
+.toggle-btn:hover {
+    color: var(--geidea-primary);
+}
+
+/* Connection Section */
+.connection-display {
+    display: grid;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-lg);
+}
+
+.status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.status-row label {
+    font-weight: 500;
+    color: #6c757d;
+    margin: 0;
+}
+
+.connection-status-badge {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.connection-controls {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+}
+
+.connect-btn,
+.disconnect-btn,
+.discover-btn {
+    min-height: var(--touch-target-size-large);
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    border-radius: var(--border-radius);
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-lg);
+    transition: all var(--transition-fast);
+    flex: 1;
+    min-width: 140px;
+}
+
+.connect-btn {
+    background: var(--geidea-primary);
+    color: white;
+}
+
+.connect-btn:hover:not(:disabled) {
+    background: var(--geidea-primary-dark);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+}
+
+.connect-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.disconnect-btn {
+    background: var(--geidea-warning);
+    color: #212529;
+}
+
+.disconnect-btn:hover {
+    background: #e0a800;
+}
+
+.discover-btn {
+    background: var(--geidea-secondary);
+    color: white;
+}
+
+.discover-btn:hover:not(:disabled) {
+    background: #5a6268;
+}
+
+/* Device List */
+.device-list {
+    margin-top: var(--spacing-lg);
+}
+
+.device-list h4 {
+    margin-bottom: var(--spacing-base);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: #495057;
+}
+
+.devices {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.device-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-base);
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.device-item:hover {
+    border-color: var(--geidea-primary);
+    background: #f8f9fa;
+}
+
+.device-item.selected {
+    border-color: var(--geidea-primary);
+    background: rgba(0, 102, 204, 0.05);
+}
+
+.device-info strong {
+    display: block;
+    color: #495057;
+    margin-bottom: 2px;
+}
+
+.device-info small {
+    color: #6c757d;
+    font-size: var(--font-size-small);
+}
+
+/* Payment Section */
+.payment-status {
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.payment-status.status-idle {
+    background: #e2e3e5;
+    color: #495057;
+}
+
+.payment-status.status-processing {
+    background: #fff3cd;
+    color: #856404;
+    animation: pulse 1.5s infinite;
+}
+
+.payment-status.status-completed {
+    background: #d4edda;
+    color: #155724;
+}
+
+.payment-status.status-failed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.amount-section {
+    margin-bottom: var(--spacing-lg);
+}
+
+.amount-label {
+    display: block;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: var(--spacing-sm);
+    font-size: var(--font-size-base);
+}
+
+.amount-input-group {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+}
+
+.amount-input {
+    flex: 2;
+    min-height: var(--touch-target-size-large);
+    font-size: var(--font-size-large);
+    font-weight: 600;
+    text-align: right;
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 0 var(--spacing-base);
+}
+
+.amount-input:focus {
+    border-color: var(--geidea-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.currency-select {
+    flex: 1;
+    min-height: var(--touch-target-size-large);
+    font-size: var(--font-size-base);
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    padding: 0 var(--spacing-base);
+}
+
+.currency-select:focus {
+    border-color: var(--geidea-primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+}
+
+.formatted-amount {
+    font-size: var(--font-size-large);
+    font-weight: 700;
+    color: var(--geidea-primary);
+    text-align: center;
+    padding: var(--spacing-sm);
+    background: rgba(0, 102, 204, 0.05);
+    border-radius: var(--border-radius);
+}
+
+.payment-controls {
+    display: flex;
+    gap: var(--spacing-base);
+    flex-wrap: wrap;
+    margin-bottom: var(--spacing-lg);
+}
+
+.payment-btn,
+.refund-btn {
+    min-height: var(--touch-target-size-large);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    border-radius: var(--border-radius);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 0 var(--spacing-xl);
+    transition: all var(--transition-fast);
+    flex: 1;
+    min-width: 180px;
+}
+
+.payment-btn {
+    background: var(--geidea-success);
+    color: white;
+    box-shadow: var(--shadow-medium);
+}
+
+.payment-btn:hover:not(:disabled) {
+    background: #218838;
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.payment-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.refund-btn {
+    background: var(--geidea-warning);
+    color: #212529;
+}
+
+.refund-btn:hover:not(:disabled) {
+    background: #e0a800;
+}
+
+/* Transaction Result */
+.transaction-result {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+.transaction-result h4 {
+    margin-bottom: var(--spacing-base);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: #495057;
+}
+
+.result-details {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.result-row:last-child {
+    border-bottom: none;
+}
+
+.result-row label {
+    font-weight: 500;
+    color: #6c757d;
+    margin: 0;
+}
+
+.result-row span {
+    font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+    color: #495057;
+}
+
+/* Advanced Section */
+.ios-diagnostics,
+.connection-health {
+    margin-bottom: var(--spacing-lg);
+}
+
+.ios-diagnostics h4,
+.connection-health h4 {
+    margin-bottom: var(--spacing-base);
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    color: #495057;
+}
+
+.diagnostic-grid,
+.health-indicators {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-base);
+}
+
+.diagnostic-item,
+.health-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--spacing-sm);
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+}
+
+.diagnostic-item label,
+.health-item label {
+    font-size: var(--font-size-small);
+    font-weight: 500;
+    color: #6c757d;
+    margin: 0;
+}
+
+.diagnostic-item span,
+.health-item span {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Error Display */
+.error-display {
+    margin-top: var(--spacing-lg);
+    padding: var(--spacing-base);
+    border-radius: var(--border-radius);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Footer */
+.geidea-footer {
+    padding: var(--spacing-base) var(--spacing-lg);
+    background: white;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.powered-by {
+    font-size: var(--font-size-small);
+    color: #6c757d;
+}
+
+/* Connection Widget */
+.geidea-connection-widget {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm);
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-light);
+}
+
+.connection-indicator {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-small);
+}
+
+.connect-toggle-btn {
+    min-height: var(--touch-target-size);
+    font-size: var(--font-size-small);
+}
+
+/* Payment Button */
+.geidea-payment-button {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-base);
+    padding: var(--spacing-base) var(--spacing-lg);
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius-large);
+    min-height: var(--touch-target-size-large);
+    width: 100%;
+    text-align: left;
+    transition: all var(--transition-fast);
+}
+
+.geidea-payment-button:hover:not(:disabled) {
+    border-color: var(--geidea-primary);
+    background: rgba(0, 102, 204, 0.02);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-medium);
+}
+
+.geidea-payment-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.geidea-payment-button.btn-primary {
+    background: var(--geidea-primary);
+    border-color: var(--geidea-primary);
+    color: white;
+}
+
+.geidea-payment-button.btn-primary:hover:not(:disabled) {
+    background: var(--geidea-primary-dark);
+    border-color: var(--geidea-primary-dark);
+}
+
+.button-icon {
+    font-size: 24px;
+    color: var(--geidea-primary);
+    min-width: 32px;
+    text-align: center;
+}
+
+.geidea-payment-button.btn-primary .button-icon {
+    color: white;
+}
+
+.button-content {
+    flex: 1;
+}
+
+.button-title {
+    font-weight: 600;
+    font-size: var(--font-size-base);
+    margin-bottom: 2px;
+}
+
+.button-subtitle {
+    font-size: var(--font-size-small);
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+.button-status {
+    font-size: var(--font-size-small);
+    font-weight: 500;
+}
+
+.button-indicator {
+    font-size: 20px;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .geidea-payment-screen {
+        --spacing-base: 12px;
+        --spacing-lg: 16px;
+    }
+    
+    .geidea-header {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+        align-items: stretch;
+    }
+    
+    .header-left,
+    .header-right {
+        justify-content: space-between;
+    }
+    
+    .connection-controls,
+    .payment-controls {
+        flex-direction: column;
+    }
+    
+    .connection-controls button,
+    .payment-controls button {
+        width: 100%;
+    }
+    
+    .amount-input-group {
+        flex-direction: column;
+    }
+    
+    .diagnostic-grid,
+    .health-indicators {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .geidea-payment-screen {
+        --border-radius: 10px;
+        --border-radius-large: 14px;
+    }
+}
+
+/* Accessibility */
+.geidea-payment-screen *:focus {
+    outline: 2px solid var(--geidea-primary);
+    outline-offset: 2px;
+}
+
+.geidea-payment-screen button:focus {
+    outline-offset: -2px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    .geidea-payment-screen * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .geidea-payment-screen {
+        background: #1a1a1a;
+        color: #ffffff;
+    }
+    
+    .card {
+        background: #2d2d2d;
+        border-color: #404040;
+    }
+    
+    .card-header {
+        background: #404040;
+        border-color: #555555;
+    }
+    
+    .geidea-header,
+    .geidea-footer {
+        background: #2d2d2d;
+        border-color: #404040;
+    }
+}

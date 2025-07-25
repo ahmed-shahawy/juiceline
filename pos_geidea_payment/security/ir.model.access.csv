@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_geidea_payment_manager,geidea.payment.manager,model_geidea_payment,point_of_sale.group_pos_manager,1,1,1,1
+access_geidea_payment_user,geidea.payment.user,model_geidea_payment,point_of_sale.group_pos_user,1,1,1,0
+access_geidea_payment_public,geidea.payment.public,model_geidea_payment,base.group_public,1,0,0,0

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- POS Configuration Views -->
+        <record id="view_pos_config_form_geidea" model="ir.ui.view">
+            <field name="name">pos.config.form.geidea</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='payment']" position="after">
+                    <div class="row mt16" attrs="{'invisible': [('module_pos_restaurant', '=', False)]}">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0">
+                                        <i class="fa fa-credit-card text-primary mr-2"/>
+                                        Geidea Payment Integration
+                                    </h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <field name="geidea_payment_enabled"/>
+                                            <field name="geidea_ipad_optimized" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}"/>
+                                            <field name="geidea_test_mode" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}"/>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <field name="geidea_auto_reconnect" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}"/>
+                                            <field name="geidea_battery_optimization" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}">
+                                        <div class="col-lg-6">
+                                            <label for="geidea_merchant_id" class="o_form_label">Merchant Credentials</label>
+                                            <field name="geidea_merchant_id" placeholder="Merchant ID"/>
+                                            <field name="geidea_merchant_key" password="True" placeholder="Merchant Key"/>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <label for="geidea_device_name" class="o_form_label">Device Configuration</label>
+                                            <field name="geidea_device_name" placeholder="Device Name"/>
+                                            <field name="geidea_device_mac" placeholder="MAC Address (optional)"/>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row mt-3" attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}">
+                                        <div class="col-lg-6">
+                                            <label for="geidea_bluetooth_timeout" class="o_form_label">Connection Settings</label>
+                                            <field name="geidea_bluetooth_timeout"/>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mt-4">
+                                                <button name="test_geidea_connection" 
+                                                        type="object" 
+                                                        string="Test Connection" 
+                                                        class="btn btn-primary"
+                                                        attrs="{'invisible': [('geidea_payment_enabled', '=', False)]}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add Geidea settings to res.config.settings -->
+        <record id="view_pos_config_settings_geidea" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.geidea</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='pos_payment_methods']" position="after">
+                    <div class="col-12 col-lg-6 o_setting_box" id="geidea_payment_settings">
+                        <div class="o_setting_left_pane">
+                            <field name="pos_geidea_payment_enabled"/>
+                        </div>
+                        <div class="o_setting_right_pane">
+                            <label for="pos_geidea_payment_enabled"/>
+                            <div class="text-muted">
+                                Enable iPad-optimized Geidea payment integration for POS
+                            </div>
+                            <div class="content-group" attrs="{'invisible': [('pos_geidea_payment_enabled', '=', False)]}">
+                                <div class="mt16">
+                                    <strong>Geidea Payment Features:</strong>
+                                    <ul class="mb-0">
+                                        <li>iPad-optimized Bluetooth connectivity</li>
+                                        <li>Secure payment processing</li>
+                                        <li>iOS background state handling</li>
+                                        <li>Battery optimization</li>
+                                        <li>Touch-friendly interface</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

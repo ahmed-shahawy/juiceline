@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Main Geidea Payment Screen -->
+    <t t-name="pos_geidea_payment.GeideaPaymentScreen" owl="1">
+        <div class="geidea-payment-screen" t-att-class="state.isIPadMode ? 'ipad-mode' : ''">
+            <!-- Header -->
+            <div class="geidea-header">
+                <div class="header-left">
+                    <h2 class="screen-title">
+                        <i class="fa fa-credit-card"/>
+                        <t t-esc="_t('Geidea Payment')"/>
+                    </h2>
+                    <div class="connection-status" t-att-class="connectionStatusClass">
+                        <span class="status-indicator"/>
+                        <span class="status-text" t-esc="connectionStatusText"/>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="device-info" t-if="state.deviceInfo">
+                        <span class="device-name" t-esc="deviceDisplayName"/>
+                        <div class="battery-indicator" t-att-class="batteryLevelClass" t-if="state.isIPadMode">
+                            <i class="fa fa-battery-full"/>
+                            <span t-esc="state.batteryLevel + '%'"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-secondary close-btn" t-on-click="onClose">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="geidea-content">
+                <!-- Connection Section -->
+                <div class="connection-section card">
+                    <div class="card-header" t-on-click="onToggleConnectionDetails">
+                        <h3>
+                            <i class="fa fa-bluetooth"/>
+                            <t t-esc="_t('Device Connection')"/>
+                        </h3>
+                        <button class="btn btn-link toggle-btn">
+                            <i t-att-class="state.showConnectionDetails ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"/>
+                        </button>
+                    </div>
+                    
+                    <div class="card-body" t-if="state.showConnectionDetails or !state.isConnected">
+                        <!-- Connection Status Display -->
+                        <div class="connection-display">
+                            <div class="status-row">
+                                <label><t t-esc="_t('Status')"/>:</label>
+                                <span class="connection-status-badge" t-att-class="connectionStatusClass">
+                                    <t t-esc="connectionStatusText"/>
+                                </span>
+                            </div>
+                            
+                            <div class="status-row" t-if="state.deviceInfo">
+                                <label><t t-esc="_t('Device')"/>:</label>
+                                <span t-esc="deviceDisplayName"/>
+                            </div>
+                            
+                            <div class="status-row" t-if="state.deviceInfo and state.deviceInfo.model">
+                                <label><t t-esc="_t('Model')"/>:</label>
+                                <span t-esc="state.deviceInfo.model"/>
+                            </div>
+                            
+                            <div class="status-row" t-if="state.deviceInfo and state.deviceInfo.firmware">
+                                <label><t t-esc="_t('Firmware')"/>:</label>
+                                <span t-esc="state.deviceInfo.firmware"/>
+                            </div>
+                        </div>
+
+                        <!-- Connection Controls -->
+                        <div class="connection-controls">
+                            <t t-if="!state.isConnected">
+                                <button class="btn btn-primary btn-lg connect-btn" 
+                                        t-on-click="onConnectDevice"
+                                        t-att-disabled="state.isConnecting">
+                                    <i t-att-class="state.isConnecting ? 'fa fa-spinner fa-spin' : 'fa fa-bluetooth'"/>
+                                    <t t-if="state.isConnecting" t-esc="_t('Connecting...')"/>
+                                    <t t-else="" t-esc="_t('Connect Device')"/>
+                                </button>
+                                
+                                <button class="btn btn-secondary discover-btn" 
+                                        t-on-click="onDiscoverDevices"
+                                        t-att-disabled="state.isScanning">
+                                    <i t-att-class="state.isScanning ? 'fa fa-spinner fa-spin' : 'fa fa-search'"/>
+                                    <t t-if="state.isScanning" t-esc="_t('Scanning...')"/>
+                                    <t t-else="" t-esc="_t('Discover Devices')"/>
+                                </button>
+                            </t>
+                            
+                            <t t-if="state.isConnected">
+                                <button class="btn btn-warning disconnect-btn" t-on-click="onDisconnectDevice">
+                                    <i class="fa fa-unlink"/>
+                                    <t t-esc="_t('Disconnect')"/>
+                                </button>
+                            </t>
+                        </div>
+
+                        <!-- Device List -->
+                        <div class="device-list" t-if="state.availableDevices.length > 0">
+                            <h4><t t-esc="_t('Available Devices')"/></h4>
+                            <div class="devices">
+                                <div t-foreach="state.availableDevices" t-as="device" 
+                                     class="device-item" 
+                                     t-att-class="state.selectedDevice === device ? 'selected' : ''"
+                                     t-on-click="() => onSelectDevice(device)">
+                                    <div class="device-info">
+                                        <strong t-esc="device.name"/>
+                                        <small t-esc="device.id"/>
+                                    </div>
+                                    <button class="btn btn-sm btn-primary" 
+                                            t-on-click="() => onConnectDevice(device)">
+                                        <t t-esc="_t('Connect')"/>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Display -->
+                        <div class="error-display alert alert-danger" t-if="state.errorMessage">
+                            <i class="fa fa-exclamation-triangle"/>
+                            <span t-esc="state.errorMessage"/>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Section -->
+                <div class="payment-section card" t-if="state.isConnected">
+                    <div class="card-header">
+                        <h3>
+                            <i class="fa fa-money"/>
+                            <t t-esc="_t('Payment Processing')"/>
+                        </h3>
+                        <div class="payment-status" t-att-class="'status-' + state.paymentStatus">
+                            <t t-esc="paymentStatusText"/>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <!-- Amount Input -->
+                        <div class="amount-section">
+                            <label class="amount-label">
+                                <t t-esc="_t('Amount')"/>
+                            </label>
+                            <div class="amount-input-group">
+                                <input type="number" 
+                                       class="form-control amount-input" 
+                                       t-att-value="state.currentAmount"
+                                       t-on-input="onAmountChange"
+                                       step="0.01"
+                                       min="0"
+                                       t-att-disabled="state.isProcessing"/>
+                                <select class="form-control currency-select" 
+                                        t-att-value="state.currentCurrency"
+                                        t-on-change="onCurrencyChange"
+                                        t-att-disabled="state.isProcessing">
+                                    <option value="SAR">SAR</option>
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="AED">AED</option>
+                                </select>
+                            </div>
+                            <div class="formatted-amount">
+                                <t t-esc="formattedAmount"/>
+                            </div>
+                        </div>
+
+                        <!-- Payment Controls -->
+                        <div class="payment-controls">
+                            <button class="btn btn-success btn-lg payment-btn" 
+                                    t-on-click="onProcessPayment"
+                                    t-att-disabled="!canProcessPayment">
+                                <i t-att-class="state.isProcessing ? 'fa fa-spinner fa-spin' : 'fa fa-credit-card'"/>
+                                <t t-if="state.isProcessing" t-esc="_t('Processing...')"/>
+                                <t t-else="" t-esc="_t('Process Payment')"/>
+                            </button>
+                            
+                            <button class="btn btn-warning refund-btn" 
+                                    t-on-click="onProcessRefund"
+                                    t-if="state.lastResult and state.lastResult.success"
+                                    t-att-disabled="state.isProcessing">
+                                <i class="fa fa-undo"/>
+                                <t t-esc="_t('Process Refund')"/>
+                            </button>
+                        </div>
+
+                        <!-- Transaction Result -->
+                        <div class="transaction-result" t-if="state.lastResult">
+                            <h4><t t-esc="_t('Last Transaction')"/></h4>
+                            <div class="result-details">
+                                <div class="result-row">
+                                    <label><t t-esc="_t('Transaction ID')"/>:</label>
+                                    <span t-esc="state.lastResult.transactionId"/>
+                                </div>
+                                <div class="result-row" t-if="state.lastResult.cardType">
+                                    <label><t t-esc="_t('Card Type')"/>:</label>
+                                    <span t-esc="state.lastResult.cardType"/>
+                                </div>
+                                <div class="result-row" t-if="state.lastResult.lastFourDigits">
+                                    <label><t t-esc="_t('Card Number')"/>:</label>
+                                    <span>**** **** **** <t t-esc="state.lastResult.lastFourDigits"/></span>
+                                </div>
+                                <div class="result-row" t-if="state.lastResult.authCode">
+                                    <label><t t-esc="_t('Auth Code')"/>:</label>
+                                    <span t-esc="state.lastResult.authCode"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="advanced-section card" t-if="state.isConnected">
+                    <div class="card-header" t-on-click="onToggleAdvancedOptions">
+                        <h3>
+                            <i class="fa fa-cog"/>
+                            <t t-esc="_t('Advanced Options')"/>
+                        </h3>
+                        <button class="btn btn-link toggle-btn">
+                            <i t-att-class="state.showAdvancedOptions ? 'fa fa-chevron-up' : 'fa fa-chevron-down'"/>
+                        </button>
+                    </div>
+                    
+                    <div class="card-body" t-if="state.showAdvancedOptions">
+                        <!-- iOS Diagnostics -->
+                        <div class="ios-diagnostics" t-if="state.isIPadMode">
+                            <h4><t t-esc="_t('iOS Diagnostics')"/></h4>
+                            <div class="diagnostic-grid">
+                                <div class="diagnostic-item">
+                                    <label><t t-esc="_t('App State')"/>:</label>
+                                    <span t-esc="state.appState"/>
+                                </div>
+                                <div class="diagnostic-item">
+                                    <label><t t-esc="_t('Battery Level')"/>:</label>
+                                    <span t-esc="state.batteryLevel + '%'"/>
+                                </div>
+                                <div class="diagnostic-item">
+                                    <label><t t-esc="_t('Orientation')"/>:</label>
+                                    <span t-esc="state.screenOrientation"/>
+                                </div>
+                                <div class="diagnostic-item">
+                                    <label><t t-esc="_t('Bluetooth')"/>:</label>
+                                    <span t-esc="state.bluetoothAvailable ? 'Available' : 'Unavailable'"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Connection Health -->
+                        <div class="connection-health" t-if="state.deviceInfo">
+                            <h4><t t-esc="_t('Connection Health')"/></h4>
+                            <div class="health-indicators">
+                                <div class="health-item">
+                                    <label><t t-esc="_t('Connection Type')"/>:</label>
+                                    <span t-esc="state.deviceInfo.connectionType or 'Bluetooth'"/>
+                                </div>
+                                <div class="health-item" t-if="state.deviceInfo.macAddress">
+                                    <label><t t-esc="_t('MAC Address')"/>:</label>
+                                    <span t-esc="state.deviceInfo.macAddress"/>
+                                </div>
+                                <div class="health-item" t-if="state.deviceInfo.batteryLevel">
+                                    <label><t t-esc="_t('Device Battery')"/>:</label>
+                                    <span t-esc="state.deviceInfo.batteryLevel + '%'"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="geidea-footer">
+                <div class="footer-info">
+                    <span class="powered-by">
+                        <t t-esc="_t('Powered by Geidea Payment Solutions')"/>
+                    </span>
+                </div>
+                <div class="footer-actions">
+                    <button class="btn btn-secondary" t-on-click="onClose">
+                        <t t-esc="_t('Close')"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Connection Widget (for use in other screens) -->
+    <t t-name="pos_geidea_payment.ConnectionWidget" owl="1">
+        <div class="geidea-connection-widget">
+            <div class="connection-indicator" t-att-class="connectionStatusClass">
+                <i class="fa fa-bluetooth"/>
+                <span class="status-text" t-esc="connectionStatusText"/>
+            </div>
+            <button class="btn btn-sm connect-toggle-btn" t-on-click="onToggleConnection">
+                <t t-if="isConnected" t-esc="_t('Disconnect')"/>
+                <t t-else="" t-esc="_t('Connect')"/>
+            </button>
+        </div>
+    </t>
+
+    <!-- Payment Button (for use in payment screen) -->
+    <t t-name="pos_geidea_payment.PaymentButton" owl="1">
+        <button class="geidea-payment-button btn" 
+                t-att-class="buttonClass"
+                t-on-click="onPaymentClick"
+                t-att-disabled="!isAvailable">
+            <div class="button-icon">
+                <i class="fa fa-credit-card"/>
+            </div>
+            <div class="button-content">
+                <div class="button-title">
+                    <t t-esc="_t('Geidea Payment')"/>
+                </div>
+                <div class="button-subtitle" t-if="deviceName">
+                    <t t-esc="deviceName"/>
+                </div>
+                <div class="button-status" t-if="statusText">
+                    <t t-esc="statusText"/>
+                </div>
+            </div>
+            <div class="button-indicator" t-if="isConnected">
+                <i class="fa fa-check-circle text-success"/>
+            </div>
+        </button>
+    </t>
+
+</templates>

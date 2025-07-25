@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Geidea Payment List View -->
+        <record id="view_geidea_payment_tree" model="ir.ui.view">
+            <field name="name">geidea.payment.tree</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <tree decoration-success="state=='completed'" 
+                      decoration-danger="state=='failed'" 
+                      decoration-warning="state=='pending'"
+                      decoration-muted="state=='cancelled'">
+                    <field name="transaction_id"/>
+                    <field name="reference"/>
+                    <field name="pos_session_id"/>
+                    <field name="amount" sum="Total Amount"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                    <field name="payment_method"/>
+                    <field name="card_type"/>
+                    <field name="last_four_digits"/>
+                    <field name="initiated_at"/>
+                    <field name="completed_at"/>
+                    <field name="processing_time" avg="Avg. Processing Time"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Form View -->
+        <record id="view_geidea_payment_form" model="ir.ui.view">
+            <field name="name">geidea.payment.form</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Payment Transaction">
+                    <header>
+                        <button name="action_authorize" 
+                                type="object" 
+                                string="Authorize" 
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'pending')]}"/>
+                        <button name="action_capture" 
+                                type="object" 
+                                string="Capture" 
+                                class="btn-primary"
+                                attrs="{'invisible': [('state', '!=', 'authorized')]}"/>
+                        <button name="action_complete" 
+                                type="object" 
+                                string="Complete" 
+                                class="btn-success"
+                                attrs="{'invisible': [('state', 'not in', ['captured', 'processing'])]}"/>
+                        <button name="action_cancel" 
+                                type="object" 
+                                string="Cancel" 
+                                class="btn-secondary"
+                                attrs="{'invisible': [('state', 'in', ['completed', 'refunded'])]}"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,authorized,captured,completed"/>
+                    </header>
+                    
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="transaction_id" readonly="1"/>
+                            </h1>
+                            <h3>
+                                <field name="reference" readonly="1"/>
+                            </h3>
+                        </div>
+                        
+                        <group>
+                            <group string="Transaction Details">
+                                <field name="pos_order_id"/>
+                                <field name="pos_session_id"/>
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="payment_method"/>
+                                <field name="refund_amount" attrs="{'invisible': [('refund_amount', '=', 0)]}"/>
+                            </group>
+                            <group string="Card Information">
+                                <field name="card_type"/>
+                                <field name="last_four_digits"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Device Information">
+                                <field name="device_id"/>
+                                <field name="bluetooth_mac"/>
+                                <field name="connection_type"/>
+                            </group>
+                            <group string="iOS Information">
+                                <field name="ios_device_id"/>
+                                <field name="ios_app_state"/>
+                                <field name="battery_level"/>
+                            </group>
+                        </group>
+                        
+                        <group>
+                            <group string="Timing">
+                                <field name="initiated_at"/>
+                                <field name="completed_at"/>
+                                <field name="processing_time" widget="float_time"/>
+                            </group>
+                            <group string="Status" attrs="{'invisible': [('error_code', '=', False), ('error_message', '=', False)]}">
+                                <field name="error_code"/>
+                                <field name="error_message"/>
+                            </group>
+                        </group>
+                        
+                        <notebook>
+                            <page string="Geidea Response" attrs="{'invisible': [('geidea_response', '=', False)]}">
+                                <field name="geidea_response" widget="text"/>
+                            </page>
+                            <page string="Refund Transactions" attrs="{'invisible': [('refund_transactions', '=', [])]}">
+                                <field name="refund_transactions">
+                                    <tree>
+                                        <field name="transaction_id"/>
+                                        <field name="amount"/>
+                                        <field name="state"/>
+                                        <field name="initiated_at"/>
+                                        <field name="completed_at"/>
+                                    </tree>
+                                </field>
+                            </page>
+                        </notebook>
+                        
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Search View -->
+        <record id="view_geidea_payment_search" model="ir.ui.view">
+            <field name="name">geidea.payment.search</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="transaction_id"/>
+                    <field name="reference"/>
+                    <field name="pos_session_id"/>
+                    <field name="card_type"/>
+                    <field name="device_id"/>
+                    
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                    <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                    <filter string="Refunded" name="refunded" domain="[('state', 'in', ['refunded', 'partially_refunded'])]"/>
+                    
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('initiated_at', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                    <filter string="This Week" name="this_week" domain="[('initiated_at', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="this_month" domain="[('initiated_at', '>=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                    
+                    <separator/>
+                    <filter string="iPad Payments" name="ipad_payments" domain="[('ios_device_id', '!=', False)]"/>
+                    <filter string="Bluetooth Payments" name="bluetooth_payments" domain="[('connection_type', '=', 'bluetooth')]"/>
+                    
+                    <group expand="0" string="Group By">
+                        <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Payment Method" name="group_payment_method" context="{'group_by': 'payment_method'}"/>
+                        <filter string="Card Type" name="group_card_type" context="{'group_by': 'card_type'}"/>
+                        <filter string="POS Session" name="group_session" context="{'group_by': 'pos_session_id'}"/>
+                        <filter string="Device" name="group_device" context="{'group_by': 'device_id'}"/>
+                        <filter string="Date" name="group_date" context="{'group_by': 'initiated_at:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Action -->
+        <record id="action_geidea_payment" model="ir.actions.act_window">
+            <field name="name">Geidea Payments</field>
+            <field name="res_model">geidea.payment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Geidea payments found!
+                </p>
+                <p>
+                    Geidea payment transactions will appear here once they are processed through the POS.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <menuitem id="menu_geidea_payment_root" 
+                  name="Geidea Payments" 
+                  parent="point_of_sale.menu_point_of_sale" 
+                  sequence="50"/>
+        
+        <menuitem id="menu_geidea_payment_transactions" 
+                  name="Payment Transactions" 
+                  parent="menu_geidea_payment_root" 
+                  action="action_geidea_payment" 
+                  sequence="10"/>
+
+    </data>
+</odoo>
