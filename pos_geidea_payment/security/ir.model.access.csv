@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_geidea_terminal_user,"geidea.terminal user",model_geidea_terminal,group_geidea_user,1,0,0,0
+access_geidea_terminal_manager,"geidea.terminal manager",model_geidea_terminal,group_geidea_manager,1,1,1,1
+access_geidea_transaction_user,"geidea.transaction user",model_geidea_transaction,group_geidea_user,1,0,0,0
+access_geidea_transaction_manager,"geidea.transaction manager",model_geidea_transaction,group_geidea_manager,1,1,1,1
