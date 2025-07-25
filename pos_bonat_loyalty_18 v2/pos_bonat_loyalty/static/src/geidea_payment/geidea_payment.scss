@@ -1,0 +1,291 @@
+/* Geidea Payment Terminal Status Styles */
+.geidea-terminal-status {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px;
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.status-header h4 {
+    margin: 0;
+    color: #495057;
+    font-weight: 600;
+}
+
+.status-header i {
+    margin-right: 8px;
+    color: #6c757d;
+}
+
+.status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.status-card,
+.metrics-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.status-item {
+    margin-bottom: 12px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.status-icon {
+    margin-right: 8px;
+    font-size: 18px;
+}
+
+.status-text {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.metric-label {
+    color: #6c757d;
+    font-size: 14px;
+}
+
+.metric-value {
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.error-message {
+    margin-top: 10px;
+}
+
+.error-message .alert {
+    padding: 8px 12px;
+    margin: 0;
+    font-size: 13px;
+}
+
+.status-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f1f3f4;
+}
+
+.metrics-card h5 {
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.metric-item {
+    text-align: center;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+}
+
+.metric-item .metric-label {
+    display: block;
+    font-size: 12px;
+    color: #6c757d;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.metric-item .metric-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.metric-value.large {
+    font-size: 24px;
+    color: #495057;
+}
+
+.metric-value.success {
+    color: #28a745;
+}
+
+.metric-value.danger {
+    color: #dc3545;
+}
+
+/* Connection Status Indicator for Payment Screen */
+.geidea-connection-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.geidea-connection-status.connected {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.geidea-connection-status.disconnected {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.geidea-connection-status.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Processing Indicator */
+.geidea-processing-indicator {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+    text-align: center;
+    display: none;
+}
+
+.geidea-processing-indicator .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.geidea-processing-text {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Payment Method Specific Styles */
+.geidea-payment-method {
+    position: relative;
+}
+
+.geidea-payment-method.is-geidea::after {
+    content: "Geidea";
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #007bff;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Terminal Health Status in Payment Screen */
+.payment-screen .geidea-status-bar {
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.geidea-status-bar .status-text {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.geidea-status-bar .response-time {
+    font-size: 11px;
+    color: #6c757d;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    
+    .status-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+/* Animation for status changes */
+.status-indicator {
+    transition: all 0.3s ease;
+}
+
+.metric-value {
+    transition: color 0.3s ease;
+}
+
+/* Loading state */
+.status-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.status-loading::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    z-index: 1;
+}

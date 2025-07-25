@@ -14,10 +14,32 @@ class ResCompany(models.Model):
     bonat_api_key = fields.Char(string="Bonat API Key")
     bonat_merchant_name = fields.Char(string="Merchant Name", default="Name")
     bonat_merchant_id = fields.Char(string="Merchant ID", default="ABCD1234")
+    
+    # Geidea Payment Integration Settings
+    enable_geidea_integration = fields.Boolean(string="Enable Geidea Payment Integration")
+    geidea_api_key = fields.Char(string="Geidea API Key")
+    geidea_api_password = fields.Char(string="Geidea API Password")
+    geidea_merchant_id = fields.Char(string="Geidea Merchant ID")
+    geidea_terminal_id = fields.Char(string="Geidea Terminal ID")
+    geidea_environment = fields.Selection([
+        ('test', 'Test Environment'),
+        ('production', 'Production Environment')
+    ], string="Geidea Environment", default='test')
+    geidea_connection_timeout = fields.Integer(string="Connection Timeout (seconds)", default=30)
+    geidea_enable_partial_payments = fields.Boolean(string="Enable Partial Payments", default=True)
+    geidea_enable_refunds = fields.Boolean(string="Enable Refunds", default=True)
+    geidea_encryption_key = fields.Char(string="Encryption Key for Sensitive Data")
+    geidea_max_retry_attempts = fields.Integer(string="Max Retry Attempts", default=3)
+    geidea_connection_pool_size = fields.Integer(string="Connection Pool Size", default=5)
 
     @api.model
     def _load_pos_data_fields(self, config_id):
-        return super()._load_pos_data_fields(config_id) + ["enable_bonat_integration", "bonat_api_key", "bonat_merchant_id", "bonat_merchant_name"]
+        return super()._load_pos_data_fields(config_id) + [
+            "enable_bonat_integration", "bonat_api_key", "bonat_merchant_id", "bonat_merchant_name",
+            "enable_geidea_integration", "geidea_api_key", "geidea_merchant_id", "geidea_terminal_id",
+            "geidea_environment", "geidea_connection_timeout", "geidea_enable_partial_payments",
+            "geidea_enable_refunds", "geidea_max_retry_attempts", "geidea_connection_pool_size"
+        ]
 
     @api.model
     def get_bonat_code_response(self, code):

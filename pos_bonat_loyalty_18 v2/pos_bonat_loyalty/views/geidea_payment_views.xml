@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Geidea Payment Terminal Views -->
+    <record id="view_geidea_payment_terminal_tree" model="ir.ui.view">
+        <field name="name">geidea.payment.terminal.tree</field>
+        <field name="model">geidea.payment.terminal</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Payment Terminals">
+                <field name="terminal_id"/>
+                <field name="name"/>
+                <field name="status" widget="badge" 
+                       decoration-success="status == 'connected'"
+                       decoration-warning="status == 'disconnected'"
+                       decoration-danger="status == 'error'"
+                       decoration-info="status == 'maintenance'"/>
+                <field name="last_connection"/>
+                <field name="total_transactions"/>
+                <field name="successful_transactions"/>
+                <field name="average_response_time" string="Avg Response (ms)"/>
+                <field name="is_active" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_geidea_payment_terminal_form" model="ir.ui.view">
+        <field name="name">geidea.payment.terminal.form</field>
+        <field name="model">geidea.payment.terminal</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Payment Terminal">
+                <header>
+                    <button name="check_terminal_health" string="Test Connection" type="object" 
+                            class="btn-primary" icon="fa-plug"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="is_active" widget="boolean_button" options='{"terminology": "active"}'/>
+                        </button>
+                    </div>
+                    
+                    <group>
+                        <group>
+                            <field name="terminal_id"/>
+                            <field name="name"/>
+                            <field name="pos_config_id"/>
+                            <field name="status"/>
+                        </group>
+                        <group>
+                            <field name="ip_address"/>
+                            <field name="port"/>
+                            <field name="connection_timeout"/>
+                            <field name="firmware_version"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Connection Status">
+                        <group>
+                            <field name="last_connection"/>
+                            <field name="connection_attempts"/>
+                            <field name="last_transaction_id"/>
+                        </group>
+                        <group>
+                            <field name="error_message" widget="text" attrs="{'invisible': [('error_message', '=', False)]}"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Performance Metrics">
+                        <group>
+                            <field name="total_transactions"/>
+                            <field name="successful_transactions"/>
+                            <field name="failed_transactions"/>
+                        </group>
+                        <group>
+                            <field name="average_response_time"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Geidea Payment Transaction Views -->
+    <record id="view_geidea_payment_transaction_tree" model="ir.ui.view">
+        <field name="name">geidea.payment.transaction.tree</field>
+        <field name="model">geidea.payment.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Payment Transactions">
+                <field name="name"/>
+                <field name="transaction_id"/>
+                <field name="amount" sum="Total Amount"/>
+                <field name="currency_id"/>
+                <field name="payment_method"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ['completed', 'captured']"
+                       decoration-info="state in ['authorized', 'pending']"
+                       decoration-warning="state == 'processing'"
+                       decoration-danger="state in ['failed', 'cancelled']"/>
+                <field name="initiated_at"/>
+                <field name="completed_at"/>
+                <field name="response_time"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_geidea_payment_transaction_form" model="ir.ui.view">
+        <field name="name">geidea.payment.transaction.form</field>
+        <field name="model">geidea.payment.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Payment Transaction">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,processing,authorized,captured,completed"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="transaction_id"/>
+                            <field name="pos_order_id"/>
+                            <field name="terminal_id"/>
+                        </group>
+                        <group>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="payment_method"/>
+                            <field name="response_time"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Card Information" attrs="{'invisible': [('payment_method', 'not in', ['card', 'contactless'])]}">
+                        <group>
+                            <field name="card_number_masked"/>
+                            <field name="card_holder_name"/>
+                        </group>
+                        <group>
+                            <field name="card_type"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Timestamps">
+                        <group>
+                            <field name="initiated_at"/>
+                            <field name="authorized_at"/>
+                        </group>
+                        <group>
+                            <field name="completed_at"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Error Information" attrs="{'invisible': [('state', '!=', 'failed')]}">
+                        <group>
+                            <field name="error_code"/>
+                            <field name="retry_count"/>
+                        </group>
+                        <group>
+                            <field name="error_message" widget="text"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Refund Information" attrs="{'invisible': [('original_transaction_id', '=', False)]}">
+                        <group>
+                            <field name="original_transaction_id"/>
+                            <field name="refund_amount"/>
+                        </group>
+                        <group>
+                            <field name="refund_reason" widget="text"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Security">
+                        <field name="checksum"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_geidea_payment_root" 
+              name="Geidea Payment" 
+              parent="point_of_sale.menu_point_config_product"
+              sequence="30"/>
+
+    <menuitem id="menu_geidea_payment_terminals"
+              name="Payment Terminals"
+              parent="menu_geidea_payment_root"
+              action="action_geidea_payment_terminal"
+              sequence="10"/>
+
+    <menuitem id="menu_geidea_payment_transactions"
+              name="Payment Transactions"
+              parent="menu_geidea_payment_root"
+              action="action_geidea_payment_transaction"
+              sequence="20"/>
+
+    <!-- Actions -->
+    <record id="action_geidea_payment_terminal" model="ir.actions.act_window">
+        <field name="name">Geidea Payment Terminals</field>
+        <field name="res_model">geidea.payment.terminal</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your Geidea payment terminals
+            </p>
+            <p>
+                Set up and monitor your Geidea payment terminals for seamless POS integration.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_geidea_payment_transaction" model="ir.actions.act_window">
+        <field name="name">Geidea Payment Transactions</field>
+        <field name="res_model">geidea.payment.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No payment transactions yet
+            </p>
+            <p>
+                Geidea payment transactions will appear here once you start processing payments.
+            </p>
+        </field>
+    </record>
+
+    <!-- Search Views -->
+    <record id="view_geidea_payment_transaction_search" model="ir.ui.view">
+        <field name="name">geidea.payment.transaction.search</field>
+        <field name="model">geidea.payment.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Search Transactions">
+                <field name="name"/>
+                <field name="transaction_id"/>
+                <field name="pos_order_id"/>
+                <field name="terminal_id"/>
+                
+                <filter string="Today" name="today" 
+                        domain="[('create_date', '>=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <filter string="This Week" name="week" 
+                        domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="month" 
+                        domain="[('create_date', '>=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                
+                <separator/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <filter string="Pending" name="pending" domain="[('state', 'in', ['pending', 'processing'])]"/>
+                
+                <separator/>
+                <filter string="Card Payments" name="card" domain="[('payment_method', 'in', ['card', 'contactless'])]"/>
+                <filter string="Mobile Payments" name="mobile" domain="[('payment_method', 'in', ['mobile', 'qr'])]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Payment Method" name="group_by_method" context="{'group_by': 'payment_method'}"/>
+                    <filter string="Terminal" name="group_by_terminal" context="{'group_by': 'terminal_id'}"/>
+                    <filter string="Date" name="group_by_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+</odoo>

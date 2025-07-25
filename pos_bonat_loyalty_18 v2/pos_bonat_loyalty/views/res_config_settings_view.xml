@@ -26,6 +26,70 @@
                         <!-- <field name="bonat_discount_percentage_product_id"/> -->
                     </setting>
                 </block>
+                
+                <block title="Geidea Payment Integration" id="pos_geidea_integration_section">
+                    <setting>
+                        <field name="enable_geidea_integration" />
+                        <div class="content-group" invisible="not enable_geidea_integration">
+                            <div class="row mt16">
+                                <div class="col-lg-6">
+                                    <label string="API Key" for="geidea_api_key" class="o_light_label" />
+                                    <field name="geidea_api_key" placeholder="Geidea API Key" password="True" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <label string="API Password" for="geidea_api_password" class="o_light_label" />
+                                    <field name="geidea_api_password" placeholder="API Password" password="True" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label string="Merchant ID" for="geidea_merchant_id" class="o_light_label" />
+                                    <field name="geidea_merchant_id" placeholder="Merchant ID" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <label string="Terminal ID" for="geidea_terminal_id" class="o_light_label" />
+                                    <field name="geidea_terminal_id" placeholder="Terminal ID" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label string="Environment" for="geidea_environment" class="o_light_label" />
+                                    <field name="geidea_environment" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <label string="Connection Timeout (seconds)" for="geidea_connection_timeout" class="o_light_label" />
+                                    <field name="geidea_connection_timeout" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <label string="Max Retry Attempts" for="geidea_max_retry_attempts" class="o_light_label" />
+                                    <field name="geidea_max_retry_attempts" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <label string="Connection Pool Size" for="geidea_connection_pool_size" class="o_light_label" />
+                                    <field name="geidea_connection_pool_size" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <field name="geidea_enable_partial_payments" />
+                                    <label for="geidea_enable_partial_payments" string="Enable Partial Payments" />
+                                </div>
+                                <div class="col-lg-6">
+                                    <field name="geidea_enable_refunds" />
+                                    <label for="geidea_enable_refunds" string="Enable Refunds" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <label string="Encryption Key" for="geidea_encryption_key" class="o_light_label" />
+                                    <field name="geidea_encryption_key" placeholder="Leave empty to auto-generate" password="True" />
+                                </div>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
             </xpath>
         </field>
     </record>

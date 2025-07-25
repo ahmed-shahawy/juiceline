@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    
+    <t t-name="pos_bonat_loyalty.GeideaTerminalStatus" owl="1">
+        <div class="geidea-terminal-status">
+            <div class="status-header">
+                <h4>
+                    <i class="fa fa-credit-card"></i>
+                    Geidea Payment Terminal
+                </h4>
+                <button class="btn btn-sm btn-secondary" t-on-click="refreshStatus">
+                    <i class="fa fa-refresh"></i>
+                    Refresh
+                </button>
+            </div>
+            
+            <div class="status-grid">
+                <!-- Connection Status -->
+                <div class="status-card">
+                    <div class="status-item">
+                        <div class="status-indicator" t-att-style="'color: ' + statusInfo.color">
+                            <span class="status-icon" t-esc="statusInfo.icon"></span>
+                            <span class="status-text" t-esc="statusInfo.text"></span>
+                        </div>
+                        <small class="text-muted" t-if="state.lastUpdate">
+                            Last updated: <t t-esc="state.lastUpdate"/>
+                        </small>
+                    </div>
+                    
+                    <!-- Response Time -->
+                    <div class="status-item" t-if="state.responseTime">
+                        <div class="metric">
+                            <span class="metric-label">Response Time:</span>
+                            <span class="metric-value" t-att-style="'color: ' + responseTimeColor">
+                                <t t-esc="Math.round(state.responseTime)"/>ms
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <!-- Error Message -->
+                    <div class="status-item error-message" t-if="state.error">
+                        <div class="alert alert-danger">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            <span t-esc="state.error"></span>
+                        </div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div class="status-actions">
+                        <button class="btn btn-sm btn-primary" 
+                                t-on-click="testConnection"
+                                t-att-disabled="state.status === 'testing'">
+                            <i class="fa fa-plug"></i>
+                            <t t-if="state.status === 'testing'">Testing...</t>
+                            <t t-else="">Test Connection</t>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Performance Metrics -->
+                <div class="metrics-card">
+                    <h5>Performance Metrics</h5>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-item">
+                            <div class="metric-label">Total Transactions</div>
+                            <div class="metric-value large" t-esc="state.transactions.total"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-label">Successful</div>
+                            <div class="metric-value success" t-esc="state.transactions.successful"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-label">Failed</div>
+                            <div class="metric-value danger" t-esc="state.transactions.failed"></div>
+                        </div>
+                        
+                        <div class="metric-item">
+                            <div class="metric-label">Success Rate</div>
+                            <div class="metric-value" t-att-style="'color: ' + successRateColor">
+                                <t t-esc="state.transactions.successRate"/>%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+    
+</templates>
