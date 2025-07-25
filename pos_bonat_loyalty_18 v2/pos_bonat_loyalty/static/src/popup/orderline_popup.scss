@@ -6,5 +6,167 @@
 }
 
 .border-right {
-    border-right: 1px solid #ddd; /* Adjust color and style as needed */
+    border-right: 1px solid #ddd;
+}
+
+/* Enhanced UX styles for OrderlinePopup */
+.quantity-control {
+    transition: all 0.2s ease-in-out;
+    border-radius: 4px;
+    padding: 4px;
+}
+
+.quantity-control.has-quantity {
+    background-color: #e8f5e8;
+    border: 1px solid #4caf50;
+}
+
+.quantity-control.quantity-changed {
+    animation: quantity-highlight 0.3s ease-in-out;
+}
+
+@keyframes quantity-highlight {
+    0% { background-color: #fff3cd; }
+    100% { background-color: transparent; }
+}
+
+.quantity-control .add-one:disabled,
+.quantity-control .remove-one:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.quantity-control .add-one.disabled,
+.quantity-control .remove-one.disabled {
+    background-color: #f8f9fa;
+    border-color: #dee2e6;
+    color: #6c757d;
+}
+
+.disc_quantity {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    text-align: center;
+    font-weight: bold;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.disc_quantity:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    outline: none;
+}
+
+.orderline-popup .error-message {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}
+
+.orderline-popup .success-message {
+    color: #155724;
+    font-size: 14px;
+    margin-top: 8px;
+    padding: 8px;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+}
+
+.orderline-popup .discount-info {
+    background-color: #e7f3ff;
+    border: 1px solid #b8daff;
+    border-radius: 4px;
+    padding: 12px;
+    margin-bottom: 16px;
+    font-weight: 500;
+    color: #004085;
+}
+
+.orderline-popup .remaining-quantity {
+    font-size: 14px;
+    color: #6c757d;
+    margin-top: 8px;
+}
+
+.orderline-popup .product-item {
+    border: 1px solid #e9ecef;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.orderline-popup .product-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.orderline-popup .product-name {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 8px;
+}
+
+.orderline-popup .btn-confirm {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.orderline-popup .btn-confirm:hover:not(:disabled) {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.orderline-popup .btn-confirm:disabled {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    cursor: not-allowed;
+}
+
+.orderline-popup .btn-cancel {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+}
+
+.orderline-popup .btn-cancel:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+.orderline-popup .loading-state .btn-confirm {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+}
+
+.orderline-popup .validation-summary {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 16px 0;
+}
+
+.orderline-popup .validation-summary.valid {
+    border-color: #28a745;
+    background-color: #f8fff9;
+}
+
+.orderline-popup .validation-summary.invalid {
+    border-color: #dc3545;
+    background-color: #fff8f8;
 }

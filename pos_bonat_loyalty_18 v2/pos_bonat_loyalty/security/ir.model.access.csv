@@ -1,2 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 pos_bonat_loyalty.access_bluemax_pos_payment,access_bluemax_pos_payment,pos_bonat_loyalty.model_bluemax_pos_payment,base.group_user,1,1,1,1
+access_pos_bonat_loyalty_user,pos.bonat.loyalty.user,base.model_res_company,point_of_sale.group_pos_user,1,0,0,0
+access_pos_bonat_loyalty_manager,pos.bonat.loyalty.manager,base.model_res_company,point_of_sale.group_pos_manager,1,1,1,0
+access_pos_bonat_session_user,pos.bonat.session.user,point_of_sale.model_pos_session,point_of_sale.group_pos_user,1,1,1,0

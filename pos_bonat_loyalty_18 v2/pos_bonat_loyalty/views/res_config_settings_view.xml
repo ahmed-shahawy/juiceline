@@ -12,18 +12,44 @@
                         <div class="content-group" invisible="not enable_bonat_integration">
                             <div class="mt16">
                                 <label string="API Key" for="bonat_api_key" class="o_light_label" />
-                                <field name="bonat_api_key" placeholder="API Key" />
+                                <field name="bonat_api_key" placeholder="Enter your Bonat API Key" password="True" />
+                                <div class="text-muted">
+                                    <small>Keep your API key secure. It will be used to authenticate with Bonat services.</small>
+                                </div>
                             </div>
                             <div>
                                 <label string="Merchant ID" for="bonat_merchant_id" class="o_light_label" />
-                                <field name="bonat_merchant_id" placeholder="Merchant ID" />
+                                <field name="bonat_merchant_id" placeholder="Your unique merchant identifier" />
                             </div>
                             <div>
                                 <label string="Merchant Name" for="bonat_merchant_name" class="o_light_label" />
-                                <field name="bonat_merchant_name" placeholder="Merchant Name" />
+                                <field name="bonat_merchant_name" placeholder="Your business name" />
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <label string="Cache Timeout (minutes)" for="bonat_cache_timeout" class="o_light_label" />
+                                    <field name="bonat_cache_timeout" />
+                                    <div class="text-muted">
+                                        <small>How long to cache API responses (1-60 minutes)</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <label string="API Retry Attempts" for="bonat_retry_attempts" class="o_light_label" />
+                                    <field name="bonat_retry_attempts" />
+                                    <div class="text-muted">
+                                        <small>Number of retry attempts for failed API calls (1-10)</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info mt16" role="alert">
+                                <strong>Performance Settings:</strong> Higher cache timeout reduces API calls but may delay updates. 
+                                More retry attempts improve reliability but may slow down error responses.
+                            </div>
+                            <div class="mt16">
+                                <button name="test_bonat_connection" type="object" string="Test Connection" 
+                                        class="btn btn-secondary" invisible="not enable_bonat_integration"/>
                             </div>
                         </div>
-                        <!-- <field name="bonat_discount_percentage_product_id"/> -->
                     </setting>
                 </block>
             </xpath>
