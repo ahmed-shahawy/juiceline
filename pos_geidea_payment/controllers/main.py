@@ -172,3 +172,144 @@ class GeideaController(http.Controller):
         return request.env['ir.config_parameter'].sudo().get_param(
             'geidea.api_url', 'https://api.geidea.net/v1'
         )
+    
+    @http.route('/geidea/webhook', type='json', auth='public', methods=['POST'], csrf=False)
+    def webhook_handler(self, **post):
+        """Handle Geidea webhook notifications"""
+        try:
+            # Verify webhook signature
+            signature = request.httprequest.headers.get('X-Geidea-Signature')
+            if not self._verify_webhook_signature(signature, request.httprequest.data):
+                return {'error': 'Invalid signature'}, 401
+            
+            data = json.loads(request.httprequest.data)
+            event_type = data.get('event_type')
+            transaction_data = data.get('transaction', {})
+            
+            _logger.info("Webhook received - Event: %s, Transaction: %s", 
+                        event_type, transaction_data.get('id'))
+            
+            # Process webhook based on event type
+            if event_type == 'payment.completed':
+                self._handle_payment_completed(transaction_data)
+            elif event_type == 'payment.failed':
+                self._handle_payment_failed(transaction_data)
+            elif event_type == 'payment.refunded':
+                self._handle_payment_refunded(transaction_data)
+            elif event_type == 'payment.cancelled':
+                self._handle_payment_cancelled(transaction_data)
+            else:
+                _logger.warning("Unknown webhook event type: %s", event_type)
+            
+            return {'status': 'received'}
+            
+        except Exception as e:
+            _logger.error("Webhook processing error: %s", str(e))
+            return {'error': str(e)}, 500
+    
+    def _verify_webhook_signature(self, signature, payload):
+        """Verify webhook signature for security"""
+        if not signature:
+            return False
+        
+        import hmac
+        import hashlib
+        
+        webhook_secret = request.env['ir.config_parameter'].sudo().get_param('geidea.webhook_secret')
+        if not webhook_secret:
+            _logger.warning("Webhook secret not configured")
+            return False
+        
+        expected_signature = hmac.new(
+            webhook_secret.encode(),
+            payload,
+            hashlib.sha256
+        ).hexdigest()
+        
+        return hmac.compare_digest(signature, expected_signature)
+    
+    def _handle_payment_completed(self, transaction_data):
+        """Handle successful payment webhook"""
+        reference = transaction_data.get('orderId')
+        if not reference:
+            return
+        
+        transaction = request.env['geidea.transaction'].sudo().search([
+            ('name', '=', reference),
+            ('state', 'in', ['pending', 'draft'])
+        ], limit=1)
+        
+        if transaction:
+            transaction.write({
+                'state': 'completed',
+                'geidea_reference': transaction_data.get('id'),
+                'approval_code': transaction_data.get('approvalCode'),
+                'response_code': transaction_data.get('responseCode'),
+                'response_message': transaction_data.get('responseMessage'),
+                'card_type': transaction_data.get('cardType'),
+                'card_number': transaction_data.get('maskedCardNumber'),
+            })
+            transaction._notify_success()
+    
+    def _handle_payment_failed(self, transaction_data):
+        """Handle failed payment webhook"""
+        reference = transaction_data.get('orderId')
+        if not reference:
+            return
+        
+        transaction = request.env['geidea.transaction'].sudo().search([
+            ('name', '=', reference),
+            ('state', 'in', ['pending', 'draft'])
+        ], limit=1)
+        
+        if transaction:
+            transaction.write({
+                'state': 'failed',
+                'response_code': transaction_data.get('responseCode'),
+                'response_message': transaction_data.get('responseMessage'),
+            })
+            transaction._notify_failure()
+    
+    def _handle_payment_refunded(self, transaction_data):
+        """Handle refunded payment webhook"""
+        reference = transaction_data.get('orderId')
+        if not reference:
+            return
+        
+        # Create refund transaction record
+        original_transaction = request.env['geidea.transaction'].sudo().search([
+            ('geidea_reference', '=', transaction_data.get('originalTransactionId')),
+            ('state', '=', 'completed')
+        ], limit=1)
+        
+        if original_transaction:
+            refund_transaction = request.env['geidea.transaction'].sudo().create({
+                'name': f"REFUND-{reference}",
+                'terminal_id': original_transaction.terminal_id.id,
+                'amount': transaction_data.get('amount', 0),
+                'currency_id': original_transaction.currency_id.id,
+                'transaction_type': 'refund',
+                'state': 'completed',
+                'geidea_reference': transaction_data.get('id'),
+                'response_code': transaction_data.get('responseCode'),
+                'response_message': transaction_data.get('responseMessage'),
+                'pos_order_id': original_transaction.pos_order_id.id,
+                'pos_session_id': original_transaction.pos_session_id.id,
+            })
+    
+    def _handle_payment_cancelled(self, transaction_data):
+        """Handle cancelled payment webhook"""
+        reference = transaction_data.get('orderId')
+        if not reference:
+            return
+        
+        transaction = request.env['geidea.transaction'].sudo().search([
+            ('name', '=', reference),
+            ('state', 'in', ['pending', 'draft'])
+        ], limit=1)
+        
+        if transaction:
+            transaction.write({
+                'state': 'cancelled',
+                'response_message': 'Payment cancelled via webhook'
+            })

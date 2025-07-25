@@ -13,6 +13,7 @@ class GeideaTransaction(models.Model):
     name = fields.Char('Reference', required=True, readonly=True, default='New')
     date = fields.Datetime('Transaction Date', required=True, default=fields.Datetime.now)
     terminal_id = fields.Many2one('geidea.terminal', string='Terminal', required=True)
+    device_id = fields.Many2one('geidea.device', string='Device', help='Device used for transaction')
     pos_order_id = fields.Many2one('pos.order', string='POS Order')
     pos_session_id = fields.Many2one('pos.session', string='POS Session')
     

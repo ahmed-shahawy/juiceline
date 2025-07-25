@@ -25,8 +25,38 @@ class GeideaTerminal(models.Model):
         ('error', 'Error')
     ], default='draft', tracking=True)
     
+    # Payment Acquirer Association
+    acquirer_id = fields.Many2one(
+        'payment.acquirer.geidea',
+        string='Payment Acquirer',
+        help='Associated Geidea payment acquirer'
+    )
+    
+    # Device Management
+    device_ids = fields.One2many(
+        'geidea.device',
+        'terminal_id',
+        string='Connected Devices'
+    )
+    
+    device_count = fields.Integer(
+        compute='_compute_device_count',
+        string='Device Count'
+    )
+    
+    primary_device_id = fields.Many2one(
+        'geidea.device',
+        string='Primary Device',
+        help='Primary device for this terminal'
+    )
+    
     pos_config_ids = fields.Many2many('pos.config', string='POS Points')
     last_sync = fields.Datetime('Last Synchronization')
+    
+    @api.depends('device_ids')
+    def _compute_device_count(self):
+        for terminal in self:
+            terminal.device_count = len(terminal.device_ids)
     
     # إضافة العلاقة مع المعاملات
     transaction_ids = fields.One2many(
@@ -44,7 +74,13 @@ class GeideaTerminal(models.Model):
         string='Success Rate (%)'
     )
     
-    encryption_key = fields.Char('Encryption Key', copy=False)
+    pos_config_ids = fields.Many2many('pos.config', string='POS Points')
+    last_sync = fields.Datetime('Last Synchronization')
+    
+    @api.depends('device_ids')
+    def _compute_device_count(self):
+        for terminal in self:
+            terminal.device_count = len(terminal.device_ids)
     
     @api.model
     def create(self, vals):
@@ -59,6 +95,16 @@ class GeideaTerminal(models.Model):
     def _decrypt_sensitive_data(self, encrypted_data):
         f = Fernet(self.encryption_key.encode())
         return f.decrypt(encrypted_data.encode()).decode()
+    
+    def _update_from_global_config(self):
+        """Update terminal configuration from global settings"""
+        ICPSudo = self.env['ir.config_parameter'].sudo()
+        
+        # Update API settings if acquirer is linked
+        if self.acquirer_id:
+            api_url = ICPSudo.get_param('geidea.api_url_production')
+            if api_url:
+                self.acquirer_id.api_url_production = api_url
     
     @api.depends('transaction_ids')
     def _compute_transaction_count(self):

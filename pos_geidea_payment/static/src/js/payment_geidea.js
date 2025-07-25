@@ -2,6 +2,7 @@ odoo.define('pos_geidea_payment.payment', function (require) {
     'use strict';
 
     const PaymentInterface = require('point_of_sale.PaymentInterface');
+    const GeideaDeviceManager = require('pos_geidea_payment.device_manager');
     const { Gui } = require('point_of_sale.Gui');
     const { _t } = require('web.core');
     const { useState, useRef } = owl.hooks;
@@ -14,8 +15,14 @@ odoo.define('pos_geidea_payment.payment', function (require) {
             this.state = useState({
                 status: 'idle',
                 message: '',
-                showRetry: false
+                showRetry: false,
+                deviceStatus: 'disconnected',
+                selectedDevice: null
             });
+            
+            // Initialize device manager
+            this.deviceManager = new GeideaDeviceManager();
+            this.initializeDeviceManager();
             
             // Subscribe to Geidea payment events
             this.pos.env.services.bus_service.addEventListener(
@@ -28,6 +35,32 @@ odoo.define('pos_geidea_payment.payment', function (require) {
             );
         },
 
+        async initializeDeviceManager() {
+            try {
+                await this.deviceManager.initialize();
+                await this.refreshDeviceList();
+                this.state.deviceStatus = 'ready';
+            } catch (error) {
+                console.error('Failed to initialize device manager:', error);
+                this.state.deviceStatus = 'error';
+            }
+        },
+
+        async refreshDeviceList() {
+            try {
+                const devices = await this.deviceManager.getDeviceStatus();
+                this.availableDevices = devices;
+                
+                // Auto-select the first online device
+                const onlineDevice = devices.find(d => d.state === 'online');
+                if (onlineDevice && !this.state.selectedDevice) {
+                    this.state.selectedDevice = onlineDevice.device_id;
+                }
+            } catch (error) {
+                console.error('Failed to refresh device list:', error);
+            }
+        },
+
         send_payment_request: async function (cid) {
             this.state.status = 'processing';
             this.state.message = _t('Processing payment...');
@@ -37,6 +70,11 @@ odoo.define('pos_geidea_payment.payment', function (require) {
             
             if (!payment_line) {
                 throw new Error(_t('No payment line found'));
+            }
+            
+            // Check if device is selected and connected
+            if (!this.state.selectedDevice) {
+                throw new Error(_t('No device selected. Please select a payment device.'));
             }
             
             try {
@@ -86,6 +124,7 @@ odoo.define('pos_geidea_payment.payment', function (require) {
                 currency: this.pos.currency.name,
                 terminal_id: terminal.terminal_id,
                 merchant_id: terminal.merchant_id,
+                device_id: this.state.selectedDevice, // Include selected device
                 order_ref: order.uid,
                 customer: customer ? {
                     name: customer.name,
@@ -93,6 +132,7 @@ odoo.define('pos_geidea_payment.payment', function (require) {
                     phone: customer.phone,
                 } : null,
                 test_mode: this.pos.config.geidea_test_mode,
+                platform: this.deviceManager.platform,
             };
 
             const response = await this._make_request('/pos_geidea/process_payment', payload);
@@ -103,6 +143,7 @@ odoo.define('pos_geidea_payment.payment', function (require) {
             const payload = {
                 order_ref: order.uid,
                 payment_id: cid,
+                device_id: this.state.selectedDevice,
             };
 
             const response = await this._make_request('/pos_geidea/cancel_payment', payload);
@@ -152,6 +193,103 @@ odoo.define('pos_geidea_payment.payment', function (require) {
             throw new Error(this.state.message);
         },
 
+        // Device management methods
+        async selectDevice(deviceId) {
+            try {
+                await this.deviceManager.connectDevice(deviceId);
+                this.state.selectedDevice = deviceId;
+                this.state.deviceStatus = 'connected';
+                
+                Gui.showPopup('ConfirmPopup', {
+                    title: _t('Device Connected'),
+                    body: _t('Successfully connected to payment device')
+                });
+            } catch (error) {
+                Gui.showPopup('ErrorPopup', {
+                    title: _t('Connection Failed'),
+                    body: _t('Failed to connect to device: ') + error.message
+                });
+            }
+        },
+
+        async disconnectDevice() {
+            if (this.state.selectedDevice) {
+                try {
+                    await this.deviceManager.disconnectDevice(this.state.selectedDevice);
+                    this.state.selectedDevice = null;
+                    this.state.deviceStatus = 'disconnected';
+                } catch (error) {
+                    console.error('Failed to disconnect device:', error);
+                }
+            }
+        },
+
+        async testDevice() {
+            if (this.state.selectedDevice) {
+                return await this.deviceManager.testDevice(this.state.selectedDevice);
+            } else {
+                Gui.showPopup('ErrorPopup', {
+                    title: _t('No Device Selected'),
+                    body: _t('Please select a device first')
+                });
+                return false;
+            }
+        },
+
+        async discoverDevices() {
+            try {
+                this.state.status = 'discovering';
+                this.state.message = _t('Discovering devices...');
+                
+                const devices = await this.deviceManager.discoverDevices();
+                await this.refreshDeviceList();
+                
+                this.state.status = 'idle';
+                this.state.message = '';
+                
+                if (devices.length > 0) {
+                    Gui.showPopup('ConfirmPopup', {
+                        title: _t('Devices Found'),
+                        body: _t('%s device(s) found', devices.length)
+                    });
+                } else {
+                    Gui.showPopup('ConfirmPopup', {
+                        title: _t('No Devices Found'),
+                        body: _t('No Geidea devices were discovered')
+                    });
+                }
+                
+                return devices;
+            } catch (error) {
+                this.state.status = 'error';
+                this.state.message = error.message;
+                
+                Gui.showPopup('ErrorPopup', {
+                    title: _t('Discovery Failed'),
+                    body: error.message
+                });
+            }
+        },
+
+        // Platform-specific payment methods
+        async processIOSPayment(paymentData) {
+            // iOS-specific payment processing
+            console.log('Processing iOS payment');
+            return this._process_payment(this._get_terminal(), paymentData);
+        },
+
+        async processAndroidPayment(paymentData) {
+            // Android-specific payment processing
+            console.log('Processing Android payment');
+            return this._process_payment(this._get_terminal(), paymentData);
+        },
+
+        async processWindowsPayment(paymentData) {
+            // Windows-specific payment processing
+            console.log('Processing Windows payment');
+            return this._process_payment(this._get_terminal(), paymentData);
+        },
+
         _onPaymentSuccess: function (event) {
             const { order_id, amount, reference } = event.detail;
             
@@ -173,6 +311,14 @@ odoo.define('pos_geidea_payment.payment', function (require) {
                 body: error,
             });
         },
+
+        // Cleanup when payment interface is destroyed
+        destroy() {
+            if (this.deviceManager) {
+                this.deviceManager.destroy();
+            }
+            this._super();
+        }
     });
 
     return GeideaPayment;
