@@ -5,6 +5,7 @@
         <record id="view_geidea_terminal_tree" model="ir.ui.view">
             <field name="name">geidea.terminal.tree</field>
             <field name="model">geidea.terminal</field>
+            <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="Geidea Terminals">
                     <field name="name"/>
@@ -20,6 +21,7 @@
         <record id="view_geidea_terminal_form" model="ir.ui.view">
             <field name="name">geidea.terminal.form</field>
             <field name="model">geidea.terminal</field>
+            <field name="type">form</field>
             <field name="arch" type="xml">
                 <form string="Geidea Terminal">
                     <header>
@@ -71,6 +73,7 @@
         <record id="view_geidea_terminal_search" model="ir.ui.view">
             <field name="name">geidea.terminal.search</field>
             <field name="model">geidea.terminal</field>
+            <field name="type">search</field>
             <field name="arch" type="xml">
                 <search string="Search Geidea Terminals">
                     <field name="name"/>
