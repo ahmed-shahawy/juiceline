@@ -66,6 +66,9 @@ patch(PosOrderline.prototype, {
         this.response_data_type_2 = this.response_data_type_2 || "";
         this.percentage_partial_discount = this.percentage_partial_discount || false;
         this.fix_amt_partial_disc = this.fix_amt_partial_disc || false;
+        
+        // Cache for expensive calculations
+        this._taxCalculationCache = new Map();
     },
     set_discountAmount(discountAmount) {
         this.discountAmount = discountAmount;
@@ -176,392 +179,256 @@ patch(PosOrderline.prototype, {
         }
         return values;
     },
-    get_all_prices(qty = this.get_quantity()) {
-        const maxDiscountAmt = this.get_maxDiscountAmt();
-        const allowedQty = this.get_allowedQty();
-        const isPercentage = this.get_isPercentage();
-        const response_data_type_2 = this.get_response_data_type_2();
-        const discountAmount = this.get_discountAmount();
-        const fix_amt_partial_disc = this.get_fix_amt_partial_disc();
-        const percentage_partial_discount = this.get_percentage_partial_discount();
-        if (response_data_type_2 && isPercentage && percentage_partial_discount) {
-            const product = this.get_product();
-            let taxtotal = 0;
-            let taxdetail = {};
-            const company = this.company;
-            const taxes = this.tax_ids || product.taxes_id;
-
-            const price_unit = this.get_unit_price();
-
-            // const taxes_ids = (this.tax_ids || product.taxes_id).filter((t) => t in this.pos.taxes_by_id);
-            // const product_taxes = this.pos.get_taxes_after_fp(taxes_ids, this.order.fiscal_position);
-
-            // const all_taxes_before_discount = this.compute_all(
-            //     product_taxes,
-            //     price_unit,
-            //     qty,
-            //     this.pos.currency.rounding
-            // );
-            let baseLine;
-            let baseLineNoDiscount;
-            let totalIncluded = 0;
-            let totalExcluded = 0;
-            if (qty > allowedQty) {
-                let discountForApplicableQty = (discountAmount / 100) * price_unit * allowedQty;
-
-                if (discountForApplicableQty > maxDiscountAmt) {
-                    discountForApplicableQty = maxDiscountAmt;
-                }
-                const discountedUnitPrice = price_unit - (discountForApplicableQty / allowedQty);
-                const baseLineDiscounted = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValuesKnk({
-                        quantity: allowedQty,
-                        tax_ids: taxes,
-                        price_unit: discountedUnitPrice,
-                    })
-                );
-
-                const baseLineRemaining = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValuesKnk({
-                        quantity: qty - allowedQty,
-                        tax_ids: taxes,
-                        price_unit: price_unit, // Full price for remaining quantity
-                    })
-                );
-                accountTaxHelpers.add_tax_details_in_base_line(baseLineDiscounted, company);
-                accountTaxHelpers.add_tax_details_in_base_line(baseLineRemaining, company);
-                accountTaxHelpers.round_base_lines_tax_details([baseLineDiscounted, baseLineRemaining], company);
-
-                baseLine = {
-                    tax_details: {
-                        total_included_currency:
-                            baseLineDiscounted.tax_details.total_included_currency +
-                            baseLineRemaining.tax_details.total_included_currency,
-                        total_excluded_currency:
-                            baseLineDiscounted.tax_details.total_excluded_currency +
-                            baseLineRemaining.tax_details.total_excluded_currency,
-                        taxes_data: [...baseLineDiscounted.tax_details.taxes_data, ...baseLineRemaining.tax_details.taxes_data],
-                    },
-                };
-                // const taxesForDiscountedQty = this.compute_all(
-                //     product_taxes,
-                //     discountedUnitPrice,
-                //     allowedQty,
-                //     this.pos.currency.rounding
-                // );
-
-                // const remainingQty = qty - allowedQty; // Remaining quantity at full price
-                // const taxesForRemainingQty = this.compute_all(
-                //     product_taxes,
-                //     price_unit, // Original price for remaining quantity
-                //     remainingQty,
-                //     this.pos.currency.rounding
-                // );
-
-                // totalIncluded = taxesForDiscountedQty.total_included + taxesForRemainingQty.total_included;
-                // totalExcluded = taxesForDiscountedQty.total_excluded + taxesForRemainingQty.total_excluded;
-
-                // const combinedTaxes = [...taxesForDiscountedQty.taxes, ...taxesForRemainingQty.taxes];
-                // combinedTaxes.forEach(function(tax) {
-                //     taxtotal += tax.amount;
-                //     if (taxdetail[tax.id]) {
-                //         taxdetail[tax.id].amount += tax.amount;
-                //         taxdetail[tax.id].base += tax.base;
-                //     } else {
-                //         taxdetail[tax.id] = {
-                //             amount: tax.amount,
-                //             base: tax.base,
-                //         };
-                //     }
-                // });
-            } else {
-                // const discountedUnitPrice = this.get_unit_price() * (1.0 - this.get_discount() / 100.0); // Discounted price per unit
-                // const all_taxes_after_discount = this.compute_all(
-                //     product_taxes,
-                //     discountedUnitPrice,
-                //     qty,
-                //     this.pos.currency.rounding
-                // );
-
-                // totalIncluded = all_taxes_after_discount.total_included;
-                // totalExcluded = all_taxes_after_discount.total_excluded;
-
-                // all_taxes_after_discount.taxes.forEach(function(tax) {
-                //     taxtotal += tax.amount;
-                //     taxdetail[tax.id] = {
-                //         amount: tax.amount,
-                //         base: tax.base,
-                //     };
-                // });
-                baseLine = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValues({
-                        quantity: qty,
-                        tax_ids: taxes,
-                    })
-                );
-                accountTaxHelpers.add_tax_details_in_base_line(baseLine, company);
-                accountTaxHelpers.round_base_lines_tax_details([baseLine], company);
-            }
-
-            baseLineNoDiscount = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                this,
-                this.prepareBaseLineForTaxesComputationExtraValues({
-                    quantity: qty,
-                    tax_ids: taxes,
-                    discount: 0.0,
-                })
-            );
-            accountTaxHelpers.add_tax_details_in_base_line(baseLineNoDiscount, company);
-            accountTaxHelpers.round_base_lines_tax_details([baseLineNoDiscount], company);
-
-            const taxDetails = {};
-            for (const taxData of baseLine.tax_details.taxes_data) {
-                taxDetails[taxData.tax.id] = {
-                    amount: taxData.tax_amount_currency,
-                    base: taxData.base_amount_currency,
-                };
-            }
-
-            // const discountTax = all_taxes_before_discount.total_included - totalIncluded;
-            return {
-                priceWithTax: baseLine.tax_details.total_included_currency,
-                priceWithoutTax: baseLine.tax_details.total_excluded_currency,
-                priceWithTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_included_currency,
-                priceWithoutTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_excluded_currency,
-                tax: baseLine.tax_details.total_included_currency - baseLine.tax_details.total_excluded_currency,
-                taxDetails: taxDetails,
-                taxesData: baseLine.tax_details.taxes_data,
-                // priceWithTax: totalIncluded,
-                // priceWithoutTax: totalExcluded,
-                // priceWithTaxBeforeDiscount: all_taxes_before_discount.total_included,
-                // priceWithoutTaxBeforeDiscount: all_taxes_before_discount.total_excluded,
-                // tax: taxtotal,
-                // taxDetails: taxdetail,
-            };
-        } else if (response_data_type_2 && !isPercentage && fix_amt_partial_disc) {
-            const company = this.company;
-            const product = this.get_product();
-            const taxes = this.tax_ids;
-            const price_unit = this.get_unit_price();
-            let taxDetails = {};
-            let baseLine;
-
-            const baseLineBeforeDiscount = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                this,
-                this.prepareBaseLineForTaxesComputationExtraValues({
-                    quantity: qty,
-                    tax_ids: taxes,
-                })
-            );
-            accountTaxHelpers.add_tax_details_in_base_line(baseLineBeforeDiscount, company);
-            accountTaxHelpers.round_base_lines_tax_details([baseLineBeforeDiscount], company);
-
-
-            // const price_unit = this.get_unit_price();
-            // let taxtotal = 0;
-            let taxdetail = {};
-
-            // const product = this.get_product();
-            // const taxes_ids = (this.tax_ids || product.taxes_id).filter((t) => t in this.pos.taxes_by_id);
-            // const product_taxes = this.pos.get_taxes_after_fp(taxes_ids, this.order.fiscal_position);
-
-            // const all_taxes_before_discount = this.compute_all(
-            //     product_taxes,
-            //     this.get_unit_price(),
-            //     qty,
-            //     this.pos.currency.rounding
-            // );
-
-            let totalIncluded = 0;
-            let totalExcluded = 0;
-
-            if (qty > allowedQty) {
-                const totalDiscount = Math.min(discountAmount * allowedQty, maxDiscountAmt); // Cap discount at maxDiscountAmt
-                const discountedUnitPrice = price_unit - (totalDiscount / allowedQty); // Apply discount evenly across allowedQty
-
-                const baseLineDiscounted = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValuesKnk({
-                        quantity: allowedQty,
-                        tax_ids: taxes,
-                        price_unit: discountedUnitPrice,
-                    })
-                );
-                accountTaxHelpers.add_tax_details_in_base_line(baseLineDiscounted, company);
-                accountTaxHelpers.round_base_lines_tax_details([baseLineDiscounted], company);
-                const baseLineRemainingQty = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValues({
-                        quantity: qty - allowedQty,
-                        tax_ids: taxes,
-                    })
-                );
-                accountTaxHelpers.add_tax_details_in_base_line(baseLineRemainingQty, company);
-                accountTaxHelpers.round_base_lines_tax_details([baseLineRemainingQty], company);
-
-                totalIncluded =
-                    baseLineDiscounted.tax_details.total_included_currency +
-                    baseLineRemainingQty.tax_details.total_included_currency;
-                totalExcluded =
-                    baseLineDiscounted.tax_details.total_excluded_currency +
-                    baseLineRemainingQty.tax_details.total_excluded_currency;
-                for (const taxData of [
-                    ...baseLineDiscounted.tax_details.taxes_data,
-                    ...baseLineRemainingQty.tax_details.taxes_data,
-                ]) {
-                    if (taxDetails[taxData.tax.id]) {
-                        taxDetails[taxData.tax.id].amount += taxData.tax_amount_currency;
-                        taxDetails[taxData.tax.id].base += taxData.base_amount_currency;
-                    } else {
-                        taxDetails[taxData.tax.id] = {
-                            amount: taxData.tax_amount_currency,
-                            base: taxData.base_amount_currency,
-                        };
-                    }
-                }
-                // const taxesForDiscountedQty = this.compute_all(
-                //     product_taxes,
-                //     discountedUnitPrice,
-                //     allowedQty,
-                //     this.pos.currency.rounding
-                // );
-                // const remainingQty = qty - allowedQty;
-                // const taxesForRemainingQty = this.compute_all(
-                //     product_taxes,
-                //     price_unit,
-                //     remainingQty,
-                //     this.pos.currency.rounding
-                // );
-
-                // totalIncluded = taxesForDiscountedQty.total_included + taxesForRemainingQty.total_included;
-                // totalExcluded = taxesForDiscountedQty.total_excluded + taxesForRemainingQty.total_excluded;
-
-                // const combinedTaxes = [...taxesForDiscountedQty.taxes, ...taxesForRemainingQty.taxes];
-                // combinedTaxes.forEach(function(tax) {
-                //     taxtotal += tax.amount;
-                //     if (taxdetail[tax.id]) {
-                //         taxdetail[tax.id].amount += tax.amount;
-                //         taxdetail[tax.id].base += tax.base;
-                //     } else {
-                //         taxdetail[tax.id] = {
-                //             amount: tax.amount,
-                //             base: tax.base,
-                //         };
-                //     }
-                // });
-            } else {
-
-                const discountedUnitPrice = this.get_unit_price() * (1.0 - this.get_discount() / 100.0);
-                const baseLineAfterDiscount = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-                    this,
-                    this.prepareBaseLineForTaxesComputationExtraValues({
-                        quantity: qty,
-                        tax_ids: taxes,
-                        price_unit: discountedUnitPrice,
-                    })
-                );
-                accountTaxHelpers.add_tax_details_in_base_line(baseLineAfterDiscount, company);
-                accountTaxHelpers.round_base_lines_tax_details([baseLineAfterDiscount], company);
-
-                totalIncluded = baseLineAfterDiscount.tax_details.total_included_currency;
-                totalExcluded = baseLineAfterDiscount.tax_details.total_excluded_currency;
-                for (const taxData of baseLineAfterDiscount.tax_details.taxes_data) {
-                    taxDetails[taxData.tax.id] = {
-                        amount: taxData.tax_amount_currency,
-                        base: taxData.base_amount_currency,
-                    };
-                }
-                // const discountedUnitPrice = this.get_unit_price() * (1.0 - this.get_discount() / 100.0);
-                // // const unitPrice = price_unit - discountAmount; // Discounted price per unit
-                // // const discountedUnitPrice = Math.max(unitPrice, 0);
-                // const all_taxes_after_discount = this.compute_all(
-                //     product_taxes,
-                //     discountedUnitPrice,
-                //     qty,
-                //     this.pos.currency.rounding
-                // );
-
-                // totalIncluded = all_taxes_after_discount.total_included;
-                // totalExcluded = all_taxes_after_discount.total_excluded;
-
-                // all_taxes_after_discount.taxes.forEach(function(tax) {
-                //     taxtotal += tax.amount;
-                //     taxdetail[tax.id] = {
-                //         amount: tax.amount,
-                //         base: tax.base,
-                //     };
-                // });
-            }
-
-            // const discountTax = all_taxes_before_discount.total_included - totalIncluded;
-            const discountTax = baseLineBeforeDiscount.tax_details.total_included_currency - totalIncluded;
-
-            return {
-                priceWithTax: totalIncluded,
-                priceWithoutTax: totalExcluded,
-                priceWithTaxBeforeDiscount: baseLineBeforeDiscount.tax_details.total_included_currency,
-                priceWithoutTaxBeforeDiscount: baseLineBeforeDiscount.tax_details.total_excluded_currency,
-                tax: discountTax,
-                taxDetails: taxDetails,
-                // taxesData: baseLine.tax_details.taxes_data,
-                
-                // priceWithTax: totalIncluded,
-                // priceWithoutTax: totalExcluded,
-                // priceWithTaxBeforeDiscount: all_taxes_before_discount.total_included,
-                // priceWithoutTaxBeforeDiscount: all_taxes_before_discount.total_excluded,
-                // tax: taxtotal,
-                // taxDetails: taxdetail,
-            };
-        } else {
-                    const company = this.company;
+    
+    // Helper method to get cache key for tax calculations
+    _getTaxCalculationCacheKey(qty, customValues = {}) {
+        const key = JSON.stringify({
+            qty,
+            price_unit: this.get_unit_price(),
+            discount: this.get_discount(),
+            tax_ids: this.tax_ids?.map(t => t.id) || [],
+            discountAmount: this.discountAmount,
+            isPercentage: this.isPercentage,
+            maxDiscountAmt: this.maxDiscountAmt,
+            allowedQty: this.allowedQty,
+            ...customValues
+        });
+        return key;
+    },
+    
+    // Helper method to calculate base tax lines with caching
+    _calculateBaseTaxLine(qty, customValues = {}, useCache = true) {
+        const cacheKey = this._getTaxCalculationCacheKey(qty, customValues);
+        
+        if (useCache && this._taxCalculationCache.has(cacheKey)) {
+            return this._taxCalculationCache.get(cacheKey);
+        }
+        
+        const company = this.company;
         const product = this.get_product();
-        const taxes = this.tax_ids || product.taxes_id;
+        const taxes = customValues.tax_ids || this.tax_ids || product.taxes_id;
+        
         const baseLine = accountTaxHelpers.prepare_base_line_for_taxes_computation(
             this,
             this.prepareBaseLineForTaxesComputationExtraValues({
                 quantity: qty,
                 tax_ids: taxes,
+                ...customValues
             })
         );
+        
         accountTaxHelpers.add_tax_details_in_base_line(baseLine, company);
         accountTaxHelpers.round_base_lines_tax_details([baseLine], company);
-
-        const baseLineNoDiscount = accountTaxHelpers.prepare_base_line_for_taxes_computation(
-            this,
-            this.prepareBaseLineForTaxesComputationExtraValues({
-                quantity: qty,
-                tax_ids: taxes,
-                discount: 0.0,
-            })
-        );
-        accountTaxHelpers.add_tax_details_in_base_line(baseLineNoDiscount, company);
-        accountTaxHelpers.round_base_lines_tax_details([baseLineNoDiscount], company);
-
-        // Tax details.
+        
+        if (useCache) {
+            this._taxCalculationCache.set(cacheKey, baseLine);
+        }
+        
+        return baseLine;
+    },
+    
+    // Helper method to calculate partial discount tax lines
+    _calculatePartialDiscountTaxLines(qty, allowedQty, discountAmount, isPercentage, maxDiscountAmt) {
+        const company = this.company;
+        const product = this.get_product();
+        const taxes = this.tax_ids || product.taxes_id;
+        const price_unit = this.get_unit_price();
+        
+        let discountForApplicableQty, discountedUnitPrice;
+        
+        if (isPercentage) {
+            discountForApplicableQty = (discountAmount / 100) * price_unit * allowedQty;
+            if (discountForApplicableQty > maxDiscountAmt) {
+                discountForApplicableQty = maxDiscountAmt;
+            }
+            discountedUnitPrice = price_unit - (discountForApplicableQty / allowedQty);
+        } else {
+            const totalDiscount = Math.min(discountAmount * allowedQty, maxDiscountAmt);
+            discountedUnitPrice = price_unit - (totalDiscount / allowedQty);
+        }
+        
+        const baseLineDiscounted = this._calculateBaseTaxLine(allowedQty, {
+            tax_ids: taxes,
+            price_unit: discountedUnitPrice,
+        }, false);
+        
+        const baseLineRemaining = this._calculateBaseTaxLine(qty - allowedQty, {
+            tax_ids: taxes,
+            price_unit: price_unit,
+        }, false);
+        
+        return { baseLineDiscounted, baseLineRemaining };
+    },
+    
+    // Helper method to create tax details object
+    _createTaxDetails(taxesData) {
         const taxDetails = {};
-        for (const taxData of baseLine.tax_details.taxes_data) {
+        for (const taxData of taxesData) {
             taxDetails[taxData.tax.id] = {
                 amount: taxData.tax_amount_currency,
                 base: taxData.base_amount_currency,
             };
         }
-
+        return taxDetails;
+    },
+    get_all_prices(qty = this.get_quantity()) {
+        try {
+            const maxDiscountAmt = this.get_maxDiscountAmt();
+            const allowedQty = this.get_allowedQty();
+            const isPercentage = this.get_isPercentage();
+            const response_data_type_2 = this.get_response_data_type_2();
+            const discountAmount = this.get_discountAmount();
+            const fix_amt_partial_disc = this.get_fix_amt_partial_disc();
+            const percentage_partial_discount = this.get_percentage_partial_discount();
+            
+            // Handle percentage partial discount
+            if (response_data_type_2 && isPercentage && percentage_partial_discount) {
+                return this._calculatePercentagePartialDiscount(qty, allowedQty, discountAmount, maxDiscountAmt);
+            }
+            
+            // Handle fixed amount partial discount  
+            if (response_data_type_2 && !isPercentage && fix_amt_partial_disc) {
+                return this._calculateFixedAmountPartialDiscount(qty, allowedQty, discountAmount, maxDiscountAmt);
+            }
+            
+            // Handle standard discount calculation
+            return this._calculateStandardDiscount(qty);
+            
+        } catch (error) {
+            console.error('Error in tax calculation:', error);
+            // Fallback to standard calculation
+            return this._calculateStandardDiscount(qty);
+        }
+    },
+    
+    _calculatePercentagePartialDiscount(qty, allowedQty, discountAmount, maxDiscountAmt) {
+        const company = this.company;
+        const product = this.get_product();
+        const taxes = this.tax_ids || product.taxes_id;
+        let baseLine;
+        
+        if (qty > allowedQty) {
+            const { baseLineDiscounted, baseLineRemaining } = this._calculatePartialDiscountTaxLines(
+                qty, allowedQty, discountAmount, true, maxDiscountAmt
+            );
+            
+            baseLine = {
+                tax_details: {
+                    total_included_currency:
+                        baseLineDiscounted.tax_details.total_included_currency +
+                        baseLineRemaining.tax_details.total_included_currency,
+                    total_excluded_currency:
+                        baseLineDiscounted.tax_details.total_excluded_currency +
+                        baseLineRemaining.tax_details.total_excluded_currency,
+                    taxes_data: [...baseLineDiscounted.tax_details.taxes_data, ...baseLineRemaining.tax_details.taxes_data],
+                },
+            };
+        } else {
+            baseLine = this._calculateBaseTaxLine(qty, { tax_ids: taxes });
+        }
+        
+        const baseLineNoDiscount = this._calculateBaseTaxLine(qty, {
+            tax_ids: taxes,
+            discount: 0.0,
+        });
+        
+        const taxDetails = this._createTaxDetails(baseLine.tax_details.taxes_data);
+        
         return {
             priceWithTax: baseLine.tax_details.total_included_currency,
             priceWithoutTax: baseLine.tax_details.total_excluded_currency,
             priceWithTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_included_currency,
             priceWithoutTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_excluded_currency,
-            tax:
-                baseLine.tax_details.total_included_currency -
-                baseLine.tax_details.total_excluded_currency,
+            tax: baseLine.tax_details.total_included_currency - baseLine.tax_details.total_excluded_currency,
             taxDetails: taxDetails,
             taxesData: baseLine.tax_details.taxes_data,
         };
-
+    },
+    
+    _calculateFixedAmountPartialDiscount(qty, allowedQty, discountAmount, maxDiscountAmt) {
+        const company = this.company;
+        const product = this.get_product();
+        const taxes = this.tax_ids;
+        const price_unit = this.get_unit_price();
+        let taxDetails = {};
+        
+        const baseLineBeforeDiscount = this._calculateBaseTaxLine(qty, { tax_ids: taxes });
+        
+        let totalIncluded = 0;
+        let totalExcluded = 0;
+        
+        if (qty > allowedQty) {
+            const { baseLineDiscounted, baseLineRemainingQty } = this._calculatePartialDiscountTaxLines(
+                qty, allowedQty, discountAmount, false, maxDiscountAmt
+            );
+            
+            const baseLineRemaining = this._calculateBaseTaxLine(qty - allowedQty, { tax_ids: taxes });
+            
+            totalIncluded = baseLineDiscounted.tax_details.total_included_currency +
+                           baseLineRemaining.tax_details.total_included_currency;
+            totalExcluded = baseLineDiscounted.tax_details.total_excluded_currency +
+                           baseLineRemaining.tax_details.total_excluded_currency;
+            
+            for (const taxData of [
+                ...baseLineDiscounted.tax_details.taxes_data,
+                ...baseLineRemaining.tax_details.taxes_data,
+            ]) {
+                if (taxDetails[taxData.tax.id]) {
+                    taxDetails[taxData.tax.id].amount += taxData.tax_amount_currency;
+                    taxDetails[taxData.tax.id].base += taxData.base_amount_currency;
+                } else {
+                    taxDetails[taxData.tax.id] = {
+                        amount: taxData.tax_amount_currency,
+                        base: taxData.base_amount_currency,
+                    };
+                }
+            }
+        } else {
+            const discountedUnitPrice = this.get_unit_price() * (1.0 - this.get_discount() / 100.0);
+            const baseLineAfterDiscount = this._calculateBaseTaxLine(qty, {
+                tax_ids: taxes,
+                price_unit: discountedUnitPrice,
+            });
+            
+            totalIncluded = baseLineAfterDiscount.tax_details.total_included_currency;
+            totalExcluded = baseLineAfterDiscount.tax_details.total_excluded_currency;
+            taxDetails = this._createTaxDetails(baseLineAfterDiscount.tax_details.taxes_data);
         }
+        
+        const discountTax = baseLineBeforeDiscount.tax_details.total_included_currency - totalIncluded;
+        
+        return {
+            priceWithTax: totalIncluded,
+            priceWithoutTax: totalExcluded,
+            priceWithTaxBeforeDiscount: baseLineBeforeDiscount.tax_details.total_included_currency,
+            priceWithoutTaxBeforeDiscount: baseLineBeforeDiscount.tax_details.total_excluded_currency,
+            tax: discountTax,
+            taxDetails: taxDetails,
+        };
+    },
+    
+    _calculateStandardDiscount(qty) {
+        const company = this.company;
+        const product = this.get_product();
+        const taxes = this.tax_ids || product.taxes_id;
+        
+        const baseLine = this._calculateBaseTaxLine(qty, { tax_ids: taxes });
+        const baseLineNoDiscount = this._calculateBaseTaxLine(qty, {
+            tax_ids: taxes,
+            discount: 0.0,
+        });
+        
+        const taxDetails = this._createTaxDetails(baseLine.tax_details.taxes_data);
+        
+        return {
+            priceWithTax: baseLine.tax_details.total_included_currency,
+            priceWithoutTax: baseLine.tax_details.total_excluded_currency,
+            priceWithTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_included_currency,
+            priceWithoutTaxBeforeDiscount: baseLineNoDiscount.tax_details.total_excluded_currency,
+            tax: baseLine.tax_details.total_included_currency - baseLine.tax_details.total_excluded_currency,
+            taxDetails: taxDetails,
+            taxesData: baseLine.tax_details.taxes_data,
+        };
     }
 });
 
