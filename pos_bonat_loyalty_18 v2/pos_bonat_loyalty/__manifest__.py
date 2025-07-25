@@ -21,6 +21,10 @@
         'views/res_config_settings_view.xml',
         'views/geidea_payment_views.xml'
     ],
+    'demo': [
+        'data/pos_bonat_demo.xml',
+        'data/geidea_demo_data.xml'
+    ],
     'depends': ['point_of_sale', 'pos_discount'],
     'external_dependencies': {
         'python': ['requests', 'cryptography']

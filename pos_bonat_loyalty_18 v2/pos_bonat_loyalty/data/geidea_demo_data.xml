@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Demo Geidea Payment Terminals -->
+        <record id="demo_geidea_terminal_main" model="geidea.payment.terminal">
+            <field name="terminal_id">DEMO_TERMINAL_001</field>
+            <field name="name">Main Terminal</field>
+            <field name="status">connected</field>
+            <field name="ip_address">192.168.1.100</field>
+            <field name="port">8080</field>
+            <field name="connection_timeout">30</field>
+            <field name="is_active">True</field>
+            <field name="firmware_version">1.2.3</field>
+        </record>
+        
+        <record id="demo_geidea_terminal_backup" model="geidea.payment.terminal">
+            <field name="terminal_id">DEMO_TERMINAL_002</field>
+            <field name="name">Backup Terminal</field>
+            <field name="status">disconnected</field>
+            <field name="ip_address">192.168.1.101</field>
+            <field name="port">8080</field>
+            <field name="connection_timeout">30</field>
+            <field name="is_active">True</field>
+            <field name="firmware_version">1.2.2</field>
+        </record>
+        
+        <!-- Demo Payment Methods -->
+        <record id="demo_geidea_payment_method_card" model="pos.payment.method">
+            <field name="name">Geidea Card Payment</field>
+            <field name="is_geidea_payment">True</field>
+            <field name="geidea_payment_type">card</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="enable_partial_payment">True</field>
+            <field name="minimum_amount">1.0</field>
+            <field name="maximum_amount">5000.0</field>
+        </record>
+        
+        <record id="demo_geidea_payment_method_contactless" model="pos.payment.method">
+            <field name="name">Geidea Contactless</field>
+            <field name="is_geidea_payment">True</field>
+            <field name="geidea_payment_type">contactless</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="enable_partial_payment">True</field>
+            <field name="minimum_amount">1.0</field>
+            <field name="maximum_amount">1000.0</field>
+        </record>
+        
+        <record id="demo_geidea_payment_method_mobile" model="pos.payment.method">
+            <field name="name">Geidea Mobile Payment</field>
+            <field name="is_geidea_payment">True</field>
+            <field name="geidea_payment_type">mobile</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="enable_partial_payment">False</field>
+            <field name="minimum_amount">5.0</field>
+            <field name="maximum_amount">2000.0</field>
+        </record>
+        
+        <record id="demo_geidea_payment_method_qr" model="pos.payment.method">
+            <field name="name">Geidea QR Payment</field>
+            <field name="is_geidea_payment">True</field>
+            <field name="geidea_payment_type">qr</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="enable_partial_payment">False</field>
+            <field name="minimum_amount">1.0</field>
+            <field name="maximum_amount">500.0</field>
+        </record>
+        
+        <!-- Demo Connection Pool -->
+        <record id="demo_geidea_connection_pool" model="geidea.connection.pool">
+            <field name="name">Main Terminal Pool</field>
+            <field name="max_connections">5</field>
+            <field name="active_connections">0</field>
+            <field name="status">active</field>
+        </record>
+        
+        <!-- Link terminals to connection pool -->
+        <record id="demo_pool_terminal_link" model="geidea.connection.pool">
+            <field name="id" ref="demo_geidea_connection_pool"/>
+            <field name="terminal_ids" eval="[(6, 0, [ref('demo_geidea_terminal_main'), ref('demo_geidea_terminal_backup')])]"/>
+        </record>
+        
+        <!-- Demo Transactions (for testing purposes) -->
+        <record id="demo_geidea_transaction_completed" model="geidea.payment.transaction">
+            <field name="name">DEMO-TXN-001</field>
+            <field name="transaction_id">GDT_DEMO_12345</field>
+            <field name="amount">100.50</field>
+            <field name="currency_id" ref="base.USD"/>
+            <field name="payment_method">card</field>
+            <field name="state">completed</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="card_number_masked">****-****-****-1234</field>
+            <field name="card_holder_name">John Doe</field>
+            <field name="card_type">VISA</field>
+            <field name="response_time">450</field>
+            <field name="initiated_at" eval="(DateTime.now() - timedelta(hours=2))"/>
+            <field name="completed_at" eval="(DateTime.now() - timedelta(hours=2) + timedelta(seconds=10))"/>
+        </record>
+        
+        <record id="demo_geidea_transaction_failed" model="geidea.payment.transaction">
+            <field name="name">DEMO-TXN-002</field>
+            <field name="transaction_id">GDT_DEMO_12346</field>
+            <field name="amount">50.25</field>
+            <field name="currency_id" ref="base.USD"/>
+            <field name="payment_method">contactless</field>
+            <field name="state">failed</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="error_code">CARD_DECLINED</field>
+            <field name="error_message">Insufficient funds</field>
+            <field name="response_time">320</field>
+            <field name="retry_count">2</field>
+            <field name="initiated_at" eval="(DateTime.now() - timedelta(hours=1))"/>
+        </record>
+        
+        <record id="demo_geidea_transaction_pending" model="geidea.payment.transaction">
+            <field name="name">DEMO-TXN-003</field>
+            <field name="amount">75.00</field>
+            <field name="currency_id" ref="base.USD"/>
+            <field name="payment_method">mobile</field>
+            <field name="state">pending</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="initiated_at" eval="DateTime.now()"/>
+        </record>
+        
+        <!-- Demo Refund Transaction -->
+        <record id="demo_geidea_transaction_refund" model="geidea.payment.transaction">
+            <field name="name">DEMO-TXN-004-REFUND</field>
+            <field name="transaction_id">GDT_DEMO_REFUND_001</field>
+            <field name="amount">25.00</field>
+            <field name="currency_id" ref="base.USD"/>
+            <field name="payment_method">card</field>
+            <field name="state">completed</field>
+            <field name="terminal_id" ref="demo_geidea_terminal_main"/>
+            <field name="original_transaction_id" ref="demo_geidea_transaction_completed"/>
+            <field name="refund_amount">25.00</field>
+            <field name="refund_reason">Customer requested partial refund</field>
+            <field name="response_time">380</field>
+            <field name="initiated_at" eval="(DateTime.now() - timedelta(minutes=30))"/>
+            <field name="completed_at" eval="(DateTime.now() - timedelta(minutes=30) + timedelta(seconds=8))"/>
+        </record>
+        
+    </data>
+</odoo>
