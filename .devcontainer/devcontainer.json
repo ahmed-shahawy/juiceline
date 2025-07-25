@@ -1,0 +1,21 @@
+{
+    "name": "Juiceline Geidea Development",
+    "dockerFile": "Dockerfile",
+    "context": "..",
+    "workspaceFolder": "/workspace",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "sswg.swift-lang",
+        "ms-vscode.vscode-json",
+        "ms-vscode.cmake-tools",
+        "GitHub.copilot"
+    ],
+    "forwardPorts": [8080],
+    "postCreateCommand": "swift package resolve",
+    "remoteUser": "root",
+    "mounts": [
+        "source=${localWorkspaceFolder}/JuicelineGeideaSDK,target=/workspace,type=bind,consistency=cached"
+    ]
+}
