@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Settings View for Geidea and Epson Printer -->
+    <record id="res_config_settings_view_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.geidea</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Epson Printer Configuration -->
+            <xpath expr="//div[@id='pos_printers']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="pos_epson_printer">
+                    <div class="o_setting_left_pane">
+                        <field name="pos_epson_printer_ip"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="pos_epson_printer_ip"/>
+                        <div class="text-muted">
+                            Configure IP address for Epson printer integration
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+            
+            <!-- Add Geidea Payment Gateway Configuration -->
+            <xpath expr="//div[@id='pos_payment_methods']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="pos_geidea_payment">
+                    <div class="o_setting_left_pane">
+                        <field name="geidea_test_mode"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="geidea_test_mode"/>
+                        <div class="text-muted">
+                            Enable test mode for Geidea payment gateway
+                        </div>
+                        <div class="content-group" id="geidea_credentials">
+                            <div class="mt16">
+                                <label for="geidea_merchant_id" string="Merchant ID" class="o_light_label"/>
+                                <field name="geidea_merchant_id" placeholder="Enter Geidea Merchant ID"/>
+                            </div>
+                            <div class="mt8">
+                                <label for="geidea_api_key" string="API Key" class="o_light_label"/>
+                                <field name="geidea_api_key" placeholder="Enter Geidea API Key" password="True"/>
+                            </div>
+                            <div class="mt8">
+                                <label for="geidea_api_password" string="API Password" class="o_light_label"/>
+                                <field name="geidea_api_password" placeholder="Enter Geidea API Password" password="True"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

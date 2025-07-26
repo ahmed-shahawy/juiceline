@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- POS Config Form View -->
+    <record id="pos_config_view_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">pos.config.view.form.inherit.geidea</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Add Epson Printer Configuration -->
+            <xpath expr="//group[@name='printers']" position="after">
+                <group string="Epson Printer" name="epson_printer">
+                    <field name="pos_epson_printer_ip" placeholder="192.168.1.100"/>
+                </group>
+            </xpath>
+            
+            <!-- Add Geidea Payment Configuration -->
+            <xpath expr="//group[@name='payment']" position="after">
+                <group string="Geidea Payment Gateway" name="geidea_payment">
+                    <field name="geidea_test_mode"/>
+                    <field name="geidea_merchant_id" placeholder="Your Merchant ID"/>
+                    <field name="geidea_api_key" password="True" placeholder="Your API Key"/>
+                    <field name="geidea_api_password" password="True" placeholder="Your API Password"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

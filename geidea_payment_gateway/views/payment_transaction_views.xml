@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payment Transaction Form View -->
+    <record id="payment_transaction_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">payment.transaction.form.inherit.geidea</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='provider_details']" position="after">
+                <group string="Geidea Details" invisible="provider_code != 'geidea'">
+                    <field name="geidea_transaction_id"/>
+                    <field name="geidea_order_id"/>
+                    <field name="geidea_payment_method"/>
+                    <field name="geidea_card_last4"/>
+                    <field name="geidea_response_code"/>
+                    <field name="geidea_response_message"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Payment Transaction Tree View -->
+    <record id="payment_transaction_tree_inherit_geidea" model="ir.ui.view">
+        <field name="name">payment.transaction.tree.inherit.geidea</field>
+        <field name="model">payment.transaction</field>
+        <field name="inherit_id" ref="payment.payment_transaction_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='provider_reference']" position="after">
+                <field name="geidea_transaction_id" optional="hide"/>
+                <field name="geidea_payment_method" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,103 @@
+# Geidea Payment Gateway for Odoo 18
+
+![Geidea Logo](static/description/icon.png)
+
+## Complete Payment Gateway Integration
+
+This module provides comprehensive integration with Geidea Payment Gateway, supporting both POS and eCommerce transactions with enterprise-grade security and multi-platform compatibility.
+
+### Key Features
+
+#### 🏪 **Point of Sale Integration**
+- Seamless POS payment processing
+- Real-time transaction status updates
+- Support for multiple payment methods
+- Epson printer integration for receipts
+
+#### 🛒 **eCommerce Support**
+- Website payment integration
+- Mobile-optimized payment forms
+- One-click checkout experience
+
+#### 🌍 **Multi-Platform Compatibility**
+- Windows POS systems
+- iOS mobile devices
+- Android tablets and phones
+- Web-based interfaces
+
+#### 🔒 **Enterprise Security**
+- PCI DSS compliance
+- End-to-end encryption
+- Secure webhook validation
+- Transaction auditing
+
+#### 💰 **Multi-Currency Support**
+- GCC currencies (AED, SAR, KWD, QAR, BHD, OMR)
+- International currencies (USD, EUR, GBP)
+- Real-time exchange rates
+
+#### ⚡ **Real-Time Processing**
+- Instant payment confirmation
+- Live transaction monitoring
+- Automatic status updates
+- Comprehensive error handling
+
+### Installation & Configuration
+
+1. **Install the Module**
+   - Install from Apps menu or upload manually
+   - Enable in Point of Sale settings
+
+2. **Configure Payment Provider**
+   - Go to Accounting > Configuration > Payment Providers
+   - Create new Geidea provider
+   - Enter your Merchant ID, API Key, and API Password
+
+3. **POS Configuration**
+   - Go to Point of Sale > Configuration > Point of Sale
+   - Select your POS configuration
+   - Add Geidea payment method
+   - Configure Epson printer IP if needed
+
+4. **Test Integration**
+   - Enable test mode for development
+   - Process test transactions
+   - Verify webhook connectivity
+
+### Technical Requirements
+
+- **Odoo Version**: 18.0+
+- **Dependencies**: `payment`, `point_of_sale`, `account`, `website_sale`
+- **Network**: HTTPS enabled for webhooks
+- **Printer**: Epson compatible (optional)
+
+### API Integration
+
+The module provides full API integration with Geidea's payment gateway:
+
+- **Checkout API**: For payment processing
+- **Transaction API**: For status updates
+- **Refund API**: For refund processing
+- **Webhook API**: For real-time notifications
+
+### Security Features
+
+- **Signature Validation**: All webhook requests are validated
+- **Encrypted Storage**: Sensitive data is encrypted
+- **Audit Trail**: Complete transaction logging
+- **Access Control**: Role-based permissions
+
+### Support & Documentation
+
+For technical support and detailed documentation, please refer to:
+- Geidea Developer Portal
+- Odoo Documentation
+- Module GitHub Repository
+
+### License
+
+This module is licensed under LGPL-3. See LICENSE file for details.
+
+---
+
+**© 2024 Ahmed Shahawy. All rights reserved.**
