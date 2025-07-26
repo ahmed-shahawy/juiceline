@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- POS Payment Method Views for Geidea -->
+        <record id="geidea_pos_payment_method_form" model="ir.ui.view">
+            <field name="name">geidea.pos.payment.method.form</field>
+            <field name="model">pos.payment.method</field>
+            <field name="inherit_id" ref="point_of_sale.pos_payment_method_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='use_payment_terminal']" position="after">
+                    <group attrs="{'invisible': [('use_payment_terminal', '!=', 'geidea')]}" 
+                           string="Geidea Terminal Configuration">
+                        <field name="geidea_terminal_id" 
+                               attrs="{'required': [('use_payment_terminal', '=', 'geidea')]}"/>
+                        <field name="geidea_terminal_key" password="True"
+                               attrs="{'required': [('use_payment_terminal', '=', 'geidea')]}"/>
+                        <field name="geidea_pos_api_url" 
+                               attrs="{'required': [('use_payment_terminal', '=', 'geidea')]}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- POS Configuration View Extensions -->
+        <record id="geidea_pos_config_form" model="ir.ui.view">
+            <field name="name">geidea.pos.config.form</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='payment_methods']" position="inside">
+                    <group string="Geidea Terminal Testing" 
+                           attrs="{'invisible': [('payment_method_ids', '=', [])]}">
+                        <button name="geidea_test_connection" string="Test Geidea Terminals" 
+                                type="object" class="btn-secondary"
+                                help="Test connection to configured Geidea payment terminals"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Terminal Test Action -->
+        <record id="geidea_terminal_test_action" model="ir.actions.server">
+            <field name="name">Test Geidea Terminal Connection</field>
+            <field name="model_id" ref="point_of_sale.model_pos_config"/>
+            <field name="binding_model_id" ref="point_of_sale.model_pos_config"/>
+            <field name="state">code</field>
+            <field name="code">
+                for record in records:
+                    try:
+                        results = record.geidea_test_connection()
+                        messages = []
+                        for result in results:
+                            if result['status'] == 'connected':
+                                messages.append(f"✓ {result['method']} (Terminal: {result['terminal_id']}) - Connected")
+                            else:
+                                messages.append(f"✗ {result['method']} (Terminal: {result['terminal_id']}) - Error: {result.get('error', 'Unknown')}")
+                        
+                        if messages:
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'message': '\n'.join(messages),
+                                    'type': 'info',
+                                    'sticky': True,
+                                }
+                            }
+                        else:
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'message': 'No Geidea payment methods configured',
+                                    'type': 'warning',
+                                    'sticky': False,
+                                }
+                            }
+                    except Exception as e:
+                        action = {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'message': f'Test failed: {str(e)}',
+                                'type': 'danger',
+                                'sticky': True,
+                            }
+                        }
+            </field>
+        </record>
+
+        <!-- Geidea Payment Method Menu -->
+        <record id="geidea_pos_payment_method_menu" model="ir.ui.menu">
+            <field name="name">Geidea Payment Methods</field>
+            <field name="parent_id" ref="point_of_sale.menu_point_config_product"/>
+            <field name="action" ref="point_of_sale.action_pos_payment_method"/>
+            <field name="sequence">15</field>
+        </record>
+
+        <!-- Geidea Payment Terminal Setup Wizard -->
+        <record id="geidea_terminal_setup_wizard" model="ir.ui.view">
+            <field name="name">geidea.terminal.setup.wizard</field>
+            <field name="model">pos.payment.method</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Terminal Setup">
+                    <header>
+                        <button name="test_geidea_connection" string="Test Connection" 
+                                type="object" class="btn-primary"
+                                attrs="{'invisible': [('use_payment_terminal', '!=', 'geidea')]}"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" placeholder="Payment Method Name" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Basic Configuration">
+                                <field name="use_payment_terminal" required="1"/>
+                                <field name="is_cash_count" attrs="{'invisible': [('use_payment_terminal', '!=', False)]}"/>
+                                <field name="split_transactions"/>
+                            </group>
+                            <group string="Geidea Terminal Settings" 
+                                   attrs="{'invisible': [('use_payment_terminal', '!=', 'geidea')]}">
+                                <field name="geidea_terminal_id" required="1"/>
+                                <field name="geidea_terminal_key" password="True" required="1"/>
+                                <field name="geidea_pos_api_url" required="1"/>
+                            </group>
+                        </group>
+                        <notebook attrs="{'invisible': [('use_payment_terminal', '!=', 'geidea')]}">
+                            <page string="Terminal Information">
+                                <group>
+                                    <field name="company_id" options="{'no_create': True}"/>
+                                </group>
+                                <div class="alert alert-info">
+                                    <strong>Geidea Terminal Integration</strong>
+                                    <ul>
+                                        <li>Make sure your terminal is connected to the network</li>
+                                        <li>Verify terminal ID and key with Geidea support</li>
+                                        <li>Test the connection before using in production</li>
+                                        <li>Configure appropriate timeout settings</li>
+                                    </ul>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>

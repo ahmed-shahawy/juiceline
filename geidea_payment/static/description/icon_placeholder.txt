@@ -1,0 +1,14 @@
+# Geidea Payment Module Icon
+
+This file represents the icon for the Geidea Payment Gateway module.
+
+In a production environment, this would be a PNG image file (128x128 pixels) 
+containing the Geidea logo or a payment gateway icon.
+
+The icon should:
+- Be 128x128 pixels in size
+- Have a transparent background
+- Represent the Geidea brand or payment functionality
+- Be in PNG format
+
+For now, this is a placeholder file indicating where the actual icon should be placed.

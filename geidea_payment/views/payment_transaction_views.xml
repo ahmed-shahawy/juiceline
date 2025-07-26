@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Payment Transaction View Extensions -->
+        <record id="geidea_transaction_form" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.form</field>
+            <field name="model">payment.transaction</field>
+            <field name="inherit_id" ref="payment.transaction_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='acquirer_reference']" position="after">
+                    <group attrs="{'invisible': [('provider', '!=', 'geidea')]}" string="Geidea Transaction Details">
+                        <field name="geidea_transaction_id" readonly="1"/>
+                        <field name="geidea_session_id" readonly="1"/>
+                        <field name="geidea_response_code" readonly="1"/>
+                        <field name="geidea_payment_method" readonly="1"/>
+                        <field name="geidea_card_last4" readonly="1"/>
+                        <field name="geidea_card_brand" readonly="1"/>
+                    </group>
+                </xpath>
+                <xpath expr="//field[@name='acquirer_reference']" position="after">
+                    <field name="geidea_response_message" readonly="1" 
+                           attrs="{'invisible': [('provider', '!=', 'geidea')]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Payment Transaction Tree View -->
+        <record id="geidea_transaction_tree" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.tree</field>
+            <field name="model">payment.transaction</field>
+            <field name="inherit_id" ref="payment.transaction_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='acquirer_reference']" position="after">
+                    <field name="geidea_transaction_id" optional="hide"/>
+                    <field name="geidea_response_code" optional="hide"/>
+                    <field name="geidea_payment_method" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Transaction Actions -->
+        <record id="geidea_check_status_action" model="ir.actions.server">
+            <field name="name">Check Geidea Status</field>
+            <field name="model_id" ref="payment.model_payment_transaction"/>
+            <field name="binding_model_id" ref="payment.model_payment_transaction"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">
+                for record in records:
+                    if record.provider == 'geidea' and record.geidea_transaction_id:
+                        success = record.geidea_check_transaction_status()
+                        if success:
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'reload',
+                            }
+                        else:
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'message': 'Failed to check transaction status',
+                                    'type': 'warning',
+                                    'sticky': False,
+                                }
+                            }
+                    else:
+                        action = {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'message': 'This action is only available for Geidea transactions',
+                                'type': 'warning',
+                                'sticky': False,
+                            }
+                        }
+            </field>
+        </record>
+
+        <!-- Geidea Refund Action -->
+        <record id="geidea_refund_action" model="ir.actions.server">
+            <field name="name">Process Geidea Refund</field>
+            <field name="model_id" ref="payment.model_payment_transaction"/>
+            <field name="binding_model_id" ref="payment.model_payment_transaction"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">
+                for record in records:
+                    if record.provider == 'geidea' and record.state == 'done':
+                        try:
+                            refund_tx = record.geidea_refund_transaction()
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'message': f'Refund processed successfully. Refund ID: {refund_tx.reference}',
+                                    'type': 'success',
+                                    'sticky': False,
+                                }
+                            }
+                        except Exception as e:
+                            action = {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'message': f'Refund failed: {str(e)}',
+                                    'type': 'danger',
+                                    'sticky': True,
+                                }
+                            }
+                    else:
+                        action = {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'message': 'Refund is only available for successful Geidea transactions',
+                                'type': 'warning',
+                                'sticky': False,
+                            }
+                        }
+            </field>
+        </record>
+
+        <!-- Search View for Geidea Transactions -->
+        <record id="geidea_transaction_search" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.search</field>
+            <field name="model">payment.transaction</field>
+            <field name="inherit_id" ref="payment.transaction_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='reference']" position="after">
+                    <field name="geidea_transaction_id"/>
+                    <field name="geidea_response_code"/>
+                    <field name="geidea_payment_method"/>
+                </xpath>
+                <xpath expr="//filter[@name='acquirer']" position="after">
+                    <filter name="geidea_provider" string="Geidea Transactions" 
+                            domain="[('provider', '=', 'geidea')]"/>
+                    <filter name="geidea_success" string="Geidea Successful" 
+                            domain="[('provider', '=', 'geidea'), ('state', '=', 'done')]"/>
+                    <filter name="geidea_pending" string="Geidea Pending" 
+                            domain="[('provider', '=', 'geidea'), ('state', '=', 'pending')]"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

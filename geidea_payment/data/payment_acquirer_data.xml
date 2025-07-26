@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Geidea Payment Acquirer Data -->
+        <record id="payment_acquirer_geidea" model="payment.acquirer">
+            <field name="name">Geidea</field>
+            <field name="provider">geidea</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="state">disabled</field>
+            <field name="website_published">False</field>
+            <field name="support_tokenization">False</field>
+            <field name="support_manual_capture">True</field>
+            <field name="support_refund">partial</field>
+            <field name="capture_manually">False</field>
+            <field name="display_as">Geidea Payment Gateway</field>
+            <field name="pre_msg"><![CDATA[
+                <p>You will be redirected to the Geidea payment page to complete your payment securely.</p>
+                <ul>
+                    <li>Accepts major credit and debit cards</li>
+                    <li>Secure SSL encryption</li>
+                    <li>Real-time payment processing</li>
+                </ul>
+            ]]></field>
+            <field name="pending_msg"><![CDATA[
+                <p>Your payment is being processed. Please wait for confirmation.</p>
+                <p>You will receive an email confirmation once the payment is complete.</p>
+            ]]></field>
+            <field name="done_msg"><![CDATA[
+                <p>Your payment has been successfully processed through Geidea.</p>
+                <p>Thank you for your business!</p>
+            ]]></field>
+            <field name="cancel_msg"><![CDATA[
+                <p>Your payment was cancelled.</p>
+                <p>If this was a mistake, you can try again or contact support.</p>
+            ]]></field>
+            <field name="geidea_gateway_url">https://api.merchant.geidea.net</field>
+        </record>
+
+        <!-- Default Geidea POS Payment Method -->
+        <record id="pos_payment_method_geidea" model="pos.payment.method">
+            <field name="name">Geidea Card Payment</field>
+            <field name="use_payment_terminal">geidea</field>
+            <field name="is_cash_count">False</field>
+            <field name="split_transactions">False</field>
+            <field name="company_id" ref="base.main_company"/>
+            <field name="geidea_pos_api_url">https://api.merchant.geidea.net/pos</field>
+        </record>
+
+        <!-- Geidea Payment Icons and Images -->
+        <record id="geidea_payment_icon" model="ir.attachment">
+            <field name="name">Geidea Payment Icon</field>
+            <field name="type">url</field>
+            <field name="url">/geidea_payment/static/description/icon.png</field>
+            <field name="mimetype">image/png</field>
+        </record>
+
+        <!-- Email Template for Geidea Payment Confirmation -->
+        <record id="geidea_payment_confirmation_email" model="mail.template">
+            <field name="name">Geidea Payment Confirmation</field>
+            <field name="model_id" ref="payment.model_payment_transaction"/>
+            <field name="subject">Payment Confirmation - {{ object.reference }}</field>
+            <field name="email_from">{{ (object.company_id.email or user.email) }}</field>
+            <field name="email_to">{{ object.partner_email }}</field>
+            <field name="lang">{{ object.partner_lang }}</field>
+            <field name="body_html"><![CDATA[
+                <div style="margin: 0px; padding: 0px;">
+                    <p>Dear {{ object.partner_name }},</p>
+                    
+                    <p>Your payment has been successfully processed through Geidea Payment Gateway.</p>
+                    
+                    <h3>Payment Details:</h3>
+                    <ul>
+                        <li><strong>Transaction Reference:</strong> {{ object.reference }}</li>
+                        <li><strong>Amount:</strong> {{ object.amount }} {{ object.currency_id.name }}</li>
+                        <li><strong>Payment Method:</strong> {{ object.geidea_payment_method or 'Card Payment' }}</li>
+                        <li><strong>Transaction ID:</strong> {{ object.geidea_transaction_id }}</li>
+                        <li><strong>Date:</strong> {{ object.create_date.strftime('%Y-%m-%d %H:%M:%S') }}</li>
+                    </ul>
+                    
+                    % if object.geidea_card_last4:
+                    <p><strong>Card Used:</strong> **** **** **** {{ object.geidea_card_last4 }}</p>
+                    % endif
+                    
+                    <p>If you have any questions about this payment, please contact our support team.</p>
+                    
+                    <p>Thank you for your business!</p>
+                    
+                    <br/>
+                    <p>{{ object.company_id.name }}</p>
+                </div>
+            ]]></field>
+        </record>
+
+        <!-- Automated Action for Payment Confirmation Email -->
+        <record id="geidea_payment_email_automation" model="base.automation">
+            <field name="name">Send Geidea Payment Confirmation Email</field>
+            <field name="model_id" ref="payment.model_payment_transaction"/>
+            <field name="state">code</field>
+            <field name="trigger">on_write</field>
+            <field name="filter_domain">[('provider', '=', 'geidea'), ('state', '=', 'done')]</field>
+            <field name="code">
+                if record.partner_email and not record.is_post_processed:
+                    template = env.ref('geidea_payment.geidea_payment_confirmation_email')
+                    template.send_mail(record.id, force_send=True)
+                    record.is_post_processed = True
+            </field>
+        </record>
+
+    </data>
+</odoo>

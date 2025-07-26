@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Geidea Payment Acquirer Views -->
+        <record id="geidea_acquirer_form" model="ir.ui.view">
+            <field name="name">geidea.payment.acquirer.form</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='acquirer']" position="after">
+                    <group attrs="{'invisible': [('provider', '!=', 'geidea')]}">
+                        <group name="geidea_credentials" string="Geidea Credentials">
+                            <field name="geidea_merchant_id" 
+                                   attrs="{'required': [('provider', '=', 'geidea')]}"/>
+                            <field name="geidea_merchant_key" password="True"
+                                   attrs="{'required': [('provider', '=', 'geidea')]}"/>
+                            <field name="geidea_api_password" password="True"
+                                   attrs="{'required': [('provider', '=', 'geidea')]}"/>
+                            <field name="geidea_gateway_url" 
+                                   attrs="{'required': [('provider', '=', 'geidea')]}"/>
+                        </group>
+                        <group name="geidea_config" string="Configuration">
+                            <field name="geidea_callback_url" readonly="1"/>
+                        </group>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Configuration in Payment Settings -->
+        <record id="geidea_acquirer_settings" model="ir.ui.view">
+            <field name="name">geidea.payment.acquirer.settings</field>
+            <field name="model">payment.acquirer</field>
+            <field name="inherit_id" ref="payment.acquirer_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='provider']" position="after">
+                    <div attrs="{'invisible': [('provider', '!=', 'geidea')]}" class="alert alert-info">
+                        <strong>Geidea Payment Gateway Integration</strong>
+                        <br/>
+                        <p>This acquirer integrates with Geidea payment gateway to process online payments securely.</p>
+                        <ul>
+                            <li>Supports card payments (Visa, Mastercard, etc.)</li>
+                            <li>Real-time payment processing</li>
+                            <li>POS terminal integration</li>
+                            <li>Webhook notifications</li>
+                            <li>Refund capabilities</li>
+                        </ul>
+                        <p>
+                            <strong>Required:</strong> You need to have a Geidea merchant account to use this gateway.
+                            Contact Geidea support for merchant credentials.
+                        </p>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Test Connection Button -->
+        <record id="geidea_test_connection_action" model="ir.actions.server">
+            <field name="name">Test Geidea Connection</field>
+            <field name="model_id" ref="payment.model_payment_acquirer"/>
+            <field name="binding_model_id" ref="payment.model_payment_acquirer"/>
+            <field name="state">code</field>
+            <field name="code">
+                if records.provider == 'geidea':
+                    # Test connection logic would go here
+                    action = {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'message': 'Geidea connection test - feature available in full implementation',
+                            'type': 'info',
+                            'sticky': False,
+                        }
+                    }
+                else:
+                    action = {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'message': 'This action is only available for Geidea acquirers',
+                            'type': 'warning',
+                            'sticky': False,
+                        }
+                    }
+            </field>
+        </record>
+
+        <!-- Menu Item for Payment Acquirers -->
+        <record id="geidea_acquirer_menu" model="ir.ui.menu">
+            <field name="name">Geidea Gateway</field>
+            <field name="parent_id" ref="account.account_payments_menu"/>
+            <field name="action" ref="payment.action_payment_acquirer"/>
+            <field name="sequence">10</field>
+        </record>
+
+    </data>
+</odoo>
