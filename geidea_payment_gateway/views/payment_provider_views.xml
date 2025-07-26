@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payment Provider Configuration View -->
+    <record id="payment_provider_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">payment.provider.form.inherit.geidea</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='provider_credentials']" position="after">
+                <group string="Geidea Credentials" invisible="code != 'geidea'">
+                    <field name="geidea_merchant_id" password="True" class="oe_inline"/>
+                    <field name="geidea_api_key" password="True" class="oe_inline"/>
+                    <field name="geidea_api_password" password="True" class="oe_inline"/>
+                    <field name="geidea_webhook_secret" password="True" class="oe_inline"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Redirect Form Template -->
+    <template id="redirect_form" name="Geidea Redirect Form">
+        <div>
+            <p>Redirecting to Geidea payment gateway...</p>
+            <form t-att-action="api_url" method="post" id="geidea_payment_form">
+                <input type="hidden" name="merchantId" t-att-value="payment_data['merchantId']"/>
+                <input type="hidden" name="amount" t-att-value="payment_data['amount']"/>
+                <input type="hidden" name="currency" t-att-value="payment_data['currency']"/>
+                <input type="hidden" name="orderId" t-att-value="payment_data['orderId']"/>
+                <input type="hidden" name="returnUrl" t-att-value="payment_data['returnUrl']"/>
+                <input type="hidden" name="callbackUrl" t-att-value="payment_data['callbackUrl']"/>
+                <input type="hidden" name="language" t-att-value="payment_data['language']"/>
+                
+                <!-- Customer information -->
+                <input type="hidden" name="customerEmail" t-att-value="payment_data['customer']['email']"/>
+                <input type="hidden" name="customerPhone" t-att-value="payment_data['customer']['phone']"/>
+                
+                <!-- Billing information -->
+                <t t-if="payment_data.get('billing')">
+                    <input type="hidden" name="billingName" t-att-value="payment_data['billing']['name']"/>
+                    <input type="hidden" name="billingAddress" t-att-value="payment_data['billing']['address']['street']"/>
+                    <input type="hidden" name="billingCity" t-att-value="payment_data['billing']['address']['city']"/>
+                    <input type="hidden" name="billingCountry" t-att-value="payment_data['billing']['address']['country']"/>
+                </t>
+                
+                <button type="submit" style="display: none;">Submit</button>
+            </form>
+            
+            <script type="text/javascript">
+                document.getElementById('geidea_payment_form').submit();
+            </script>
+        </div>
+    </template>
+</odoo>
