@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sequence for Geidea Transactions -->
+        <record id="seq_geidea_transaction" model="ir.sequence">
+            <field name="name">Geidea Transaction</field>
+            <field name="code">geidea.transaction</field>
+            <field name="prefix">GDT</field>
+            <field name="padding">6</field>
+            <field name="number_next">1</field>
+            <field name="number_increment">1</field>
+        </record>
+
+        <!-- Default Geidea Payment Acquirer (Demo Data) -->
+        <record id="geidea_acquirer_demo" model="payment.acquirer.geidea">
+            <field name="name">Geidea Demo Acquirer</field>
+            <field name="merchant_id">DEMO_MERCHANT_123</field>
+            <field name="terminal_id">TERM_001</field>
+            <field name="api_key">demo_api_key</field>
+            <field name="api_secret">demo_api_secret</field>
+            <field name="environment">test</field>
+            <field name="device_type">windows</field>
+            <field name="connection_method">usb</field>
+            <field name="active">False</field>
+        </record>
+    </data>
+</odoo>

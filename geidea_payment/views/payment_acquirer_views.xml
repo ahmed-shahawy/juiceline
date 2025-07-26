@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Payment Acquirer Geidea Views -->
+    
+    <!-- Tree View -->
+    <record id="view_payment_acquirer_geidea_tree" model="ir.ui.view">
+        <field name="name">payment.acquirer.geidea.tree</field>
+        <field name="model">payment.acquirer.geidea</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Payment Acquirers">
+                <field name="name"/>
+                <field name="merchant_id"/>
+                <field name="terminal_id"/>
+                <field name="device_type"/>
+                <field name="environment"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_payment_acquirer_geidea_form" model="ir.ui.view">
+        <field name="name">payment.acquirer.geidea.form</field>
+        <field name="model">payment.acquirer.geidea</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Payment Acquirer">
+                <header>
+                    <button name="test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button class="oe_stat_button" type="object" name="test_connection" icon="fa-plug">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Test</span>
+                                <span class="o_stat_text">Connection</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Acquirer Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="basic_config">
+                            <field name="active"/>
+                            <field name="company_id"/>
+                            <field name="environment"/>
+                            <field name="device_type"/>
+                            <field name="connection_method"/>
+                        </group>
+                        <group name="credentials">
+                            <field name="merchant_id"/>
+                            <field name="terminal_id"/>
+                            <field name="api_key" password="True"/>
+                            <field name="api_secret" password="True"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="POS Configurations" name="pos_configs">
+                            <field name="pos_config_ids">
+                                <tree>
+                                    <field name="name"/>
+                                    <field name="current_session_state"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_payment_acquirer_geidea" model="ir.actions.act_window">
+        <field name="name">Geidea Payment Acquirers</field>
+        <field name="res_model">payment.acquirer.geidea</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first Geidea Payment Acquirer!
+            </p>
+            <p>
+                Configure your Geidea payment gateway settings to start accepting payments
+                through Geidea payment devices.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_geidea_payment_root"
+              name="Geidea Payment"
+              parent="point_of_sale.menu_point_root"
+              sequence="10"/>
+              
+    <menuitem id="menu_payment_acquirer_geidea"
+              name="Payment Acquirers"
+              parent="menu_geidea_payment_root"
+              action="action_payment_acquirer_geidea"
+              sequence="10"/>
+</odoo>

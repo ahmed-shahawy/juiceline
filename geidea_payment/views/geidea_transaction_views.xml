@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Transaction Views -->
+    
+    <!-- Tree View -->
+    <record id="view_geidea_transaction_tree" model="ir.ui.view">
+        <field name="name">geidea.transaction.tree</field>
+        <field name="model">geidea.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Transactions">
+                <field name="name"/>
+                <field name="transaction_id"/>
+                <field name="amount"/>
+                <field name="currency_id"/>
+                <field name="payment_method"/>
+                <field name="state" widget="badge"
+                       decoration-success="state in ('captured', 'authorized')"
+                       decoration-danger="state in ('error', 'cancelled')"
+                       decoration-warning="state == 'pending'"
+                       decoration-info="state == 'draft'"/>
+                <field name="processed_date"/>
+                <field name="device_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="view_geidea_transaction_form" model="ir.ui.view">
+        <field name="name">geidea.transaction.form</field>
+        <field name="model">geidea.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Transaction">
+                <header>
+                    <button name="process_payment" string="Process Payment" type="object" 
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="capture_payment" string="Capture Payment" type="object" 
+                            class="btn-success" invisible="state != 'authorized'"/>
+                    <button name="cancel_transaction" string="Cancel" type="object" 
+                            class="btn-secondary" invisible="state in ('captured', 'cancelled', 'error')"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="transaction_info">
+                            <field name="transaction_id"/>
+                            <field name="amount"/>
+                            <field name="currency_id"/>
+                            <field name="payment_method"/>
+                            <field name="processed_date"/>
+                        </group>
+                        <group name="device_info">
+                            <field name="device_id"/>
+                            <field name="acquirer_id"/>
+                            <field name="pos_order_id"/>
+                            <field name="pos_session_id"/>
+                            <field name="customer_id"/>
+                        </group>
+                    </group>
+                    <group name="payment_details" string="Payment Details">
+                        <group>
+                            <field name="card_number"/>
+                            <field name="card_type"/>
+                            <field name="authorization_code"/>
+                        </group>
+                        <group>
+                            <field name="receipt_number"/>
+                        </group>
+                    </group>
+                    <group name="error_info" string="Error Information" invisible="state != 'error'">
+                        <field name="error_message" nolabel="1"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_geidea_transaction" model="ir.actions.act_window">
+        <field name="name">Geidea Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No transactions found!
+            </p>
+            <p>
+                Payment transactions will appear here when processed through Geidea devices.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item -->
+    <menuitem id="menu_geidea_transaction"
+              name="Transactions"
+              parent="menu_geidea_payment_root"
+              action="action_geidea_transaction"
+              sequence="30"/>
+</odoo>
