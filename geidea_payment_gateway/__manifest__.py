@@ -2,8 +2,8 @@
 {
     'name': 'Geidea Payment Gateway',
     'version': '18.0.1.0.0',
-    'category': 'Accounting/Payment Providers',
-    'summary': 'Geidea Payment Gateway Integration for POS and eCommerce',
+    'category': 'Sales/Point of Sale',
+    'summary': 'Geidea Payment Gateway - Complete POS & eCommerce Payment Solution',
     'description': """
 Geidea Payment Gateway Integration
 ==================================
@@ -57,8 +57,10 @@ Features:
     },
     'installable': True,
     'auto_install': False,
-    'application': False,
+    'application': True,
     'license': 'LGPL-3',
     'price': 0.0,
     'currency': 'USD',
+    'images': ['static/description/icon.png'],
+    'support': 'community',
 }

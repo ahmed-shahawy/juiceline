@@ -1,103 +1,110 @@
-# Geidea Payment Gateway for Odoo 18
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geidea Payment Gateway for Odoo 18</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { width: 128px; height: 128px; margin: 0 auto 20px; }
+        h1 { color: #1e40af; margin-bottom: 10px; }
+        .subtitle { color: #6b7280; font-size: 18px; margin-bottom: 30px; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin: 30px 0; }
+        .feature-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; }
+        .feature-card h3 { color: #1e40af; margin-top: 0; }
+        .feature-list { list-style: none; padding: 0; }
+        .feature-list li { padding: 5px 0; }
+        .feature-list li:before { content: "✓ "; color: #10b981; font-weight: bold; }
+        .installation { background: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; margin: 30px 0; }
+        .security { background: #f0fdf4; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0; }
+        .requirements { background: #fef7f7; border-left: 4px solid #ef4444; padding: 20px; margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="icon.png" alt="Geidea Payment Gateway" class="logo">
+        <h1>Geidea Payment Gateway</h1>
+        <div class="subtitle">Complete Payment Solution for Odoo 18</div>
+    </div>
 
-![Geidea Logo](static/description/icon.png)
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h3>🏪 Point of Sale Integration</h3>
+            <ul class="feature-list">
+                <li>Seamless POS payment processing</li>
+                <li>Real-time transaction updates</li>
+                <li>Multiple payment methods</li>
+                <li>Epson printer integration</li>
+            </ul>
+        </div>
 
-## Complete Payment Gateway Integration
+        <div class="feature-card">
+            <h3>🛒 eCommerce Support</h3>
+            <ul class="feature-list">
+                <li>Website payment integration</li>
+                <li>Mobile-optimized forms</li>
+                <li>One-click checkout</li>
+                <li>Responsive design</li>
+            </ul>
+        </div>
 
-This module provides comprehensive integration with Geidea Payment Gateway, supporting both POS and eCommerce transactions with enterprise-grade security and multi-platform compatibility.
+        <div class="feature-card">
+            <h3>🌍 Multi-Platform</h3>
+            <ul class="feature-list">
+                <li>Windows POS systems</li>
+                <li>iOS mobile devices</li>
+                <li>Android tablets & phones</li>
+                <li>Web-based interfaces</li>
+            </ul>
+        </div>
 
-### Key Features
+        <div class="feature-card">
+            <h3>💰 Multi-Currency</h3>
+            <ul class="feature-list">
+                <li>GCC currencies (AED, SAR, KWD, QAR, BHD, OMR)</li>
+                <li>International (USD, EUR, GBP)</li>
+                <li>Real-time exchange rates</li>
+                <li>Automatic conversion</li>
+            </ul>
+        </div>
+    </div>
 
-#### 🏪 **Point of Sale Integration**
-- Seamless POS payment processing
-- Real-time transaction status updates
-- Support for multiple payment methods
-- Epson printer integration for receipts
+    <div class="security">
+        <h3>🔒 Enterprise Security & Compliance</h3>
+        <ul class="feature-list">
+            <li>PCI DSS compliance</li>
+            <li>End-to-end encryption</li>
+            <li>Secure webhook validation</li>
+            <li>Complete transaction auditing</li>
+            <li>Role-based access control</li>
+        </ul>
+    </div>
 
-#### 🛒 **eCommerce Support**
-- Website payment integration
-- Mobile-optimized payment forms
-- One-click checkout experience
+    <div class="installation">
+        <h3>⚡ Quick Installation</h3>
+        <ol>
+            <li><strong>Install Module:</strong> Find "Geidea Payment Gateway" in Apps menu</li>
+            <li><strong>Configure Provider:</strong> Accounting → Configuration → Payment Providers</li>
+            <li><strong>POS Setup:</strong> Point of Sale → Configuration → Point of Sale</li>
+            <li><strong>Test Integration:</strong> Enable test mode and process test transactions</li>
+        </ol>
+    </div>
 
-#### 🌍 **Multi-Platform Compatibility**
-- Windows POS systems
-- iOS mobile devices
-- Android tablets and phones
-- Web-based interfaces
+    <div class="requirements">
+        <h3>📋 Requirements</h3>
+        <ul class="feature-list">
+            <li><strong>Odoo Version:</strong> 18.0+</li>
+            <li><strong>Dependencies:</strong> payment, point_of_sale, account, website_sale</li>
+            <li><strong>Network:</strong> HTTPS enabled for webhooks</li>
+            <li><strong>Optional:</strong> Epson compatible printer for POS receipts</li>
+        </ul>
+    </div>
 
-#### 🔒 **Enterprise Security**
-- PCI DSS compliance
-- End-to-end encryption
-- Secure webhook validation
-- Transaction auditing
-
-#### 💰 **Multi-Currency Support**
-- GCC currencies (AED, SAR, KWD, QAR, BHD, OMR)
-- International currencies (USD, EUR, GBP)
-- Real-time exchange rates
-
-#### ⚡ **Real-Time Processing**
-- Instant payment confirmation
-- Live transaction monitoring
-- Automatic status updates
-- Comprehensive error handling
-
-### Installation & Configuration
-
-1. **Install the Module**
-   - Install from Apps menu or upload manually
-   - Enable in Point of Sale settings
-
-2. **Configure Payment Provider**
-   - Go to Accounting > Configuration > Payment Providers
-   - Create new Geidea provider
-   - Enter your Merchant ID, API Key, and API Password
-
-3. **POS Configuration**
-   - Go to Point of Sale > Configuration > Point of Sale
-   - Select your POS configuration
-   - Add Geidea payment method
-   - Configure Epson printer IP if needed
-
-4. **Test Integration**
-   - Enable test mode for development
-   - Process test transactions
-   - Verify webhook connectivity
-
-### Technical Requirements
-
-- **Odoo Version**: 18.0+
-- **Dependencies**: `payment`, `point_of_sale`, `account`, `website_sale`
-- **Network**: HTTPS enabled for webhooks
-- **Printer**: Epson compatible (optional)
-
-### API Integration
-
-The module provides full API integration with Geidea's payment gateway:
-
-- **Checkout API**: For payment processing
-- **Transaction API**: For status updates
-- **Refund API**: For refund processing
-- **Webhook API**: For real-time notifications
-
-### Security Features
-
-- **Signature Validation**: All webhook requests are validated
-- **Encrypted Storage**: Sensitive data is encrypted
-- **Audit Trail**: Complete transaction logging
-- **Access Control**: Role-based permissions
-
-### Support & Documentation
-
-For technical support and detailed documentation, please refer to:
-- Geidea Developer Portal
-- Odoo Documentation
-- Module GitHub Repository
-
-### License
-
-This module is licensed under LGPL-3. See LICENSE file for details.
-
----
-
-**© 2024 Ahmed Shahawy. All rights reserved.**
+    <div style="text-align: center; margin-top: 50px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+        <h3>Ready to Transform Your Payment Processing?</h3>
+        <p>Install Geidea Payment Gateway now and start accepting payments with confidence!</p>
+        <p style="color: #6b7280; font-size: 14px;">© 2024 Ahmed Shahawy. Licensed under LGPL-3.</p>
+    </div>
+</body>
+</html>
