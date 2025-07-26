@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <!-- Geidea Payment Acquirer Views -->
+        <record id="view_geidea_payment_acquirer_tree" model="ir.ui.view">
+            <field name="name">geidea.payment.acquirer.tree</field>
+            <field name="model">geidea.payment.acquirer</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Payment Acquirers">
+                    <field name="name"/>
+                    <field name="merchant_id"/>
+                    <field name="terminal_id"/>
+                    <field name="environment"/>
+                    <field name="connection_status"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_geidea_payment_acquirer_form" model="ir.ui.view">
+            <field name="name">geidea.payment.acquirer.form</field>
+            <field name="model">geidea.payment.acquirer</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Payment Acquirer">
+                    <header>
+                        <button name="test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                                <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+                            </button>
+                        </div>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name" placeholder="e.g. Geidea Main Terminal"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Geidea Configuration">
+                                <field name="merchant_id" required="1"/>
+                                <field name="terminal_id" required="1"/>
+                                <field name="api_key" required="1" password="True"/>
+                                <field name="api_secret" required="1" password="True"/>
+                                <field name="environment" required="1"/>
+                                <field name="currency_id"/>
+                                <field name="timeout"/>
+                            </group>
+                            <group string="API Configuration">
+                                <field name="test_api_url" attrs="{'invisible': [('environment', '=', 'production')]}"/>
+                                <field name="production_api_url" attrs="{'invisible': [('environment', '=', 'test')]}"/>
+                            </group>
+                        </group>
+                        <group string="POS Configuration">
+                            <field name="pos_config_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Status">
+                            <field name="connection_status" readonly="1"/>
+                            <field name="last_connection_test" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_geidea_payment_acquirer_search" model="ir.ui.view">
+            <field name="name">geidea.payment.acquirer.search</field>
+            <field name="model">geidea.payment.acquirer</field>
+            <field name="arch" type="xml">
+                <search string="Search Geidea Acquirers">
+                    <field name="name"/>
+                    <field name="merchant_id"/>
+                    <field name="terminal_id"/>
+                    <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                    <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter string="Test Environment" name="test_env" domain="[('environment', '=', 'test')]"/>
+                    <filter string="Production Environment" name="prod_env" domain="[('environment', '=', 'production')]"/>
+                    <separator/>
+                    <filter string="Connected" name="connected" domain="[('connection_status', '=', 'connected')]"/>
+                    <filter string="Error" name="error" domain="[('connection_status', '=', 'error')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Environment" name="group_environment" context="{'group_by': 'environment'}"/>
+                        <filter string="Connection Status" name="group_connection_status" context="{'group_by': 'connection_status'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Transaction Views -->
+        <record id="view_geidea_payment_transaction_tree" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.tree</field>
+            <field name="model">geidea.payment.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Payment Transactions" decoration-success="state == 'captured'" decoration-danger="state == 'error'" decoration-warning="state == 'pending'">
+                    <field name="name"/>
+                    <field name="acquirer_id"/>
+                    <field name="amount" widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="geidea_transaction_id"/>
+                    <field name="state"/>
+                    <field name="transaction_date"/>
+                    <field name="pos_order_id"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="view_geidea_payment_transaction_form" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.form</field>
+            <field name="model">geidea.payment.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Payment Transaction">
+                    <header>
+                        <button name="send_payment_request" string="Send Payment Request" type="object" 
+                                attrs="{'invisible': [('state', '!=', 'draft')]}" class="btn-primary"/>
+                        <button name="capture_payment" string="Capture Payment" type="object" 
+                                attrs="{'invisible': [('state', '!=', 'authorized')]}" class="btn-success"/>
+                        <button name="cancel_payment" string="Cancel Payment" type="object" 
+                                attrs="{'invisible': [('state', 'not in', ['pending', 'authorized'])]}" class="btn-warning"/>
+                        <field name="state" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name"/>
+                            <h1>
+                                <field name="name"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Transaction Details">
+                                <field name="acquirer_id" required="1"/>
+                                <field name="amount" widget="monetary"/>
+                                <field name="currency_id"/>
+                                <field name="transaction_date"/>
+                            </group>
+                            <group string="Geidea Response">
+                                <field name="geidea_transaction_id" readonly="1"/>
+                                <field name="geidea_order_id" readonly="1"/>
+                                <field name="authorized_date" readonly="1"/>
+                                <field name="captured_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="POS Integration">
+                            <field name="pos_order_id"/>
+                            <field name="pos_session_id"/>
+                        </group>
+                        <notebook>
+                            <page string="Response Data" attrs="{'invisible': [('response_data', '=', False)]}">
+                                <field name="response_data" widget="text"/>
+                            </page>
+                            <page string="Error Details" attrs="{'invisible': [('error_message', '=', False)]}">
+                                <field name="error_message" widget="text"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_geidea_payment_transaction_search" model="ir.ui.view">
+            <field name="name">geidea.payment.transaction.search</field>
+            <field name="model">geidea.payment.transaction</field>
+            <field name="arch" type="xml">
+                <search string="Search Geidea Transactions">
+                    <field name="name"/>
+                    <field name="geidea_transaction_id"/>
+                    <field name="acquirer_id"/>
+                    <field name="pos_order_id"/>
+                    <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <filter string="Authorized" name="authorized" domain="[('state', '=', 'authorized')]"/>
+                    <filter string="Captured" name="captured" domain="[('state', '=', 'captured')]"/>
+                    <filter string="Error" name="error" domain="[('state', '=', 'error')]"/>
+                    <separator/>
+                    <filter string="Today" name="today" domain="[('transaction_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Week" name="week" domain="[('transaction_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="This Month" name="month" domain="[('transaction_date', '>=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Acquirer" name="group_acquirer" context="{'group_by': 'acquirer_id'}"/>
+                        <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                        <filter string="Transaction Date" name="group_transaction_date" context="{'group_by': 'transaction_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Menu Items -->
+        <record id="menu_geidea_root" model="ir.ui.menu">
+            <field name="name">Geidea Payments</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="menu_geidea_config" model="ir.ui.menu">
+            <field name="name">Configuration</field>
+            <field name="parent_id" ref="menu_geidea_root"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="menu_geidea_transactions" model="ir.ui.menu">
+            <field name="name">Transactions</field>
+            <field name="parent_id" ref="menu_geidea_root"/>
+            <field name="sequence">20</field>
+        </record>
+
+        <!-- Actions -->
+        <record id="action_geidea_payment_acquirer" model="ir.actions.act_window">
+            <field name="name">Geidea Payment Acquirers</field>
+            <field name="res_model">geidea.payment.acquirer</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first Geidea Payment Acquirer
+                </p>
+                <p>
+                    Configure your Geidea payment devices to process payments in your POS system.
+                </p>
+            </field>
+        </record>
+
+        <record id="action_geidea_payment_transaction" model="ir.actions.act_window">
+            <field name="name">Geidea Payment Transactions</field>
+            <field name="res_model">geidea.payment.transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No payment transactions yet
+                </p>
+                <p>
+                    Payment transactions will appear here when processed through Geidea devices.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Actions -->
+        <menuitem id="menu_geidea_acquirers" 
+                  name="Payment Acquirers" 
+                  parent="menu_geidea_config" 
+                  action="action_geidea_payment_acquirer" 
+                  sequence="10"/>
+
+        <menuitem id="menu_geidea_payment_transactions" 
+                  name="Payment Transactions" 
+                  parent="menu_geidea_transactions" 
+                  action="action_geidea_payment_transaction" 
+                  sequence="10"/>
+
+        <!-- POS Config View Extension -->
+        <record id="view_pos_config_form_geidea" model="ir.ui.view">
+            <field name="name">pos.config.form.geidea</field>
+            <field name="model">pos.config</field>
+            <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='payment_method_ids']" position="after">
+                    <group string="Geidea Payment Integration" col="2">
+                        <field name="geidea_enabled"/>
+                        <field name="geidea_acquirer_id" 
+                               attrs="{'invisible': [('geidea_enabled', '=', False)], 'required': [('geidea_enabled', '=', True)]}"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>
