@@ -6,6 +6,12 @@ from odoo import fields, models
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
+    # POS configuration reference
+    pos_config_id = fields.Many2one(
+        comodel_name='pos.config',
+        string='POS Configuration',
+        help='Reference to the POS configuration settings'
+    )
     # Epson printer configuration
     pos_epson_printer_ip = fields.Char(
         related='pos_config_id.pos_epson_printer_ip',
