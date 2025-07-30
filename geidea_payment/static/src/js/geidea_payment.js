@@ -151,39 +151,13 @@ export class GeideaPaymentInterface extends PaymentInterface {
 // Register the payment interface
 registry.category("pos_payment_interfaces").add("geidea", GeideaPaymentInterface);
 
-// Override POS order to handle Geidea transactions
-import { Order } from "@point_of_sale/app/store/models";
-import { patch } from "@web/core/utils/patch";
-
-patch(Order.prototype, {
-    /**
-     * Override export_for_printing to include Geidea transaction info
-     */
-    export_for_printing() {
-        const result = super.export_for_printing();
-        
-        // Add Geidea transaction IDs to receipt
-        const geidea_payments = this.paymentlines.filter(line => 
-            line.payment_method.use_geidea && line.geidea_transaction_id
-        );
-        
-        if (geidea_payments.length > 0) {
-            result.geidea_transactions = geidea_payments.map(line => ({
-                transaction_id: line.geidea_transaction_id,
-                amount: line.amount
-            }));
-        }
-        
-        return result;
-    }
-});
-
 // Override PaymentLine to store Geidea transaction ID
 import { Paymentline } from "@point_of_sale/app/store/models";
+import { patch } from "@web/core/utils/patch";
 
 patch(Paymentline.prototype, {
-    setup() {
-        super.setup();
+    setup(options) {
+        super.setup(options);
         this.geidea_transaction_id = null;
     },
 
