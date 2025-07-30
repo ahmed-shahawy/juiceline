@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Geidea Payment Transaction Tree View -->
+        <record id="geidea_payment_tree_view" model="ir.ui.view">
+            <field name="name">geidea.payment.tree</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Payments" decoration-success="state=='success'" decoration-danger="state=='failed'">
+                    <field name="transaction_id"/>
+                    <field name="pos_order_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                    <field name="create_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Transaction Form View -->
+        <record id="geidea_payment_form_view" model="ir.ui.view">
+            <field name="name">geidea.payment.form</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Payment" create="false" edit="false">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,success,failed"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="transaction_id"/>
+                                <field name="pos_order_id"/>
+                                <field name="reference"/>
+                                <field name="payment_method_id"/>
+                            </group>
+                            <group>
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="create_date"/>
+                                <field name="state"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Error Details" attrs="{'invisible': [('state', '!=', 'failed')]}">
+                                <group>
+                                    <field name="error_message" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Response Data" attrs="{'invisible': [('response_data', '=', False)]}">
+                                <group>
+                                    <field name="response_data" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Transaction Search View -->
+        <record id="geidea_payment_search_view" model="ir.ui.view">
+            <field name="name">geidea.payment.search</field>
+            <field name="model">geidea.payment</field>
+            <field name="arch" type="xml">
+                <search string="Geidea Payments">
+                    <field name="transaction_id"/>
+                    <field name="pos_order_id"/>
+                    <field name="reference"/>
+                    <filter string="Success" name="success" domain="[('state', '=', 'success')]"/>
+                    <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                    <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Status" name="group_state" domain="[]" context="{'group_by': 'state'}"/>
+                        <filter string="Payment Method" name="group_payment_method" domain="[]" context="{'group_by': 'payment_method_id'}"/>
+                        <filter string="Date" name="group_date" domain="[]" context="{'group_by': 'create_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Transaction Action -->
+        <record id="action_geidea_payment" model="ir.actions.act_window">
+            <field name="name">Geidea Payments</field>
+            <field name="res_model">geidea.payment</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="geidea_payment_search_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Geidea payment transactions found
+                </p>
+                <p>
+                    Geidea payment transactions will appear here when customers pay using Geidea payment methods in the Point of Sale.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_geidea_payment"
+                  name="Geidea Payments"
+                  parent="point_of_sale.menu_pos_reporting"
+                  action="action_geidea_payment"
+                  sequence="15"/>
+
+    </data>
+</odoo>

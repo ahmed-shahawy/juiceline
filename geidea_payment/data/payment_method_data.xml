@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Geidea Payment Method -->
+        <record id="payment_method_geidea" model="pos.payment.method">
+            <field name="name">Geidea Payment</field>
+            <field name="use_geidea">True</field>
+            <field name="geidea_test_mode">True</field>
+            <field name="is_cash_count">False</field>
+            <field name="split_transactions">False</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Geidea Payment Method Form View -->
+        <record id="pos_payment_method_form_geidea" model="ir.ui.view">
+            <field name="name">pos.payment.method.form.geidea</field>
+            <field name="model">pos.payment.method</field>
+            <field name="inherit_id" ref="point_of_sale.pos_payment_method_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group[@name='payment_method_details']" position="after">
+                    <group string="Geidea Configuration" col="2" attrs="{'invisible': [('use_geidea', '=', False)]}">
+                        <field name="geidea_merchant_id" attrs="{'required': [('use_geidea', '=', True)]}"/>
+                        <field name="geidea_terminal_id" attrs="{'required': [('use_geidea', '=', True)]}"/>
+                        <field name="geidea_api_key" password="True"/>
+                        <field name="geidea_test_mode"/>
+                    </group>
+                    <group string="Geidea Settings" col="2">
+                        <field name="use_geidea"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Payment Method Tree View -->
+        <record id="pos_payment_method_tree_geidea" model="ir.ui.view">
+            <field name="name">pos.payment.method.tree.geidea</field>
+            <field name="model">pos.payment.method</field>
+            <field name="inherit_id" ref="point_of_sale.pos_payment_method_tree_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='name']" position="after">
+                    <field name="use_geidea" string="Geidea"/>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

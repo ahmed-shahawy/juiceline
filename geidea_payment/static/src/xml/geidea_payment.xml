@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <!-- Geidea Payment Screen -->
+    <t t-name="GeideaPaymentScreen" owl="1">
+        <div class="geidea-payment-screen">
+            <div class="geidea-header">
+                <h3>Geidea Payment Processing</h3>
+            </div>
+            <div class="geidea-content">
+                <div class="payment-info">
+                    <p><strong>Amount:</strong> <t t-esc="props.amount"/> <t t-esc="props.currency"/></p>
+                    <p><strong>Order:</strong> <t t-esc="props.order_ref"/></p>
+                </div>
+                <div class="payment-status">
+                    <t t-if="state.status === 'processing'">
+                        <div class="processing-animation">
+                            <i class="fa fa-spinner fa-spin fa-2x"></i>
+                            <p>Processing payment...</p>
+                        </div>
+                    </t>
+                    <t t-if="state.status === 'success'">
+                        <div class="success-message">
+                            <i class="fa fa-check-circle fa-2x text-success"></i>
+                            <p class="text-success">Payment successful!</p>
+                            <p><strong>Transaction ID:</strong> <t t-esc="state.transaction_id"/></p>
+                        </div>
+                    </t>
+                    <t t-if="state.status === 'error'">
+                        <div class="error-message">
+                            <i class="fa fa-exclamation-triangle fa-2x text-danger"></i>
+                            <p class="text-danger">Payment failed!</p>
+                            <p><t t-esc="state.error_message"/></p>
+                        </div>
+                    </t>
+                </div>
+                <div class="payment-actions">
+                    <t t-if="state.status === 'processing'">
+                        <button class="btn btn-secondary" t-on-click="cancel">Cancel</button>
+                    </t>
+                    <t t-if="state.status === 'success'">
+                        <button class="btn btn-primary" t-on-click="confirm">Continue</button>
+                    </t>
+                    <t t-if="state.status === 'error'">
+                        <button class="btn btn-warning" t-on-click="retry">Retry</button>
+                        <button class="btn btn-secondary" t-on-click="cancel">Cancel</button>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Geidea Payment Method Button -->
+    <t t-name="GeideaPaymentButton" owl="1">
+        <div class="geidea-payment-button" t-att-class="props.selected ? 'selected' : ''">
+            <div class="payment-method-icon">
+                <i class="fa fa-credit-card"></i>
+            </div>
+            <div class="payment-method-name">
+                <span>Geidea Payment</span>
+            </div>
+            <div class="payment-method-status" t-if="props.status">
+                <t t-if="props.status === 'pending'">
+                    <i class="fa fa-clock-o text-warning"></i>
+                </t>
+                <t t-if="props.status === 'done'">
+                    <i class="fa fa-check text-success"></i>
+                </t>
+                <t t-if="props.status === 'retry'">
+                    <i class="fa fa-exclamation-triangle text-danger"></i>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <!-- Geidea Receipt Template -->
+    <t t-name="GeideaReceiptLine" owl="1">
+        <div class="geidea-receipt-line">
+            <div class="payment-method">
+                <span>Geidea Payment</span>
+            </div>
+            <div class="transaction-details">
+                <div class="amount">
+                    <t t-esc="props.amount"/> <t t-esc="props.currency"/>
+                </div>
+                <div class="transaction-id" t-if="props.transaction_id">
+                    <small>ID: <t t-esc="props.transaction_id"/></small>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <!-- Geidea Configuration Form -->
+    <t t-name="GeideaConfigForm" owl="1">
+        <div class="geidea-config-form">
+            <h4>Geidea Payment Configuration</h4>
+            <div class="form-group">
+                <label for="merchant_id">Merchant ID:</label>
+                <input type="text" 
+                       id="merchant_id" 
+                       class="form-control" 
+                       t-model="state.merchant_id"
+                       placeholder="Enter Geidea Merchant ID"/>
+            </div>
+            <div class="form-group">
+                <label for="terminal_id">Terminal ID:</label>
+                <input type="text" 
+                       id="terminal_id" 
+                       class="form-control" 
+                       t-model="state.terminal_id"
+                       placeholder="Enter Geidea Terminal ID"/>
+            </div>
+            <div class="form-group">
+                <label for="api_key">API Key:</label>
+                <input type="password" 
+                       id="api_key" 
+                       class="form-control" 
+                       t-model="state.api_key"
+                       placeholder="Enter Geidea API Key"/>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" t-model="state.test_mode"/> Test Mode
+                </label>
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-primary" t-on-click="save">Save Configuration</button>
+                <button class="btn btn-secondary" t-on-click="test">Test Connection</button>
+            </div>
+        </div>
+    </t>
+
+</templates>
