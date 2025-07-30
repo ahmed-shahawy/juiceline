@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
-        
-        <!-- Geidea Payment Method -->
-        <record id="payment_method_geidea" model="pos.payment.method">
-            <field name="name">Geidea Payment</field>
-            <field name="use_geidea">True</field>
-            <field name="geidea_test_mode">True</field>
-            <field name="is_cash_count">False</field>
-            <field name="split_transactions">False</field>
-        </record>
-
-    </data>
+    <record id="payment_acquirer_geidea" model="payment.acquirer">
+        <field name="name">Geidea</field>
+        <field name="provider">geidea</field>
+        <field name="state">enabled</field>
+        <field name="geidea_merchant_id">TEST_MERCHANT_ID</field>
+        <field name="geidea_public_key">TEST_PUBLIC_KEY</field>
+        <!-- يمكنك إضافة أو تعديل الحقول التالية بحسب ما هو مطلوب في الموديل -->
+        <!-- <field name="geidea_terminal_id">TEST_TERMINAL_ID</field> -->
+        <!-- <field name="company_id" ref="base.main_company"/> -->
+        <!-- <field name="environment">test</field> -->
+    </record>
 </odoo>
