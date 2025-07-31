@@ -12,13 +12,13 @@ Element '<xpath expr="//group[@name='provider_details']">' cannot be located in 
 ## Solution Implemented
 This version fixes the XPath compatibility issues by:
 
-1. **Using Reliable Anchor Points**: Instead of searching for `group[@name='provider_details']`, we use `field[@name='code']` which is guaranteed to exist in payment provider forms.
+1. **Simplified View Inheritance**: Removed redundant fallback view records that were causing conflicts. Uses a single, clean inheritance approach.
 
-2. **Multiple Fallback Approaches**: 
-   - Primary: Add fields after the `code` field
-   - Fallback: Add fields at the end of the form if the primary approach fails
+2. **Optimized XPath Strategy**: Instead of searching for potentially missing elements like `group[@name='provider_details']`, the solution uses `<group position="after">` which is more universal and works with most Odoo form structures.
 
-3. **Odoo 18 Compatible Syntax**: Uses modern field attributes instead of deprecated `attrs` syntax.
+3. **Odoo 18 Compatible Syntax**: Uses modern field attributes and follows Odoo 18 best practices for payment provider modules.
+
+4. **Minimal Changes Approach**: The fix eliminates the dual-approach complexity and focuses on a single, robust solution.
 
 ## Installation
 1. Copy this module to your Odoo addons directory
@@ -45,6 +45,12 @@ This version fixes the XPath compatibility issues by:
 - **Views**: Compatible payment provider configuration forms
 - **Controllers**: Handles payment flow and webhooks
 - **Security**: Proper field-level security for sensitive data
+
+## Key Improvements from Original
+- **Single view inheritance record** instead of dual approach
+- **Simplified XPath expression** for better compatibility
+- **Cleaner code structure** with fewer potential conflicts
+- **Better maintainability** for future Odoo versions
 
 ## Compatibility
 - Odoo 18.0+
