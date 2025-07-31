@@ -42,5 +42,18 @@ After installation, go to:
 ## Notes
 
 - Payment icons have been temporarily removed to ensure compatibility
-- Icons can be added back once the correct external IDs for Odoo 18 are identified
+- To add payment icons back, you can:
+  1. Check the file `data/payment_provider_data_with_icons.xml` for alternative approaches
+  2. Try different external ID patterns like `payment.payment_icon_visa` (without 'cc_')
+  3. Create your own payment icons within the module
+  4. Use the alternative XML file by replacing the content of `payment_provider_data.xml`
 - The module is created in disabled state by default for security
+- This solution addresses the specific error: `ValueError('External ID not found in the system: payment.payment_icon_cc_visa')`
+
+## Troubleshooting
+
+If you still encounter external ID errors:
+1. Check what payment icons exist in your Odoo 18 installation
+2. Use the Odoo developer mode to inspect existing payment modules
+3. Modify the external ID references accordingly
+4. Consider creating custom payment icons instead of relying on system ones
