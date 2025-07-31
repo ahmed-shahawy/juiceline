@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="geidea_form" name="Geidea Payment Form">
+        <div class="card">
+            <div class="card-header">
+                <h4>Geidea Payment</h4>
+            </div>
+            <div class="card-body">
+                <form action="#" method="post" class="o_payment_form" 
+                      data-provider-code="geidea">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                    <input type="hidden" name="merchant_id" t-att-value="merchant_id"/>
+                    <input type="hidden" name="terminal_id" t-att-value="terminal_id"/>
+                    <input type="hidden" name="api_key" t-att-value="api_key"/>
+                    <input type="hidden" name="amount" t-att-value="amount"/>
+                    <input type="hidden" name="currency" t-att-value="currency"/>
+                    <input type="hidden" name="reference" t-att-value="reference"/>
+                    
+                    <div class="mb-3">
+                        <p>You will be redirected to Geidea to complete your payment securely.</p>
+                        <p><strong>Amount:</strong> <span t-esc="amount"/> <span t-esc="currency"/></p>
+                        <p><strong>Reference:</strong> <span t-esc="reference"/></p>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fa fa-credit-card"/> Pay with Geidea
+                    </button>
+                </form>
+            </div>
+        </div>
+    </template>
+</odoo>

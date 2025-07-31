@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="payment_provider_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">payment.provider.form.inherit.geidea</field>
+        <field name="model">payment.provider</field>
+        <field name="inherit_id" ref="payment.payment_provider_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='provider_credentials']" position="inside">
+                <group name="geidea_credentials" string="Geidea Credentials" 
+                       invisible="code != 'geidea'">
+                    <group>
+                        <field name="geidea_merchant_id" 
+                               password="True"
+                               placeholder="Enter your Geidea Merchant ID"/>
+                        <field name="geidea_terminal_id" 
+                               password="True"
+                               placeholder="Enter your Geidea Terminal ID"/>
+                    </group>
+                    <group>
+                        <field name="geidea_api_key" 
+                               password="True"
+                               placeholder="Enter your Geidea API Key"/>
+                        <field name="geidea_api_secret" 
+                               password="True"
+                               placeholder="Enter your Geidea API Secret"/>
+                    </group>
+                    <group>
+                        <field name="geidea_environment"/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> Please ensure you have obtained these credentials from your Geidea merchant account.
+                        <ul>
+                            <li><strong>Merchant ID:</strong> Your unique merchant identifier</li>
+                            <li><strong>Terminal ID:</strong> Your terminal identifier for payment processing</li>
+                            <li><strong>API Key:</strong> Your API access key</li>
+                            <li><strong>API Secret:</strong> Your API secret key (keep this secure)</li>
+                            <li><strong>Environment:</strong> Choose Test for development, Production for live transactions</li>
+                        </ul>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

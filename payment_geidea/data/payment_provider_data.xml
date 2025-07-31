@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Geidea Payment Provider -->
+        <record id="payment_provider_geidea" model="payment.provider">
+            <field name="name">Geidea</field>
+            <field name="code">geidea</field>
+            <field name="sequence">10</field>
+            <field name="state">disabled</field>
+            <field name="is_published">False</field>
+            <field name="allow_tokenization">False</field>
+            <field name="allow_express_checkout">False</field>
+            <field name="capture_manually">False</field>
+            <field name="support_fees">False</field>
+            <field name="support_refund">partial</field>
+            <field name="payment_icon_ids" eval="[(6, 0, [
+                ref('payment.payment_icon_cc_visa'),
+                ref('payment.payment_icon_cc_mastercard')
+            ])]"/>
+            <field name="pre_msg"><![CDATA[
+                <p>You will be redirected to the Geidea website to proceed with your payment.</p>
+            ]]></field>
+            <field name="pending_msg"><![CDATA[
+                <p>Your payment is being processed by Geidea.</p>
+                <p>Please wait, do not refresh this page.</p>
+            ]]></field>
+            <field name="auth_msg"><![CDATA[
+                <p>Your payment has been authorized but not yet captured.</p>
+                <p>It will be captured automatically when your order is processed.</p>
+            ]]></field>
+            <field name="done_msg"><![CDATA[
+                <p>Your payment has been processed successfully by Geidea.</p>
+                <p>Thank you for your business!</p>
+            ]]></field>
+            <field name="cancel_msg"><![CDATA[
+                <p>Your payment has been cancelled.</p>
+                <p>You can try again with a different payment method.</p>
+            ]]></field>
+        </record>
+    </data>
+</odoo>
