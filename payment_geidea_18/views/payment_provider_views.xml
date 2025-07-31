@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- 
+        Main payment provider form view inheritance for Geidea 
+        This addresses the original XPath error by using a more reliable anchor point
+        -->
+        <record id="payment_provider_form_inherit_geidea" model="ir.ui.view">
+            <field name="name">payment.provider.form.inherit.geidea</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_form"/>
+            <field name="arch" type="xml">
+                <!-- Try to find the code field as the anchor point -->
+                <field name="code" position="after">
+                    <!-- Geidea-specific configuration fields -->
+                    <group string="Geidea Configuration" 
+                           invisible="code != 'geidea'"
+                           groups="base.group_system">
+                        <field name="geidea_merchant_key" 
+                               string="Merchant Key"
+                               required="code == 'geidea' and state != 'disabled'"
+                               groups="base.group_system"/>
+                        <field name="geidea_merchant_password" 
+                               string="Merchant Password"
+                               password="True"
+                               required="code == 'geidea' and state != 'disabled'"
+                               groups="base.group_system"/>
+                        <field name="geidea_merchant_public_key" 
+                               string="Merchant Public Key"
+                               required="code == 'geidea' and state != 'disabled'"
+                               groups="base.group_system"/>
+                    </group>
+                </field>
+            </field>
+        </record>
+
+        <!-- 
+        Alternative approach: Try to add fields at the end of the form if the above fails 
+        This is a fallback in case the 'code' field inheritance doesn't work
+        -->
+        <record id="payment_provider_form_inherit_geidea_fallback" model="ir.ui.view">
+            <field name="name">payment.provider.form.inherit.geidea.fallback</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_form"/>
+            <field name="arch" type="xml">
+                <!-- Add at the end of the form as a last resort -->
+                <form position="inside">
+                    <group string="Geidea Payment Gateway Settings" 
+                           invisible="code != 'geidea'"
+                           groups="base.group_system">
+                        <field name="geidea_merchant_key" 
+                               string="Merchant Key"
+                               required="code == 'geidea' and state != 'disabled'"/>
+                        <field name="geidea_merchant_password" 
+                               string="Merchant Password"
+                               password="True"
+                               required="code == 'geidea' and state != 'disabled'"/>
+                        <field name="geidea_merchant_public_key" 
+                               string="Merchant Public Key"
+                               required="code == 'geidea' and state != 'disabled'"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

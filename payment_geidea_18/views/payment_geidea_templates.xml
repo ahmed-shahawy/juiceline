@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Payment form template for Geidea -->
+        <template id="geidea_form" name="Geidea Payment Form">
+            <form method="post" target="_self" action="/payment/geidea/payment" class="o_payment_form">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <input type="hidden" name="merchant_key" t-att-value="merchant_key"/>
+                <input type="hidden" name="amount" t-att-value="amount"/>
+                <input type="hidden" name="currency" t-att-value="currency"/>
+                <input type="hidden" name="reference" t-att-value="reference"/>
+                <input type="hidden" name="return_url" t-att-value="return_url"/>
+                
+                <div class="mb-3">
+                    <label for="cardholder_name" class="form-label">Cardholder Name</label>
+                    <input type="text" class="form-control" id="cardholder_name" name="cardholder_name" required="true"/>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="card_number" class="form-label">Card Number</label>
+                    <input type="text" class="form-control" id="card_number" name="card_number" placeholder="1234 5678 9012 3456" required="true"/>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="expiry_month" class="form-label">Expiry Month</label>
+                        <select class="form-control" id="expiry_month" name="expiry_month" required="true">
+                            <option value="">Month</option>
+                            <option value="01">01</option>
+                            <option value="02">02</option>
+                            <option value="03">03</option>
+                            <option value="04">04</option>
+                            <option value="05">05</option>
+                            <option value="06">06</option>
+                            <option value="07">07</option>
+                            <option value="08">08</option>
+                            <option value="09">09</option>
+                            <option value="10">10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="expiry_year" class="form-label">Expiry Year</label>
+                        <select class="form-control" id="expiry_year" name="expiry_year" required="true">
+                            <option value="">Year</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                            <option value="2026">2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
+                            <option value="2029">2029</option>
+                            <option value="2030">2030</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="cvv" class="form-label">CVV</label>
+                    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" maxlength="4" required="true"/>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Pay Now</button>
+            </form>
+        </template>
+    </data>
+</odoo>
