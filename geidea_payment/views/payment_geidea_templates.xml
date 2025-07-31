@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        
+        <template id="redirect_form" name="Geidea Redirect Form">
+            <form name="geidea_payment_form" method="post" target="_self">
+                <input type="hidden" name="merchant_id" t-att-value="merchant_id"/>
+                <input type="hidden" name="amount" t-att-value="amount"/>
+                <input type="hidden" name="currency" t-att-value="currency"/>
+                <input type="hidden" name="order_id" t-att-value="order_id"/>
+                <input type="hidden" name="return_url" t-att-value="return_url"/>
+            </form>
+        </template>
+        
+    </data>
+</odoo>
