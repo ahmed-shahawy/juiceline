@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Payment Form Template -->
+    <template id="geidea_form" name="Geidea Payment Form">
+        <div class="geidea-payment-form">
+            <form method="post" t-att-action="api_url" class="payment-form">
+                <input type="hidden" name="merchantId" t-att-value="merchant_id"/>
+                <input type="hidden" name="orderId" t-att-value="order_id"/>
+                <input type="hidden" name="amount" t-att-value="amount"/>
+                <input type="hidden" name="currency" t-att-value="currency"/>
+                <input type="hidden" name="customerEmail" t-att-value="customer_email"/>
+                <input type="hidden" name="returnUrl" t-att-value="return_url"/>
+                <input type="hidden" name="callbackUrl" t-att-value="callback_url"/>
+                <input type="hidden" name="timestamp" t-att-value="timestamp"/>
+                
+                <div class="form-group">
+                    <label for="cardNumber">Card Number</label>
+                    <input type="text" id="cardNumber" name="cardNumber" class="form-control" 
+                           placeholder="1234 5678 9012 3456" maxlength="19" required="required"/>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="expiryMonth">Expiry Month</label>
+                            <select id="expiryMonth" name="expiryMonth" class="form-control" required="required">
+                                <option value="">MM</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="expiryYear">Expiry Year</label>
+                            <select id="expiryYear" name="expiryYear" class="form-control" required="required">
+                                <option value="">YYYY</option>
+                                <t t-foreach="range(2024, 2035)" t-as="year">
+                                    <option t-att-value="year" t-esc="year"/>
+                                </t>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cvv">CVV</label>
+                    <input type="password" id="cvv" name="cvv" class="form-control" 
+                           placeholder="123" maxlength="4" required="required"/>
+                </div>
+                
+                <div class="form-group">
+                    <label for="cardHolderName">Cardholder Name</label>
+                    <input type="text" id="cardHolderName" name="cardHolderName" class="form-control" 
+                           placeholder="John Doe" required="required"/>
+                </div>
+                
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        Pay <span t-esc="amount"/> <span t-esc="currency"/>
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <script>
+            // Basic form validation and formatting
+            document.addEventListener('DOMContentLoaded', function() {
+                const cardNumber = document.getElementById('cardNumber');
+                const cvv = document.getElementById('cvv');
+                
+                // Format card number
+                cardNumber.addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s/g, '');
+                    let formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
+                    if (formattedValue !== e.target.value) {
+                        e.target.value = formattedValue;
+                    }
+                });
+                
+                // Restrict CVV to numbers only
+                cvv.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/\D/g, '');
+                });
+                
+                // Restrict card number to numbers and spaces only
+                cardNumber.addEventListener('input', function(e) {
+                    e.target.value = e.target.value.replace(/[^\d\s]/g, '');
+                });
+            });
+        </script>
+        
+        <style>
+            .geidea-payment-form {
+                max-width: 400px;
+                margin: 0 auto;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                background-color: #f9f9f9;
+            }
+            
+            .geidea-payment-form .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .geidea-payment-form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #333;
+            }
+            
+            .geidea-payment-form .form-control {
+                width: 100%;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 14px;
+            }
+            
+            .geidea-payment-form .btn {
+                padding: 12px 30px;
+                border: none;
+                border-radius: 4px;
+                font-size: 16px;
+                cursor: pointer;
+                text-decoration: none;
+                display: inline-block;
+            }
+            
+            .geidea-payment-form .btn-primary {
+                background-color: #007bff;
+                color: white;
+            }
+            
+            .geidea-payment-form .btn:hover {
+                opacity: 0.9;
+            }
+        </style>
+    </template>
+    
+    <!-- Payment Status Template -->
+    <template id="geidea_payment_status" name="Geidea Payment Status">
+        <t t-call="website.layout">
+            <div class="container mt-5">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <t t-if="success">
+                                    <div class="alert alert-success">
+                                        <i class="fa fa-check-circle fa-3x mb-3 text-success"></i>
+                                        <h4>Payment Successful!</h4>
+                                        <p>Your payment has been processed successfully.</p>
+                                        <p><strong>Transaction ID:</strong> <span t-esc="transaction_id"/></p>
+                                    </div>
+                                </t>
+                                <t t-else="">
+                                    <div class="alert alert-danger">
+                                        <i class="fa fa-times-circle fa-3x mb-3 text-danger"></i>
+                                        <h4>Payment Failed</h4>
+                                        <p t-esc="error_message or 'An error occurred while processing your payment.'"/>
+                                        <p>Please try again or contact support if the problem persists.</p>
+                                    </div>
+                                </t>
+                                <a href="/" class="btn btn-primary">Return to Home</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

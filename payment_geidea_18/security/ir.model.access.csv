@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_geidea_payment_acquirer_user,geidea.payment.acquirer.user,model_geidea_payment_acquirer,base.group_user,1,0,0,0
+access_geidea_payment_acquirer_manager,geidea.payment.acquirer.manager,model_geidea_payment_acquirer,account.group_account_manager,1,1,1,1
+access_geidea_payment_acquirer_system,geidea.payment.acquirer.system,model_geidea_payment_acquirer,base.group_system,1,1,1,1
+access_payment_provider_geidea_user,payment.provider.geidea.user,payment.model_payment_provider,base.group_user,1,0,0,0
+access_payment_provider_geidea_manager,payment.provider.geidea.manager,payment.model_payment_provider,account.group_account_manager,1,1,1,0
+access_payment_transaction_geidea_user,payment.transaction.geidea.user,payment.model_payment_transaction,base.group_user,1,0,0,0
+access_payment_transaction_geidea_manager,payment.transaction.geidea.manager,payment.model_payment_transaction,account.group_account_manager,1,1,1,0
