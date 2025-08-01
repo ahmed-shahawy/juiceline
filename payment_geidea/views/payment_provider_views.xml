@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Geidea Payment Provider Configuration Form -->
+        <record id="payment_provider_form_geidea" model="ir.ui.view">
+            <field name="name">payment.provider.form.geidea</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='configuration']" position="inside">
+                    <group name="geidea_credentials" string="Geidea Credentials" 
+                           attrs="{'invisible': [('code', '!=', 'geidea')]}">
+                        <field name="geidea_merchant_id" password="True" required="True"
+                               attrs="{'required': [('code', '=', 'geidea'), ('state', '!=', 'disabled')]}"/>
+                        <field name="geidea_api_key" password="True" required="True"
+                               attrs="{'required': [('code', '=', 'geidea'), ('state', '!=', 'disabled')]}"/>
+                        <field name="geidea_merchant_password" password="True" required="True"
+                               attrs="{'required': [('code', '=', 'geidea'), ('state', '!=', 'disabled')]}"/>
+                    </group>
+                    
+                    <group name="geidea_configuration" string="Geidea Configuration" 
+                           attrs="{'invisible': [('code', '!=', 'geidea')]}">
+                        <field name="geidea_api_url" 
+                               attrs="{'readonly': [('state', '=', 'enabled')]}"/>
+                        <field name="geidea_enable_tokenization"/>
+                        <field name="geidea_enable_express_checkout"/>
+                        <field name="geidea_pos_integration"/>
+                    </group>
+                </xpath>
+                
+                <!-- Add help message for Geidea configuration -->
+                <xpath expr="//page[@name='configuration']" position="inside">
+                    <div class="alert alert-info" role="alert" 
+                         attrs="{'invisible': [('code', '!=', 'geidea')]}">
+                        <h4>Geidea Payment Gateway Setup</h4>
+                        <p>
+                            To configure Geidea payment provider:
+                            <br/>• Contact Geidea to obtain your Merchant ID, API Key, and Merchant Password
+                            <br/>• Use the test API URL (https://api-test.geidea.net) for testing
+                            <br/>• Use the production API URL (https://api.geidea.net) for live transactions
+                            <br/>• Enable tokenization to allow customers to save payment methods
+                            <br/>• Enable POS integration for in-store payments
+                        </p>
+                        <p>
+                            <strong>Supported Currencies:</strong> EGP, USD, EUR, AED, SAR, KWD, QAR, BHD
+                            <br/>
+                            <strong>Supported Countries:</strong> Egypt, UAE, Saudi Arabia, Kuwait, Qatar, Bahrain, Jordan, Lebanon
+                        </p>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Add Geidea to payment provider list -->
+        <record id="payment_provider_list_geidea" model="ir.ui.view">
+            <field name="name">payment.provider.list.geidea</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//kanban" position="inside">
+                    <t t-if="record.code.raw_value == 'geidea'">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_image">
+                                <img t-att-src="kanban_image('payment.provider', 'image_128', record.id.raw_value)" alt="Geidea"/>
+                            </div>
+                            <div class="oe_kanban_details">
+                                <strong class="o_kanban_record_title">
+                                    <field name="display_name"/>
+                                </strong>
+                                <div class="o_kanban_record_subtitle">
+                                    <field name="state" widget="label_selection" 
+                                           options="{'classes': {'disabled': 'default', 'enabled': 'success', 'test': 'warning'}}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

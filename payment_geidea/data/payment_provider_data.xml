@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Geidea Payment Provider -->
+        <record id="payment_provider_geidea" model="payment.provider">
+            <field name="name">Geidea</field>
+            <field name="code">geidea</field>
+            <field name="state">disabled</field>
+            <field name="is_published">False</field>
+            <field name="company_id" ref="base.main_company"/>
+            
+            <!-- Basic provider settings -->
+            <field name="payment_icon_ids" eval="[(6, 0, [ref('payment.payment_icon_cc_visa'), ref('payment.payment_icon_cc_mastercard')])]"/>
+            <field name="support_authorization">True</field>
+            <field name="support_tokenization">True</field>
+            <field name="support_express_checkout">True</field>
+            <field name="support_refund">partial</field>
+            
+            <!-- Geidea specific settings -->
+            <field name="geidea_api_url">https://api.geidea.net</field>
+            <field name="geidea_enable_tokenization">False</field>
+            <field name="geidea_enable_express_checkout">False</field>
+            <field name="geidea_pos_integration">False</field>
+            
+            <!-- Default maximum amount (adjust as needed) -->
+            <field name="maximum_amount">1000000.0</field>
+        </record>
+
+        <!-- Currency support for Geidea (Middle East and international currencies) -->
+        <record id="payment_provider_geidea_currency_egp" model="payment.provider.currency">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="currency_id" ref="base.EGP"/>
+        </record>
+        
+        <record id="payment_provider_geidea_currency_usd" model="payment.provider.currency">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="currency_id" ref="base.USD"/>
+        </record>
+        
+        <record id="payment_provider_geidea_currency_eur" model="payment.provider.currency">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="currency_id" ref="base.EUR"/>
+        </record>
+        
+        <record id="payment_provider_geidea_currency_aed" model="payment.provider.currency">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="currency_id" ref="base.AED"/>
+        </record>
+        
+        <record id="payment_provider_geidea_currency_sar" model="payment.provider.currency">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="currency_id" ref="base.SAR"/>
+        </record>
+
+        <!-- Country support for Geidea (Middle East and Africa) -->
+        <record id="payment_provider_geidea_country_eg" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.eg"/>
+        </record>
+        
+        <record id="payment_provider_geidea_country_ae" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.ae"/>
+        </record>
+        
+        <record id="payment_provider_geidea_country_sa" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.sa"/>
+        </record>
+        
+        <record id="payment_provider_geidea_country_kw" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.kw"/>
+        </record>
+        
+        <record id="payment_provider_geidea_country_qa" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.qa"/>
+        </record>
+        
+        <record id="payment_provider_geidea_country_bh" model="payment.provider.country">
+            <field name="provider_id" ref="payment_provider_geidea"/>
+            <field name="country_id" ref="base.bh"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Geidea Payment Form Template -->
+        <template id="geidea_form" name="Geidea Payment Form">
+            <form t-att-action="tx_values['api_url'] + '/v1/payment/checkout'" method="post" target="_self">
+                <input type="hidden" name="merchantId" t-att-value="tx_values['geidea_values']['merchantId']"/>
+                <input type="hidden" name="orderId" t-att-value="tx_values['geidea_values']['orderId']"/>
+                <input type="hidden" name="amount" t-att-value="tx_values['geidea_values']['amount']"/>
+                <input type="hidden" name="currency" t-att-value="tx_values['geidea_values']['currency']"/>
+                <input type="hidden" name="returnUrl" t-att-value="tx_values['geidea_values']['returnUrl']"/>
+                <input type="hidden" name="callbackUrl" t-att-value="tx_values['geidea_values']['callbackUrl']"/>
+                <input type="hidden" name="customerEmail" t-att-value="tx_values['geidea_values']['customerEmail']"/>
+                <input type="hidden" name="language" t-att-value="tx_values['geidea_values']['language']"/>
+                
+                <!-- Tokenization fields if enabled -->
+                <t t-if="tx_values['geidea_values'].get('tokenization')">
+                    <input type="hidden" name="tokenization" value="true"/>
+                    <input type="hidden" name="tokenId" t-att-value="tx_values['geidea_values'].get('tokenId', '')"/>
+                </t>
+                
+                <!-- Submit button will be auto-clicked by JavaScript -->
+                <input type="submit" style="display: none;"/>
+            </form>
+        </template>
+
+        <!-- Geidea Payment Button (for direct integration) -->
+        <template id="geidea_button" name="Geidea Payment Button">
+            <button type="button" class="btn btn-primary btn-lg btn-block o_payment_form_pay" 
+                    t-att-data-provider-id="provider.id"
+                    disabled="true">
+                <i class="fa fa-lock"/> Pay with Geidea
+            </button>
+        </template>
+
+        <!-- Geidea Token Form (for saved payment methods) -->
+        <template id="geidea_token_form" name="Geidea Token Payment Form">
+            <form t-att-action="tx_values['api_url'] + '/v1/payment/token'" method="post" target="_self">
+                <input type="hidden" name="merchantId" t-att-value="tx_values['geidea_values']['merchantId']"/>
+                <input type="hidden" name="tokenId" t-att-value="tx_values['geidea_values']['tokenId']"/>
+                <input type="hidden" name="orderId" t-att-value="tx_values['geidea_values']['orderId']"/>
+                <input type="hidden" name="amount" t-att-value="tx_values['geidea_values']['amount']"/>
+                <input type="hidden" name="currency" t-att-value="tx_values['geidea_values']['currency']"/>
+                <input type="hidden" name="returnUrl" t-att-value="tx_values['geidea_values']['returnUrl']"/>
+                <input type="hidden" name="callbackUrl" t-att-value="tx_values['geidea_values']['callbackUrl']"/>
+                
+                <!-- Submit button will be auto-clicked by JavaScript -->
+                <input type="submit" style="display: none;"/>
+            </form>
+        </template>
+
+        <!-- Express Checkout Button -->
+        <template id="geidea_express_checkout" name="Geidea Express Checkout">
+            <div class="o_payment_form_express" t-if="provider.geidea_enable_express_checkout">
+                <h4>Express Checkout</h4>
+                <button type="button" class="btn btn-success btn-lg btn-block o_payment_form_express_geidea" 
+                        t-att-data-provider-id="provider.id">
+                    <i class="fa fa-bolt"/> Pay with Geidea Express
+                </button>
+                <hr/>
+            </div>
+        </template>
+
+        <!-- Payment method icon -->
+        <template id="geidea_icon" name="Geidea Payment Icon">
+            <span class="payment_icon_geidea">
+                <i class="fa fa-credit-card" style="font-size: 2em; color: #2c5aa0;"/>
+            </span>
+        </template>
+    </data>
+</odoo>
