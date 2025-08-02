@@ -9,6 +9,12 @@ class ResConfigSettings(models.TransientModel):
     bonat_merchant_name = fields.Char(related='company_id.bonat_merchant_name', readonly=False)
     bonat_merchant_id = fields.Char(related='company_id.bonat_merchant_id', readonly=False)
     # bonat_discount_percentage_product_id = fields.Many2one(related='company_id.bonat_discount_percentage_product_id', readonly=False)
+    
+    currency_provider = fields.Selection([
+        ('manual', 'Manual'),
+        ('auto', 'Automatic'),
+        ('geidea', 'Geidea'),
+    ], string='Currency Provider', default='manual')
 
     @api.onchange('enable_bonat_integration')
     def _onchange_enable_bonat_integration(self):
