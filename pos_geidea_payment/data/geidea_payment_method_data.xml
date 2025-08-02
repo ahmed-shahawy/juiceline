@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Default Payment Method for Geidea -->
+    <record id="payment_method_geidea" model="pos.payment.method">
+        <field name="name">Geidea Payment</field>
+        <field name="use_payment_terminal">geidea</field>
+        <field name="use_geidea_payment">True</field>
+        <field name="geidea_payment_type">card</field>
+    </record>
+
+    <!-- Sequence for Transaction IDs -->
+    <record id="sequence_geidea_transaction" model="ir.sequence">
+        <field name="name">Geidea Transaction</field>
+        <field name="code">geidea.transaction</field>
+        <field name="prefix">GID</field>
+        <field name="padding">8</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+
+    <!-- Cron Job for Device Status Check -->
+    <record id="cron_geidea_device_status" model="ir.cron">
+        <field name="name">Geidea: Check Device Status</field>
+        <field name="model_id" ref="model_geidea_device"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_check_device_status()</field>
+        <field name="interval_number">5</field>
+        <field name="interval_type">minutes</field>
+        <field name="numbercall">-1</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <!-- Geidea Device Status Component Template -->
+    <t t-name="pos_geidea_payment.GeideaDeviceStatus">
+        <div class="geidea-device-status">
+            <div class="device-status-header">
+                <h5>
+                    <i class="fa fa-credit-card me-2"/>
+                    Geidea Devices
+                    <span t-att-class="'badge ms-2 ' + statusClass">
+                        <t t-esc="statusText"/>
+                    </span>
+                </h5>
+            </div>
+            
+            <div class="device-list" t-if="devices.length > 0">
+                <div t-foreach="devices" t-as="device" t-key="device.id" 
+                     class="device-item d-flex align-items-center p-2 border-bottom"
+                     t-on-click="() => onDeviceClick(device)">
+                    <div class="device-icon me-2">
+                        <i t-att-class="'fa ' + getDeviceIcon(device)"/>
+                    </div>
+                    <div class="device-info flex-grow-1">
+                        <div class="device-name fw-bold">
+                            <t t-esc="device.name"/>
+                        </div>
+                        <div class="device-details small text-muted">
+                            <t t-esc="device.platform"/> • <t t-esc="device.connection_type"/>
+                            <span t-if="device.ip_address"> • <t t-esc="device.ip_address"/></span>
+                        </div>
+                    </div>
+                    <div class="device-status">
+                        <span t-att-class="'badge ' + getDeviceStatusClass(device)">
+                            <t t-esc="device.status"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="no-devices text-center text-muted p-3" t-if="devices.length === 0">
+                <i class="fa fa-exclamation-triangle fa-2x mb-2"/>
+                <p>No Geidea devices configured</p>
+                <small>Configure devices in Geidea settings</small>
+            </div>
+        </div>
+    </t>
+
+    <!-- Payment Screen Geidea Status -->
+    <t t-name="pos_geidea_payment.PaymentScreenStatus">
+        <div class="geidea-payment-status">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="payment-status-info">
+                    <i class="fa fa-credit-card me-2"/>
+                    <span t-esc="paymentStatusDisplay"/>
+                </div>
+                <div class="device-status-indicator">
+                    <span t-att-class="'badge ' + statusClass">
+                        <t t-esc="statusText"/>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="payment-progress mt-2" t-if="showProgress">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 100%"/>
+                </div>
+                <small class="text-muted mt-1">Processing payment...</small>
+            </div>
+        </div>
+    </t>
+
+    <!-- Geidea Settings Panel -->
+    <t t-name="pos_geidea_payment.SettingsPanel">
+        <div class="geidea-settings-panel">
+            <div class="settings-header">
+                <h4>
+                    <i class="fa fa-cog me-2"/>
+                    Geidea Payment Settings
+                </h4>
+            </div>
+            
+            <div class="settings-content">
+                <div class="form-group">
+                    <label>Environment</label>
+                    <div class="form-control-static">
+                        <span t-esc="config.environment"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Merchant ID</label>
+                    <div class="form-control-static">
+                        <span t-esc="config.merchant_id"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Terminal ID</label>
+                    <div class="form-control-static">
+                        <span t-esc="config.terminal_id"/>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Connection Status</label>
+                    <div class="form-control-static">
+                        <span t-att-class="'badge ' + getConnectionStatusClass()">
+                            <t t-esc="config.connection_status"/>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-actions mt-3">
+                <button class="btn btn-primary btn-sm" t-on-click="testConnection">
+                    <i class="fa fa-plug me-1"/>
+                    Test Connection
+                </button>
+                <button class="btn btn-secondary btn-sm ms-2" t-on-click="refreshDevices">
+                    <i class="fa fa-refresh me-1"/>
+                    Refresh Devices
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

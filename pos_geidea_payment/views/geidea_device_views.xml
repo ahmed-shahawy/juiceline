@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Device Form View -->
+    <record id="view_geidea_device_form" model="ir.ui.view">
+        <field name="name">geidea.device.form</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Device">
+                <header>
+                    <button name="test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                    <button name="reset_device" string="Reset Device" type="object" class="btn-secondary"/>
+                    <field name="status" widget="statusbar" statusbar_visible="offline,online,busy,error,maintenance"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_geidea_transaction_from_device)d" type="action" class="oe_stat_button" icon="fa-credit-card">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_transactions"/></span>
+                                <span class="o_stat_text">Transactions</span>
+                            </div>
+                        </button>
+                        <button name="%(action_geidea_transaction_from_device)d" type="action" class="oe_stat_button" icon="fa-money" context="{'search_default_successful': 1}">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value"><field name="total_amount" widget="monetary"/></span>
+                                <span class="o_stat_text">Total Amount</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1><field name="name" placeholder="Device Name"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Device Information">
+                            <field name="active"/>
+                            <field name="device_id" required="1"/>
+                            <field name="serial_number"/>
+                            <field name="model"/>
+                        </group>
+                        <group string="Status">
+                            <field name="last_seen"/>
+                            <field name="last_transaction_date"/>
+                            <field name="error_count" invisible="error_count == 0"/>
+                            <field name="error_message" invisible="not error_message"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Configuration" name="configuration">
+                            <group>
+                                <group string="Platform">
+                                    <field name="platform" required="1"/>
+                                    <field name="platform_version"/>
+                                </group>
+                                <group string="Geidea Configuration">
+                                    <field name="config_id" required="1"/>
+                                    <field name="pos_config_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Network" name="network">
+                            <group>
+                                <group string="Connection">
+                                    <field name="connection_type"/>
+                                    <field name="ip_address"/>
+                                    <field name="port"/>
+                                    <field name="mac_address"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Capabilities" name="capabilities">
+                            <group>
+                                <group string="Payment Methods">
+                                    <field name="supports_contactless"/>
+                                    <field name="supports_chip_pin"/>
+                                    <field name="supports_magstripe"/>
+                                    <field name="supports_mobile_payment"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Settings" name="settings">
+                            <group>
+                                <group string="Device Settings">
+                                    <field name="receipt_settings" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                                <group string="Display Settings">
+                                    <field name="display_settings" widget="ace" options="{'mode': 'json'}"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Statistics" name="statistics">
+                            <group>
+                                <group string="Transaction Statistics">
+                                    <field name="total_transactions"/>
+                                    <field name="successful_transactions"/>
+                                    <field name="failed_transactions"/>
+                                    <field name="total_amount" widget="monetary"/>
+                                    <field name="currency_id" invisible="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Geidea Device Tree View -->
+    <record id="view_geidea_device_tree" model="ir.ui.view">
+        <field name="name">geidea.device.tree</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Devices">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform"/>
+                <field name="status" widget="badge" decoration-success="status == 'online'" decoration-danger="status == 'error'" decoration-warning="status == 'busy'" decoration-muted="status == 'offline'"/>
+                <field name="connection_type"/>
+                <field name="ip_address"/>
+                <field name="total_transactions"/>
+                <field name="last_seen"/>
+                <field name="config_id"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Geidea Device Kanban View -->
+    <record id="view_geidea_device_kanban" model="ir.ui.view">
+        <field name="name">geidea.device.kanban</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <kanban string="Geidea Devices">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform"/>
+                <field name="status"/>
+                <field name="connection_type"/>
+                <field name="ip_address"/>
+                <field name="total_transactions"/>
+                <field name="last_seen"/>
+                <field name="config_id"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <div class="o_kanban_record_top mb16">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <field name="name"/>
+                                    </strong>
+                                    <br/>
+                                    <small class="o_kanban_record_subtitle text-muted">
+                                        <field name="device_id"/>
+                                    </small>
+                                </div>
+                                <div class="o_kanban_record_top_right">
+                                    <span t-if="record.status.raw_value == 'online'" class="badge badge-success">Online</span>
+                                    <span t-if="record.status.raw_value == 'offline'" class="badge badge-secondary">Offline</span>
+                                    <span t-if="record.status.raw_value == 'busy'" class="badge badge-warning">Busy</span>
+                                    <span t-if="record.status.raw_value == 'error'" class="badge badge-danger">Error</span>
+                                    <span t-if="record.status.raw_value == 'maintenance'" class="badge badge-info">Maintenance</span>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_body">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span><i class="fa fa-desktop"/> <field name="platform"/></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <span><i class="fa fa-plug"/> <field name="connection_type"/></span>
+                                    </div>
+                                </div>
+                                <div class="row mt8" t-if="record.ip_address.raw_value">
+                                    <div class="col-12">
+                                        <span><i class="fa fa-globe"/> <field name="ip_address"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_kanban_record_bottom">
+                                <div class="oe_kanban_bottom_left">
+                                    <span><i class="fa fa-credit-card"/> <field name="total_transactions"/> transactions</span>
+                                </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <small class="text-muted">
+                                        Last seen: <field name="last_seen" widget="relative"/>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Geidea Device Search View -->
+    <record id="view_geidea_device_search" model="ir.ui.view">
+        <field name="name">geidea.device.search</field>
+        <field name="model">geidea.device</field>
+        <field name="arch" type="xml">
+            <search string="Search Geidea Devices">
+                <field name="name"/>
+                <field name="device_id"/>
+                <field name="platform"/>
+                <field name="ip_address"/>
+                <field name="config_id"/>
+                
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Inactive" name="inactive" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Online" name="online" domain="[('status', '=', 'online')]"/>
+                <filter string="Offline" name="offline" domain="[('status', '=', 'offline')]"/>
+                <filter string="Error" name="error" domain="[('status', '=', 'error')]"/>
+                <filter string="Busy" name="busy" domain="[('status', '=', 'busy')]"/>
+                <separator/>
+                <filter string="Windows" name="windows" domain="[('platform', '=', 'windows')]"/>
+                <filter string="Android" name="android" domain="[('platform', '=', 'android')]"/>
+                <filter string="iOS/iPad" name="ios" domain="[('platform', '=', 'ios')]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Platform" name="group_platform" context="{'group_by': 'platform'}"/>
+                    <filter string="Configuration" name="group_config" context="{'group_by': 'config_id'}"/>
+                    <filter string="Connection Type" name="group_connection" context="{'group_by': 'connection_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Geidea Device Action -->
+    <record id="action_geidea_device" model="ir.actions.act_window">
+        <field name="name">Geidea Devices</field>
+        <field name="res_model">geidea.device</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first Geidea device!
+            </p>
+            <p>
+                Register and manage your Geidea payment devices here. Each device needs to be registered
+                with a unique device ID and configured for the platform it runs on.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action from Configuration -->
+    <record id="action_geidea_device_from_config" model="ir.actions.act_window">
+        <field name="name">Devices</field>
+        <field name="res_model">geidea.device</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('config_id', '=', active_id)]</field>
+        <field name="context">{'default_config_id': active_id}</field>
+    </record>
+</odoo>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Payment Menu -->
+    <menuitem id="menu_geidea_root" name="Geidea Payment" sequence="100"/>
+    
+    <!-- Configuration Menu -->
+    <menuitem id="menu_geidea_config" name="Configuration" parent="menu_geidea_root" sequence="10"/>
+    
+    <menuitem id="menu_geidea_config_main"
+              name="Geidea Configurations"
+              parent="menu_geidea_config"
+              action="action_geidea_config"
+              sequence="10"/>
+              
+    <menuitem id="menu_geidea_device"
+              name="Payment Devices"
+              parent="menu_geidea_config"
+              action="action_geidea_device"
+              sequence="20"/>
+    
+    <!-- Transactions Menu -->
+    <menuitem id="menu_geidea_transactions" name="Transactions" parent="menu_geidea_root" sequence="20"/>
+    
+    <menuitem id="menu_geidea_transaction_main"
+              name="All Transactions"
+              parent="menu_geidea_transactions"
+              action="action_geidea_transaction"
+              sequence="10"/>
+              
+    <menuitem id="menu_geidea_transaction_completed"
+              name="Completed Transactions"
+              parent="menu_geidea_transactions"
+              action="action_geidea_transaction"
+              sequence="20">
+        <record id="action_geidea_transaction_completed" model="ir.actions.act_window">
+            <field name="name">Completed Transactions</field>
+            <field name="res_model">geidea.transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', '=', 'completed')]</field>
+            <field name="context">{'search_default_completed': 1}</field>
+        </record>
+    </menuitem>
+    
+    <menuitem id="menu_geidea_transaction_failed"
+              name="Failed Transactions"
+              parent="menu_geidea_transactions"
+              action="action_geidea_transaction"
+              sequence="30">
+        <record id="action_geidea_transaction_failed" model="ir.actions.act_window">
+            <field name="name">Failed Transactions</field>
+            <field name="res_model">geidea.transaction</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('state', '=', 'failed')]</field>
+            <field name="context">{'search_default_failed': 1}</field>
+        </record>
+    </menuitem>
+
+    <!-- Add to Point of Sale menu as well -->
+    <menuitem id="menu_pos_geidea_config"
+              name="Geidea Configuration"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_geidea_config"
+              sequence="50"
+              groups="point_of_sale.group_pos_manager"/>
+              
+    <menuitem id="menu_pos_geidea_devices"
+              name="Geidea Devices"
+              parent="point_of_sale.menu_point_of_sale"
+              action="action_geidea_device"
+              sequence="51"
+              groups="point_of_sale.group_pos_manager"/>
+</odoo>

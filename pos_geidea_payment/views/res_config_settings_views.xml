@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit Point of Sale Settings -->
+    <record id="res_config_settings_view_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.geidea</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_inventory_section']" position="after">
+                <block title="Geidea Payment Integration" id="pos_geidea_integration_section">
+                    <setting>
+                        <field name="enable_geidea_integration"/>
+                        <div class="content-group" invisible="not enable_geidea_integration">
+                            <div class="mt16">
+                                <label string="API Key" for="geidea_api_key" class="o_light_label"/>
+                                <field name="geidea_api_key" placeholder="Your Geidea API Key" password="True"/>
+                            </div>
+                            <div class="mt8">
+                                <label string="Merchant ID" for="geidea_merchant_id" class="o_light_label"/>
+                                <field name="geidea_merchant_id" placeholder="Your Merchant ID"/>
+                            </div>
+                            <div class="mt8">
+                                <label string="Terminal ID" for="geidea_terminal_id" class="o_light_label"/>
+                                <field name="geidea_terminal_id" placeholder="Your Terminal ID"/>
+                            </div>
+                            <div class="row mt8">
+                                <div class="col-lg-6">
+                                    <label string="Environment" for="geidea_environment" class="o_light_label"/>
+                                    <field name="geidea_environment"/>
+                                </div>
+                                <div class="col-lg-6">
+                                    <label string="Timeout (seconds)" for="geidea_timeout" class="o_light_label"/>
+                                    <field name="geidea_timeout"/>
+                                </div>
+                            </div>
+                            <div class="mt8">
+                                <field name="geidea_auto_capture"/>
+                                <label for="geidea_auto_capture" string="Auto Capture Payments"/>
+                            </div>
+                            <div class="mt16">
+                                <button name="action_create_geidea_config" string="Create Geidea Configuration" type="object" class="btn-primary" icon="fa-plus"/>
+                                <p class="text-muted mt8">
+                                    Create a detailed Geidea configuration for advanced settings and device management.
+                                </p>
+                            </div>
+                        </div>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit POS Payment Method Form -->
+    <record id="view_pos_payment_method_form_inherit_geidea" model="ir.ui.view">
+        <field name="name">pos.payment.method.form.inherit.geidea</field>
+        <field name="model">pos.payment.method</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_payment_method_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='payment_terminal']" position="after">
+                <group string="Geidea Integration" name="geidea_integration" invisible="not use_geidea_payment">
+                    <field name="use_geidea_payment"/>
+                    <field name="geidea_config_id" invisible="not use_geidea_payment" required="use_geidea_payment"/>
+                    <field name="geidea_payment_type" invisible="not use_geidea_payment"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

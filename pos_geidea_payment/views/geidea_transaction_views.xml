@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Geidea Transaction Form View -->
+    <record id="view_geidea_transaction_form" model="ir.ui.view">
+        <field name="name">geidea.transaction.form</field>
+        <field name="model">geidea.transaction</field>
+        <field name="arch" type="xml">
+            <form string="Geidea Transaction">
+                <header>
+                    <button name="action_process" string="Process" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_refund" string="Refund" type="object" class="btn-secondary" invisible="not is_refundable or remaining_amount == 0"/>
+                    <button name="action_void" string="Void" type="object" class="btn-warning" invisible="state not in ['pending', 'processing']"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,pending,processing,completed,failed,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(action_geidea_transaction_children)d" type="action" class="oe_stat_button" icon="fa-credit-card" invisible="not child_transaction_ids">
+                            <field name="child_transaction_ids" widget="statinfo" string="Related"/>
+                        </button>
+                    </div>
+                    
+                    <div class="oe_title">
+                        <label for="transaction_id" class="oe_edit_only"/>
+                        <h1><field name="transaction_id" readonly="1"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group string="Transaction Details">
+                            <field name="type"/>
+                            <field name="amount" widget="monetary"/>
+                            <field name="currency_id"/>
+                            <field name="reference"/>
+                            <field name="order_id"/>
+                        </group>
+                        <group string="Configuration">
+                            <field name="config_id"/>
+                            <field name="device_id"/>
+                            <field name="pos_order_id"/>
+                            <field name="parent_transaction_id" invisible="not parent_transaction_id"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Payment Details" name="payment">
+                            <group>
+                                <group string="Payment Method">
+                                    <field name="payment_method"/>
+                                    <field name="card_type"/>
+                                    <field name="card_last_four"/>
+                                    <field name="cardholder_name"/>
+                                </group>
+                                <group string="Processing">
+                                    <field name="authorization_code"/>
+                                    <field name="gateway_transaction_id"/>
+                                    <field name="rrn"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Timestamps" name="timestamps">
+                            <group>
+                                <group string="Transaction Timeline">
+                                    <field name="requested_at"/>
+                                    <field name="processed_at"/>
+                                    <field name="completed_at"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Response" name="response">
+                            <group>
+                                <group string="Response Data">
+                                    <field name="response_code"/>
+                                    <field name="response_message"/>
+                                </group>
+                                <group string="Error Information" invisible="state != 'failed'">
+                                    <field name="error_code"/>
+                                    <field name="error_message"/>
+                                </group>
+                            </group>
+                            <group string="Raw Response" invisible="not raw_response">
+                                <field name="raw_response" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                            </group>
+                        </page>
+                        
+                        <page string="Customer" name="customer">
+                            <group>
+                                <group string="Customer Information">
+                                    <field name="customer_email"/>
+                                    <field name="customer_phone"/>
+                                </group>
+                            </group>
+                        </page>
+                        
+                        <page string="Refunds" name="refunds" invisible="type != 'sale' or not is_refundable">
+                            <group>
+                                <group string="Refund Information">
+                                    <field name="is_refundable"/>
+                                    <field name="refunded_amount" widget="monetary"/>
+                                    <field name="remaining_amount" widget="monetary"/>
+                                </group>
+                            </group>
+                            <field name="child_transaction_ids" readonly="1">
+                                <tree>
+                                    <field name="transaction_id"/>
+                                    <field name="type"/>
+                                    <field name="amount" widget="monetary"/>
+                                    <field name="state"/>
+                                    <field name="create_date"/>
+                                </tree>
+                            </field>
+                        </page>
+                        
+                        <page string="Additional Data" name="additional">
+                            <group>
+                                <group string="Metadata" invisible="not metadata">
+                                    <field name="metadata" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                                </group>
+                                <group string="Receipt Data" invisible="not receipt_data">
+                                    <field name="receipt_data" widget="ace" options="{'mode': 'json'}" nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Geidea Transaction Tree View -->
+    <record id="view_geidea_transaction_tree" model="ir.ui.view">
+        <field name="name">geidea.transaction.tree</field>
+        <field name="model">geidea.transaction</field>
+        <field name="arch" type="xml">
+            <tree string="Geidea Transactions">
+                <field name="transaction_id"/>
+                <field name="type"/>
+                <field name="amount" widget="monetary"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="state" widget="badge" decoration-success="state == 'completed'" decoration-danger="state == 'failed'" decoration-warning="state in ['pending', 'processing']" decoration-muted="state in ['draft', 'cancelled']"/>
+                <field name="payment_method"/>
+                <field name="card_last_four"/>
+                <field name="device_id"/>
+                <field name="processed_at"/>
+                <field name="reference"/>
+                <field name="config_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Geidea Transaction Search View -->
+    <record id="view_geidea_transaction_search" model="ir.ui.view">
+        <field name="name">geidea.transaction.search</field>
+        <field name="model">geidea.transaction</field>
+        <field name="arch" type="xml">
+            <search string="Search Geidea Transactions">
+                <field name="transaction_id"/>
+                <field name="reference"/>
+                <field name="order_id"/>
+                <field name="card_last_four"/>
+                <field name="customer_email"/>
+                <field name="device_id"/>
+                <field name="config_id"/>
+                
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Pending" name="pending" domain="[('state', '=', 'pending')]"/>
+                <filter string="Processing" name="processing" domain="[('state', '=', 'processing')]"/>
+                <filter string="Completed" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Failed" name="failed" domain="[('state', '=', 'failed')]"/>
+                <filter string="Cancelled" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter string="Sales" name="sales" domain="[('type', '=', 'sale')]"/>
+                <filter string="Refunds" name="refunds" domain="[('type', '=', 'refund')]"/>
+                <filter string="Successful" name="successful" domain="[('state', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Today" name="today" domain="[('create_date', '>=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="week" domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="month" domain="[('create_date', '>=', (context_today().replace(day=1)).strftime('%Y-%m-%d'))]"/>
+                
+                <group expand="0" string="Group By">
+                    <filter string="State" name="group_state" context="{'group_by': 'state'}"/>
+                    <filter string="Type" name="group_type" context="{'group_by': 'type'}"/>
+                    <filter string="Payment Method" name="group_payment_method" context="{'group_by': 'payment_method'}"/>
+                    <filter string="Device" name="group_device" context="{'group_by': 'device_id'}"/>
+                    <filter string="Configuration" name="group_config" context="{'group_by': 'config_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Geidea Transaction Action -->
+    <record id="action_geidea_transaction" model="ir.actions.act_window">
+        <field name="name">Geidea Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="context">{'search_default_today': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No transactions found!
+            </p>
+            <p>
+                Payment transactions processed through Geidea will appear here.
+                Use the POS system to create your first transaction.
+            </p>
+        </field>
+    </record>
+
+    <!-- Action from Configuration -->
+    <record id="action_geidea_transaction_from_config" model="ir.actions.act_window">
+        <field name="name">Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('config_id', '=', active_id)]</field>
+        <field name="context">{'default_config_id': active_id}</field>
+    </record>
+
+    <!-- Action from Device -->
+    <record id="action_geidea_transaction_from_device" model="ir.actions.act_window">
+        <field name="name">Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('device_id', '=', active_id)]</field>
+        <field name="context">{'default_device_id': active_id}</field>
+    </record>
+
+    <!-- Action for Child Transactions -->
+    <record id="action_geidea_transaction_children" model="ir.actions.act_window">
+        <field name="name">Related Transactions</field>
+        <field name="res_model">geidea.transaction</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('parent_transaction_id', '=', active_id)]</field>
+        <field name="context">{'default_parent_transaction_id': active_id}</field>
+    </record>
+</odoo>
