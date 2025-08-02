@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_geidea_device_user,geidea.device.user,model_geidea_device,base.group_user,1,0,0,0
+access_geidea_device_manager,geidea.device.manager,model_geidea_device,account.group_account_manager,1,1,1,1
+access_geidea_transaction_user,geidea.transaction.user,model_geidea_transaction,base.group_user,1,0,0,0
+access_geidea_transaction_manager,geidea.transaction.manager,model_geidea_transaction,account.group_account_manager,1,1,1,1
+access_geidea_config_user,geidea.config.user,model_geidea_config,base.group_user,1,0,0,0
+access_geidea_config_manager,geidea.config.manager,model_geidea_config,account.group_account_manager,1,1,1,1

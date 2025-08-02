@@ -2,14 +2,262 @@
 <odoo>
     <data>
         
+        <!-- Enhanced Payment Provider Form View -->
+        <record id="payment_provider_geidea_form" model="ir.ui.view">
+            <field name="name">payment.provider.geidea.form</field>
+            <field name="model">payment.provider</field>
+            <field name="inherit_id" ref="payment.payment_provider_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='configuration']" position="after">
+                    <page name="geidea_credentials" string="Credentials" invisible="code != 'geidea'">
+                        <group>
+                            <group string="Authentication">
+                                <field name="geidea_api_key" password="True" required="code == 'geidea'"/>
+                                <field name="geidea_merchant_id" required="code == 'geidea'"/>
+                                <field name="geidea_terminal_id" required="code == 'geidea'"/>
+                            </group>
+                            <group string="Configuration">
+                                <field name="geidea_test_mode"/>
+                                <field name="geidea_webhook_url" readonly="1"/>
+                            </group>
+                        </group>
+                    </page>
+                    <page name="geidea_devices" string="Devices" invisible="code != 'geidea'">
+                        <field name="geidea_device_ids" context="{'default_provider_id': active_id}">
+                            <tree string="Payment Devices">
+                                <field name="name"/>
+                                <field name="device_type"/>
+                                <field name="platform"/>
+                                <field name="connection_type"/>
+                                <field name="status"/>
+                                <field name="last_connection"/>
+                            </tree>
+                        </field>
+                    </page>
+                    <page name="geidea_transactions" string="Transactions" invisible="code != 'geidea'">
+                        <field name="geidea_transaction_ids" context="{'default_provider_id': active_id}">
+                            <tree string="Transactions">
+                                <field name="transaction_id"/>
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="state"/>
+                                <field name="initiated_date"/>
+                                <field name="processed_date"/>
+                            </tree>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Geidea Device Form View -->
+        <record id="geidea_device_form" model="ir.ui.view">
+            <field name="name">geidea.device.form</field>
+            <field name="model">geidea.device</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Device">
+                    <header>
+                        <button name="action_test_connection" string="Test Connection" type="object" class="btn-primary"/>
+                        <field name="status" widget="statusbar" statusbar_visible="connected,disconnected,error"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Device Information">
+                                <field name="device_id"/>
+                                <field name="device_type"/>
+                                <field name="platform"/>
+                                <field name="connection_type"/>
+                                <field name="provider_id"/>
+                            </group>
+                            <group string="Status">
+                                <field name="last_connection"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Configuration">
+                                <field name="config_data" widget="ace" options="{'mode': 'json'}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Geidea Device Tree View -->
+        <record id="geidea_device_tree" model="ir.ui.view">
+            <field name="name">geidea.device.tree</field>
+            <field name="model">geidea.device</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Devices">
+                    <field name="name"/>
+                    <field name="device_type"/>
+                    <field name="platform"/>
+                    <field name="connection_type"/>
+                    <field name="status"/>
+                    <field name="last_connection"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Geidea Transaction Form View -->
+        <record id="geidea_transaction_form" model="ir.ui.view">
+            <field name="name">geidea.transaction.form</field>
+            <field name="model">geidea.transaction</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Transaction">
+                    <header>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,pending,authorized,captured"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="transaction_id"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group string="Transaction Details">
+                                <field name="amount"/>
+                                <field name="currency_id"/>
+                                <field name="provider_id"/>
+                                <field name="device_id"/>
+                                <field name="payment_transaction_id"/>
+                            </group>
+                            <group string="Geidea Information">
+                                <field name="geidea_order_id"/>
+                                <field name="geidea_payment_id"/>
+                                <field name="authorization_code"/>
+                                <field name="response_code"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Timestamps">
+                                <field name="initiated_date"/>
+                                <field name="processed_date"/>
+                            </group>
+                            <group string="Customer Information">
+                                <field name="customer_email"/>
+                                <field name="customer_phone"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Response Message">
+                                <field name="response_message" widget="text"/>
+                            </page>
+                            <page string="Raw Data">
+                                <field name="raw_data" widget="ace" options="{'mode': 'json'}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Geidea Transaction Tree View -->
+        <record id="geidea_transaction_tree" model="ir.ui.view">
+            <field name="name">geidea.transaction.tree</field>
+            <field name="model">geidea.transaction</field>
+            <field name="arch" type="xml">
+                <tree string="Geidea Transactions">
+                    <field name="transaction_id"/>
+                    <field name="amount"/>
+                    <field name="currency_id"/>
+                    <field name="state"/>
+                    <field name="provider_id"/>
+                    <field name="initiated_date"/>
+                    <field name="processed_date"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Geidea Configuration Form View -->
+        <record id="geidea_config_form" model="ir.ui.view">
+            <field name="name">geidea.config.form</field>
+            <field name="model">geidea.config</field>
+            <field name="arch" type="xml">
+                <form string="Geidea Configuration">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" required="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="provider_id"/>
+                            <field name="active"/>
+                        </group>
+                        <notebook>
+                            <page string="API Configuration">
+                                <group>
+                                    <group>
+                                        <field name="api_version"/>
+                                        <field name="timeout"/>
+                                        <field name="retry_attempts"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Security">
+                                <group>
+                                    <group>
+                                        <field name="enable_3ds"/>
+                                        <field name="enable_tokenization"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Logging &amp; Monitoring">
+                                <group>
+                                    <group>
+                                        <field name="enable_logging"/>
+                                        <field name="log_level"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Notifications">
+                                <group>
+                                    <field name="enable_webhooks"/>
+                                    <field name="webhook_events" widget="text"/>
+                                </group>
+                            </page>
+                            <page string="Device Management">
+                                <group>
+                                    <group>
+                                        <field name="auto_detect_devices"/>
+                                        <field name="device_heartbeat_interval"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Custom Configuration">
+                                <field name="custom_fields" widget="ace" options="{'mode': 'json'}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Redirect Form Template for Geidea -->
         <template id="redirect_form" name="Geidea Redirect Form">
-            <form name="geidea_payment_form" method="post" target="_self">
+            <form name="geidea_payment_form" method="post" target="_self" t-att-action="payment_url">
                 <input type="hidden" name="merchant_id" t-att-value="merchant_id"/>
+                <input type="hidden" name="api_password" t-att-value="api_password"/>
                 <input type="hidden" name="amount" t-att-value="amount"/>
                 <input type="hidden" name="currency" t-att-value="currency"/>
                 <input type="hidden" name="order_id" t-att-value="order_id"/>
                 <input type="hidden" name="return_url" t-att-value="return_url"/>
+                <input type="hidden" name="cancel_url" t-att-value="cancel_url"/>
+                <input type="hidden" name="webhook_url" t-att-value="webhook_url"/>
+                <input type="hidden" name="language" t-att-value="language"/>
+                <input type="hidden" name="customer_email" t-att-value="customer_email"/>
+                <input type="hidden" name="signature" t-att-value="signature"/>
             </form>
+            <script type="text/javascript">
+                document.forms.geidea_payment_form.submit();
+            </script>
         </template>
         
     </data>
