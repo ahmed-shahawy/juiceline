@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Vendor Purchase UoM on supplierinfo form -->
+    <record id="view_supplierinfo_form_vendor_uom" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.vendor.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='price']" position="after">
+                <field name="purchase_uom_id"
+                       domain="[('category_id', '=', parent.uom_id.category_id)]"
+                       options="{'no_create_edit': True}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add Vendor Purchase UoM on supplierinfo tree/list -->
+    <record id="view_supplierinfo_tree_vendor_uom" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.vendor.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//tree/field[@name='price']" position="after">
+                <field name="purchase_uom_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
