@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_supplier_uom_user,supplier.uom.user,model_supplier_uom,base.group_user,1,1,1,1
+access_supplier_uom_manager,supplier.uom.manager,model_supplier_uom,base.group_system,1,1,1,1
+access_uom_conversion_user,uom.conversion.user,model_uom_conversion,base.group_user,1,1,1,1
+access_uom_conversion_manager,uom.conversion.manager,model_uom_conversion,base.group_system,1,1,1,1

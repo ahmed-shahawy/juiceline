@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Common Conversion Rules -->
+        <record id="uom_conversion_kg_to_g" model="uom.conversion">
+            <field name="name">كيلوجرام إلى جرام</field>
+            <field name="from_uom_id" ref="uom.product_uom_kgm"/>
+            <field name="to_uom_id" ref="uom.product_uom_gram"/>
+            <field name="factor">1000</field>
+        </record>
+
+        <record id="uom_conversion_liter_to_ml" model="uom.conversion">
+            <field name="name">لتر إلى مليلتر</field>
+            <field name="from_uom_id" ref="uom.product_uom_litre"/>
+            <field name="to_uom_id" ref="uom.product_uom_cubic_millimeter"/>
+            <field name="factor">1000000</field>
+        </record>
+
+        <record id="uom_conversion_dozen_to_unit" model="uom.conversion">
+            <field name="name">دزينة إلى قطعة</field>
+            <field name="from_uom_id" ref="uom.product_uom_dozen"/>
+            <field name="to_uom_id" ref="uom.product_uom_unit"/>
+            <field name="factor">12</field>
+        </record>
+    </data>
+</odoo>

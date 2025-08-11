@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Supplier UOM Tree View -->
+    <record id="view_supplier_uom_tree" model="ir.ui.view">
+        <field name="name">supplier.uom.tree</field>
+        <field name="model">supplier.uom</field>
+        <field name="arch" type="xml">
+            <tree string="وحدات قياس الموردين">
+                <field name="partner_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="supplier_uom_id"/>
+                <field name="standard_uom_id"/>
+                <field name="conversion_factor"/>
+                <field name="is_default"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Supplier UOM Form View -->
+    <record id="view_supplier_uom_form" model="ir.ui.view">
+        <field name="name">supplier.uom.form</field>
+        <field name="model">supplier.uom</field>
+        <field name="arch" type="xml">
+            <form string="وحدة قياس المورد">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="product_tmpl_id"/>
+                            <field name="supplier_uom_id"/>
+                        </group>
+                        <group>
+                            <field name="standard_uom_id"/>
+                            <field name="conversion_factor"/>
+                            <field name="is_default"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Supplier UOM Search View -->
+    <record id="view_supplier_uom_search" model="ir.ui.view">
+        <field name="name">supplier.uom.search</field>
+        <field name="model">supplier.uom</field>
+        <field name="arch" type="xml">
+            <search string="البحث في وحدات قياس الموردين">
+                <field name="partner_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="supplier_uom_id"/>
+                <filter string="افتراضي" name="default" domain="[('is_default', '=', True)]"/>
+                <group expand="0" string="تجميع حسب">
+                    <filter string="المورد" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="المنتج" name="group_product" context="{'group_by': 'product_tmpl_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Supplier UOM Action -->
+    <record id="action_supplier_uom" model="ir.actions.act_window">
+        <field name="name">وحدات قياس الموردين</field>
+        <field name="res_model">supplier.uom</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_supplier_uom_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                إنشاء أول وحدة قياس للمورد
+            </p>
+            <p>
+                يمكنك هنا تحديد وحدات القياس التي يستخدمها الموردون المختلفون
+                لنفس المنتج وتحديد معاملات التحويل بينها.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items -->
+    <menuitem id="menu_supplier_unit_measurement_root"
+              name="وحدات قياس الموردين"
+              web_icon="supplier_unit_measurement,static/description/icon.png"
+              sequence="60"/>
+
+    <menuitem id="menu_supplier_uom"
+              name="وحدات قياس الموردين"
+              parent="menu_supplier_unit_measurement_root"
+              action="action_supplier_uom"
+              sequence="10"/>
+</odoo>
