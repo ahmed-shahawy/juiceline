@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Supplier UOM Tree View -->
+        <record id="supplier_uom_tree_view" model="ir.ui.view">
+            <field name="name">supplier.uom.tree</field>
+            <field name="model">uom.uom</field>
+            <field name="type">list</field>
+            <field name="arch" type="xml">
+                <tree string="Supplier Units of Measurement">
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="factor"/>
+                    <field name="uom_type"/>
+                    <field name="active"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Supplier UOM Form View -->
+        <record id="supplier_uom_form_view" model="ir.ui.view">
+            <field name="name">supplier.uom.form</field>
+            <field name="model">uom.uom</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Supplier Unit of Measurement">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="category_id"/>
+                            <field name="factor"/>
+                            <field name="uom_type"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Supplier UOM Action -->
+        <record id="action_supplier_uom" model="ir.actions.act_window">
+            <field name="name">Supplier Units of Measurement</field>
+            <field name="res_model">uom.uom</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="supplier_uom_tree_view"/>
+            <field name="domain">[('active', 'in', [True, False])]</field>
+            <field name="context">{}</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create a new supplier unit of measurement.
+                </p>
+            </field>
+        </record>
+
+        <!-- Menu Item -->
+        <menuitem id="menu_supplier_uom"
+                  name="Supplier UOM"
+                  parent="purchase.menu_purchase_config"
+                  action="action_supplier_uom"
+                  sequence="20"/>
+
+    </data>
+</odoo>
