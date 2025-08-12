@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Demo product for testing multi UOM suppliers -->
+        <record id="product_demo_cooking_oil" model="product.product">
+            <field name="name">Cooking Oil</field>
+            <field name="default_code">OIL001</field>
+            <field name="type">product</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="uom_id" ref="uom.product_uom_litre"/>
+            <field name="uom_po_id" ref="uom.product_uom_litre"/>
+            <field name="purchase_ok">True</field>
+            <field name="sale_ok">True</field>
+            <field name="list_price">5.0</field>
+        </record>
+
+        <!-- Demo suppliers -->
+        <record id="supplier_a" model="res.partner">
+            <field name="name">Supplier A (Liter)</field>
+            <field name="is_company">True</field>
+            <field name="supplier_rank">1</field>
+        </record>
+
+        <record id="supplier_b" model="res.partner">
+            <field name="name">Supplier B (Gallon)</field>
+            <field name="is_company">True</field>
+            <field name="supplier_rank">1</field>
+        </record>
+
+        <record id="supplier_c" model="res.partner">
+            <field name="name">Supplier C (ML)</field>
+            <field name="is_company">True</field>
+            <field name="supplier_rank">1</field>
+        </record>
+
+        <!-- Supplier info with different UOMs -->
+        <record id="supplierinfo_oil_supplier_a" model="product.supplierinfo">
+            <field name="partner_id" ref="supplier_a"/>
+            <field name="product_tmpl_id" ref="product_demo_cooking_oil"/>
+            <field name="price">5.0</field>
+            <field name="supplier_uom" ref="uom.product_uom_litre"/>
+        </record>
+
+        <record id="supplierinfo_oil_supplier_b" model="product.supplierinfo">
+            <field name="partner_id" ref="supplier_b"/>
+            <field name="product_tmpl_id" ref="product_demo_cooking_oil"/>
+            <field name="price">18.0</field>
+            <field name="supplier_uom" ref="uom.product_uom_gal"/>
+        </record>
+
+        <record id="supplierinfo_oil_supplier_c" model="product.supplierinfo">
+            <field name="partner_id" ref="supplier_c"/>
+            <field name="product_tmpl_id" ref="product_demo_cooking_oil"/>
+            <field name="price">0.005</field>
+            <field name="supplier_uom" ref="uom.product_uom_millilitre"/>
+        </record>
+
+    </data>
+</odoo>

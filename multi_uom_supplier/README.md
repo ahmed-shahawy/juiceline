@@ -81,20 +81,38 @@ The Multi UOM Supplier module enables Odoo to support multiple units of measure 
 - `_compute_supplier_uom()`: حساب وحدة القياس للمورد
 - `_onchange_product_supplier_uom()`: تحديث الوحدة عند تغيير المنتج/المورد
 
-### الملفات (Files)
+## الملفات المُنجزة (Completed Files)
 
 ```
 multi_uom_supplier/
-├── __init__.py
-├── __manifest__.py
+├── __init__.py                    # Module initialization
+├── __manifest__.py               # Module manifest with dependencies
 ├── models/
-│   ├── __init__.py
-│   ├── product_supplierinfo.py
-│   └── purchase_order_line.py
+│   ├── __init__.py              # Models initialization
+│   ├── product_supplierinfo.py # Extended supplier info model
+│   └── purchase_order_line.py  # Extended purchase order line model
 ├── views/
-│   └── product_views.xml
-└── README.md
+│   └── product_views.xml       # UI enhancements and views
+├── security/
+│   └── ir.model.access.csv     # Access rights and security
+├── data/
+│   └── demo_data.xml           # Demo data for testing
+└── README.md                   # This documentation
 ```
+
+### الاختبار (Testing)
+
+تم إنشاء بيانات تجريبية لتسهيل الاختبار:
+- منتج: زيت الطبخ
+- مورد أ: يبيع باللتر (5 دولار/لتر)
+- مورد ب: يبيع بالجالون (18 دولار/جالون)  
+- مورد ج: يبيع بالملليلتر (0.005 دولار/مل)
+
+Demo data has been created for easy testing:
+- Product: Cooking Oil
+- Supplier A: Sells in Liters (5$/L)
+- Supplier B: Sells in Gallons (18$/Gal)
+- Supplier C: Sells in Milliliters (0.005$/mL)
 
 ## المتطلبات (Requirements)
 

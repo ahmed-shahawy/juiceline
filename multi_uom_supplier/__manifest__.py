@@ -25,7 +25,11 @@ Technical Implementation:
     'author': 'Juiceline',
     'depends': ['purchase', 'product', 'uom'],
     'data': [
+        'security/ir.model.access.csv',
         'views/product_views.xml',
+    ],
+    'demo': [
+        'data/demo_data.xml',
     ],
     'installable': True,
     'auto_install': False,

@@ -13,6 +13,13 @@ class ProductSupplierinfo(models.Model):
         help="Unit of measure used by this supplier for this product. "
              "If not set, the product's purchase UOM will be used."
     )
+    
+    # Helper field for domain filtering in views
+    product_uom_category_id = fields.Many2one(
+        related='product_tmpl_id.uom_po_id.category_id',
+        string='Product UOM Category',
+        store=False
+    )
 
     @api.constrains('supplier_uom', 'product_tmpl_id', 'product_id')
     def _check_supplier_uom_category(self):

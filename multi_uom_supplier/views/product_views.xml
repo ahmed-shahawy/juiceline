@@ -10,8 +10,7 @@
             <xpath expr="//field[@name='seller_ids']/tree/field[@name='price']" position="after">
                 <field name="supplier_uom" 
                        options="{'no_create': True}" 
-                       optional="show"
-                       domain="[('category_id', '=', parent.uom_po_id.category_id if parent.uom_po_id else False)]"/>
+                       optional="show"/>
             </xpath>
         </field>
     </record>
@@ -25,8 +24,7 @@
             <xpath expr="//field[@name='seller_ids']/tree/field[@name='price']" position="after">
                 <field name="supplier_uom" 
                        options="{'no_create': True}" 
-                       optional="show"
-                       domain="[('category_id', '=', parent.uom_po_id.category_id if parent.uom_po_id else False)]"/>
+                       optional="show"/>
             </xpath>
         </field>
     </record>

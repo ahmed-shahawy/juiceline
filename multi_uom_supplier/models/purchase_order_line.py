@@ -12,7 +12,7 @@ class PurchaseOrderLine(models.Model):
         help="Unit of measure used by the supplier for this product"
     )
 
-    @api.depends('product_id', 'partner_id')
+    @api.depends('product_id', 'partner_id', 'product_id.seller_ids.supplier_uom')
     def _compute_supplier_uom(self):
         """Compute supplier UOM based on product and supplier"""
         for line in self:
