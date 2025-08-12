@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Demo data for testing supplier UOM functionality -->
+        
+        <!-- Create a demo product if it doesn't exist -->
+        <record id="demo_product_uom_test" model="product.template">
+            <field name="name">Demo Product for UOM Testing</field>
+            <field name="type">product</field>
+            <field name="uom_id" ref="uom.product_uom_unit"/>
+            <field name="uom_po_id" ref="uom.product_uom_unit"/>
+            <field name="purchase_ok">True</field>
+            <field name="sale_ok">True</field>
+        </record>
+
+        <!-- Create demo suppliers -->
+        <record id="demo_supplier_1" model="res.partner">
+            <field name="name">Demo Supplier A (Units)</field>
+            <field name="is_company">True</field>
+            <field name="supplier_rank">1</field>
+        </record>
+
+        <record id="demo_supplier_2" model="res.partner">
+            <field name="name">Demo Supplier B (Dozens)</field>
+            <field name="is_company">True</field>
+            <field name="supplier_rank">1</field>
+        </record>
+
+        <!-- Create supplier info with different UOMs -->
+        <record id="demo_supplier_info_1" model="product.supplierinfo">
+            <field name="partner_id" ref="demo_supplier_1"/>
+            <field name="product_tmpl_id" ref="demo_product_uom_test"/>
+            <field name="price">10.0</field>
+            <field name="min_qty">1.0</field>
+            <!-- Uses default UOM (units) -->
+        </record>
+
+        <record id="demo_supplier_info_2" model="product.supplierinfo">
+            <field name="partner_id" ref="demo_supplier_2"/>
+            <field name="product_tmpl_id" ref="demo_product_uom_test"/>
+            <field name="price">100.0</field>
+            <field name="min_qty">1.0</field>
+            <field name="supplier_uom_id" ref="uom.product_uom_dozen"/>
+        </record>
+
+    </data>
+</odoo>
