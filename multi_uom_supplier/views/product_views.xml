@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Inherit product template form to show supplier UOM -->
+    <record id="product_template_form_view_supplier_uom" model="ir.ui.view">
+        <field name="name">product.template.form.supplier.uom</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='seller_ids']/tree/field[@name='price']" position="after">
+                <field name="supplier_uom" 
+                       options="{'no_create': True}" 
+                       optional="show"
+                       domain="[('category_id', '=', parent.uom_po_id.category_id if parent.uom_po_id else False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit product form to show supplier UOM -->
+    <record id="product_normal_form_view_supplier_uom" model="ir.ui.view">
+        <field name="name">product.product.form.supplier.uom</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='seller_ids']/tree/field[@name='price']" position="after">
+                <field name="supplier_uom" 
+                       options="{'no_create': True}" 
+                       optional="show"
+                       domain="[('category_id', '=', parent.uom_po_id.category_id if parent.uom_po_id else False)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Enhanced supplier info form view -->
+    <record id="product_supplierinfo_form_view_uom" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <field name="currency_id" position="after">
+                <field name="supplier_uom" 
+                       options="{'no_create': True}"
+                       domain="[('category_id', '=', product_uom_category_id)]"
+                       help="Unit of measure used by this supplier. Leave empty to use product's purchase UOM."/>
+            </field>
+            <field name="price" position="attributes">
+                <attribute name="help">Price per supplier unit of measure</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- Add supplier UOM to purchase order line tree view -->
+    <record id="purchase_order_line_tree_supplier_uom" model="ir.ui.view">
+        <field name="name">purchase.order.line.tree.supplier.uom</field>
+        <field name="model">purchase.order.line</field>
+        <field name="inherit_id" ref="purchase.purchase_order_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="product_uom" position="after">
+                <field name="supplier_uom" optional="hide" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Add supplier UOM to purchase order form view -->
+    <record id="purchase_order_form_supplier_uom" model="ir.ui.view">
+        <field name="name">purchase.order.form.supplier.uom</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="after">
+                <field name="supplier_uom" optional="hide" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Supplier info tree view with UOM -->
+    <record id="product_supplierinfo_tree_view_uom" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="price" position="after">
+                <field name="supplier_uom" optional="show"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>
