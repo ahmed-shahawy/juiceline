@@ -6,6 +6,14 @@ from odoo import models, fields, api
 class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
+    @api.model
+    def _get_supplier_info_for_product(self, supplier, product):
+        """Get supplier info for a product and supplier"""
+        return self.env['product.supplierinfo'].search([
+            ('partner_id', '=', supplier.id),
+            ('product_tmpl_id', '=', product.product_tmpl_id.id),
+        ], limit=1)
+
     def _prepare_purchase_order_line(self, product_id, product_qty, product_uom, company_id, supplier, po):
         """Override to use supplier-specific UOM when creating purchase order lines"""
         values = super()._prepare_purchase_order_line(
@@ -13,18 +21,23 @@ class PurchaseOrder(models.Model):
         )
         
         # Find supplier info for this product and supplier
-        supplier_info = self.env['product.supplierinfo'].search([
-            ('partner_id', '=', supplier.id),
-            ('product_tmpl_id', '=', product_id.product_tmpl_id.id),
-        ], limit=1)
+        supplier_info = self._get_supplier_info_for_product(supplier, product_id)
         
         if supplier_info and supplier_info.supplier_uom_id:
-            # Convert quantity to supplier UOM
-            supplier_qty = supplier_info._convert_quantity_to_supplier_uom(product_qty)
-            values.update({
-                'product_qty': supplier_qty,
-                'product_uom': supplier_info.supplier_uom_id.id,
-            })
+            try:
+                # Convert quantity to supplier UOM using Odoo's UOM conversion
+                supplier_qty = product_uom._compute_quantity(
+                    product_qty, 
+                    supplier_info.supplier_uom_id,
+                    round=False
+                )
+                values.update({
+                    'product_qty': supplier_qty,
+                    'product_uom': supplier_info.supplier_uom_id.id,
+                })
+            except Exception:
+                # If conversion fails, keep original values
+                pass
         
         return values
 
@@ -67,11 +80,15 @@ class PurchaseOrderLine(models.Model):
                 if self.product_uom != supplier_info.supplier_uom_id:
                     # Convert current quantity to supplier UOM
                     if self.product_qty and self.product_uom:
-                        new_qty = self.product_uom._compute_quantity(
-                            self.product_qty,
-                            supplier_info.supplier_uom_id
-                        )
-                        self.product_qty = new_qty
+                        try:
+                            new_qty = self.product_uom._compute_quantity(
+                                self.product_qty,
+                                supplier_info.supplier_uom_id
+                            )
+                            self.product_qty = new_qty
+                        except Exception:
+                            # If conversion fails, just update UOM
+                            pass
                     self.product_uom = supplier_info.supplier_uom_id
 
     def _prepare_account_move_line(self, move=False):

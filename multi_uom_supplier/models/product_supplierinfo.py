@@ -77,3 +77,23 @@ class ProductSupplierinfo(models.Model):
         
         # Convert the quantity using the UOM factor
         return quantity * self.supplier_uom_factor
+
+    @api.onchange('supplier_uom_id')
+    def _onchange_supplier_uom_id(self):
+        """Recalculate conversion factor when supplier UOM changes"""
+        self._compute_supplier_uom_factor()
+
+    def get_price_for_quantity(self, quantity, date=None):
+        """Get price for the given quantity, handling UOM conversion"""
+        self.ensure_one()
+        # Get the base price from the supplier info
+        price = self._get_supplier_price(quantity, date)
+        
+        # If we have a supplier UOM, the price should be returned as-is
+        # since it's already in the supplier's UOM
+        return price
+
+    def _get_supplier_price(self, quantity, date=None):
+        """Get the supplier price (override if needed for complex pricing)"""
+        self.ensure_one()
+        return self.price
