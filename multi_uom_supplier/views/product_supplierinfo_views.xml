@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_supplierinfo_form_view_inherit" model="ir.ui.view">
+        <field name="name">product.supplierinfo.form.inherit.multi.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_form_view"/>
+        <field name="arch" type="xml">
+            <field name="price" position="after">
+                <field name="product_uom_category_id" invisible="1"/>
+                <field name="supplier_uom_id" domain="[(‘category_id’, '=', product_uom_category_id)]"/>
+                <field name="supplier_uom_factor" readonly="1" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_supplierinfo_tree_view_inherit" model="ir.ui.view">
+        <field name="name">product.supplierinfo.tree.inherit.multi.uom</field>
+        <field name="model">product.supplierinfo</field>
+        <field name="inherit_id" ref="product.product_supplierinfo_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="price" position="after">
+                <field name="supplier_uom_id" optional="show"/>
+                <field name="supplier_uom_factor" optional="hide"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- استخدام معرف صحيح موجود في وحدة المشتريات -->
+    <record id="product_template_form_view_supplier_uom" model="ir.ui.view">
+        <field name="name">product.template.form.supplier.uom</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="purchase.view_product_supplier_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='seller_ids']/tree//field[@name='price']" position="after">
+                <field name="supplier_uom_id" optional="show"/>
+                <field name="supplier_uom_factor" optional="hide"/>
+            </xpath>
+            <xpath expr="//field[@name='seller_ids']/form//field[@name='price']" position="after">
+                <field name="supplier_uom_id"/>
+                <field name="supplier_uom_factor" readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
