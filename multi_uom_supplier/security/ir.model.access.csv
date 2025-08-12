@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_product_supplierinfo_supplier_uom,product.supplierinfo.supplier.uom,product.model_product_supplierinfo,purchase.group_purchase_user,1,1,1,1
+access_purchase_order_line_supplier_uom,purchase.order.line.supplier.uom,purchase.model_purchase_order_line,purchase.group_purchase_user,1,1,1,1
