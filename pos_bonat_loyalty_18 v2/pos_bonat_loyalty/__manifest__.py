@@ -6,9 +6,10 @@
     'summary': 'Loyalty and Customer Engagement',
     'description': 'A customized loyalty system for your store: Promote your new products with ease by motivating your customers with rewards and customized offers, then retarget them with multiple marketing tools and make your decisions based on detailed reports.',
     'data': [
-        'views/res_config_settings_view.xml'
+        'views/res_config_settings_view.xml',
+        'views/product_template_view.xml'
     ],
-    'depends': ['point_of_sale', 'pos_discount'],
+    'depends': ['point_of_sale', 'pos_discount', 'product'],
     'installable': True,
     'assets': {
         'point_of_sale._assets_pos': [
